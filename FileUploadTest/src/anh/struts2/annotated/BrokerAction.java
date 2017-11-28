@@ -3,6 +3,9 @@
  */
 package anh.struts2.annotated;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
@@ -24,13 +27,21 @@ public class BrokerAction extends ActionSupport {
     private boolean notABroker;
 
     @Action(value = "broker_decision", results = { @Result(name = "success", location = "pages/search_violation.jsp") })
-    public String execute() {
+    public String execute() throws Exception {
 
 	if (notABroker) {
 	    return SUCCESS;
-	} else {
-	    return NONE;
 	}
+	if (broker) {
+	    /**
+	     * In case the user is a broker, then we need to redirect them to the external
+	     * URL.
+	     */
+	    HttpServletResponse response = ServletActionContext.getResponse();
+	    response.sendRedirect("http://www1.nyc.gov/site/finance/vehicles/");
+	    return super.execute();
+	}
+	return NONE;
     }
 
     /**

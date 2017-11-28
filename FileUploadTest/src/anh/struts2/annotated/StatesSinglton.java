@@ -44,6 +44,17 @@ public class StatesSinglton {
     @SuppressWarnings("unchecked")
     private static List<String> populateStates() {
 	
+	
+	List<String> states = new ArrayList<String>();
+	states.add("New York");
+	states.add("New Jersey");
+	states.add("New Hampshire");
+	states.add("California");
+	states.add("Virgin Islands");
+	
+	if( Boolean.TRUE )
+	    return states;
+	
 	String jsonResponse = "";
 	try {
 	    URL url = new URL("http://localhost:8080/violation/");

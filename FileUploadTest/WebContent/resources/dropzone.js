@@ -780,6 +780,7 @@ var Dropzone = function (_Emitter) {
             var removeFileEvent = function removeFileEvent(e) {
               e.preventDefault();
               e.stopPropagation();
+              //TODO: Ahmar. We can call AJAX here to remove file from server
               if (file.status === Dropzone.UPLOADING) {
                 return Dropzone.confirm(_this2.options.dictCancelUploadConfirmation, function () {
                   return _this2.removeFile(file);
