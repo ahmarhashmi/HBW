@@ -39,97 +39,16 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-<%-- <script type="text/javascript">
-    /* window.onbeforeunload = function() {
-    	alert("lj");
-    	return confirm("Data will be lost if you leave the page, are you sure?");
-    	  //return "Data will be lost if you leave the page, are you sure?";
-    	}; */
-    	
-    	$(window).bind('beforeunload', function(){
-    	    return '>>>>>Before You Go<<<<<<<< \n Your custom message go here';
-    	});
-    </script> --%>
-<script>
-	/*  $( window ).on('beforeunload', function( event ) {
-	 	console.log(event);
-	     return "asdf";
-	 }); */
-	/* $(document).ready(function() {
-	    $('form').submit(function() { window.onbeforeunload = null; });
-	    $('a[rel!=ext]').click(function() { window.onbeforeunload = null; });
-	}); */
-
-	/*  $('#mainForm').submit(function() {
-	 	   $(window).unbind('beforeunload');
-	 	}); */
-
-	var formHasChanged = false;
-	var submitted = false;
-
-	$(document)
-			.on(
-					'change',
-					'form.confirm-navigation-form input, form.confirm-navigation-form select, form.confirm-navigation-form textarea',
-					function(e) {
-						alert("in document submit");
-						formHasChanged = true;
-					});
-
-	$(document).ready(
-			function() {
-				window.onbeforeunload = function(e) {
-					if (formHasChanged && !submitted) {
-						var message = "You have not saved your changes.", e = e
-								|| window.event;
-						if (e) {
-							e.returnValue = message;
-						}
-						return message;
-					}
-				}
-
-				/* $("form").submit(function() {
-				    submitted = true;
-				    }); */
-			});
+<script type="text/javascript">
+	$(document).submit(function(event){
+	    $(window).unbind('beforeunload');
+	});
 
 	$(window).on('beforeunload', function(event) {
-		return "asdf";
+			return "asdf";
 	});
 
-	// Form Submit
-	$(document).on("submit", "mainForm", function(event) {
-		alert("hun ki kriye");
-		// disable warning
-		$(window).off('beforeunload');
-	});
 </script>
-
-
-<script type="text/javascript">
-	var dont_confirm_leave = 0; //set dont_confirm_leave to 1 when you want the user to be able to leave withou confirmation
-	var leave_message = 'You sure you want to leave?'
-	function goodbye(e) {
-		if (dont_confirm_leave !== 1) {
-			if (!e)
-				e = window.event;
-			//e.cancelBubble is supported by IE - this will kill the bubbling process.
-			e.cancelBubble = true;
-			e.returnValue = leave_message;
-			//e.stopPropagation works in Firefox.
-			if (e.stopPropagation) {
-				e.stopPropagation();
-				e.preventDefault();
-			}
-
-			//return works for Chrome and Safari
-			return leave_message;
-		}
-	}
-	window.onbeforeunload = goodbye;
-</script>
-
 </head>
 <body>
 	<div class="topbar">
@@ -318,56 +237,72 @@
 					<%-- <form id="file-Upload-Form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form> --%>
-					<div class="dropzone" id="my-dropzone" name="mainFileUploader">
-						<div class="fallback">
-							<input name="file" type="file" multiple />
+					<s:form id="file-Upload-Form" enctype="multipart/form-data"
+						action="/FileUploadServlet" method="POST">
+						<div class="dropzone" id="my-dropzone" name="mainFileUploader">
 						</div>
-					</div>
+					</s:form>
 					<br>
 					<script>
 					Dropzone.options.myDropzone = {
-				            url: "/Account/Create",
-				            autoProcessQueue: false,
-				            uploadMultiple: true,
-				            parallelUploads: 100,
-				            maxFiles: 100,
-				            acceptedFiles: "image/*",
+							maxFilesize : 20, // MB
+							acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
+							addRemoveLinks : true,
+				            url: "<%=request.getContextPath()%>/FileUploadServlet",
+							autoProcessQueue : false,
+							uploadMultiple : true,
+							parallelUploads : 100,
+							maxFiles : 100,
 
-				            init: function () {
+							init : function() {
 
-				                var submitButton = document.querySelector("#submit-all");
-				                var wrapperThis = this;
+								var submitButton = document
+										.querySelector("#submit-all");
+								var wrapperThis = this;
 
-				                submitButton.addEventListener("click", function () {
-				                    wrapperThis.processQueue();
-				                });
+								/* submitButton.addEventListener("click", function () {
+								    wrapperThis.processQueue();
+								}); */
 
-				                this.on("addedfile", function (file) {
+								this
+										.on(
+												"addedfile",
+												function(file) {
 
-				                    // Create the remove button
-				                    var removeButton = Dropzone.createElement("<button class='btn btn-lg dark'>Remove File</button>");
+													// Create the remove button
+													var removeButton = Dropzone
+															.createElement("<button class='btn btn-lg dark'>Remove File</button>");
 
-				                    // Listen to the click event
-				                    removeButton.addEventListener("click", function (e) {
-				                        // Make sure the button click doesn't submit the form:
-				                        e.preventDefault();
-				                        e.stopPropagation();
+													// Listen to the click event
+													removeButton
+															.addEventListener(
+																	"click",
+																	function(e) {
+																		// Make sure the button click doesn't submit the form:
+																		e
+																				.preventDefault();
+																		e
+																				.stopPropagation();
 
-				                        // Remove the file preview.
-				                        wrapperThis.removeFile(file);
-				                        // If you want to the delete the file on the server as well,
-				                        // you can do the AJAX request here.
-				                    });
+																		// Remove the file preview.
+																		wrapperThis
+																				.removeFile(file);
+																		// If you want to the delete the file on the server as well,
+																		// you can do the AJAX request here.
+																	});
 
-				                    // Add the button to the file preview element.
-				                    file.previewElement.appendChild(removeButton);
-				                });
+													// Add the button to the file preview element.
+													file.previewElement
+															.appendChild(removeButton);
+												});
 
-				                this.on('sendingmultiple', function (data, xhr, formData) {
-				                    formData.append("Username", $("#Username").val());
-				                });
-				            }
-				        };
+								this.on('sendingmultiple', function(data, xhr,
+										formData) {
+									formData.append("Username", $("#Username")
+											.val());
+								});
+							}
+						};
 						/* Dropzone.prototype.defaultOptions.dictDefaultMessage = "";
 						Dropzone.options.fileUploadForm = {
 							maxFilesize : 20, // MB
@@ -375,7 +310,6 @@
 							addRemoveLinks : true */
 						//init: function() {
 						//this.on("addedfile", function(file) {
-
 						//document.getElementById("affirmCheckBox").style.display =  "none";
 						// Create the remove button
 						/* var removeButton = Dropzone.createElement("<button>Remove file</button>");	        
@@ -424,7 +358,7 @@
 					<s:form method="post" action="create_hearing" namespace="/Broker"
 						theme="simple" id="mainForm">
 						<p>
-							<div class="dottedborderdiv"></div>
+						<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
 							<label> <input type="checkbox"> I affirm that I
 								am not uploading evidence for the judge to consider. I
@@ -519,8 +453,7 @@
 							scheduled.</p>
 						<div class="form-group">
 							<s:submit value="Submit Request" class="btn btn-primary " />
-							<s:submit class="btn btn-link " value="Cancel Request"></s:submit>
-
+							<a class="btn btn-link " href="#" onclick="location.reload();" >Cancel Request</a>
 						</div>
 
 					</s:form>
@@ -564,8 +497,8 @@
 		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 		crossorigin="anonymous">
 		
-	</script></
-						body>
+	</script>
+	</ body>
 </html>
 
 
