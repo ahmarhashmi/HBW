@@ -2,6 +2,9 @@ package anh.struts2.annotated;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.InterceptorRefs;
@@ -21,7 +24,7 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 @Namespace("/Broker")
 @ResultPath(value = "/")
 @Results({
-    @Result(name = "success", location = "pages/verify_info.jsp"),
+    @Result(name = "success", location = "Broker/pages/verify_info.jsp"),
     @Result(name = "input", location = "Broker/pages/enter_defense.jsp"),
 })
 @InterceptorRefs ({
@@ -52,7 +55,8 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
     @Action(value = "/create_hearing")
     public String execute() {
-
+	HttpServletRequest request = ServletActionContext.getRequest();
+	System.out.println( request.getAttribute("defense") );
 	return SUCCESS;
     }
     

@@ -39,13 +39,31 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+<style type="text/css">
+/* *****CHAMP DROPZONE***** */
+.dropzone {
+	border: 1px dashed #cec7c7;
+	/*min-height: 360px;*/
+	height: 165px;
+	width: 700px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background: #f3f3f3;
+	background-image:
+		url("${pageContext.request.contextPath}/images/drag.png");
+	background-repeat: no-repeat;
+	padding: 0px;
+	margin: 0px;
+}
+</style>
+
 <script type="text/javascript">
 	$(document).submit(function(event){
 	    $(window).unbind('beforeunload');
 	});
 
 	$(window).on('beforeunload', function(event) {
-			return "asdf";
+		return "";
 	});
 
 </script>
@@ -199,10 +217,7 @@
 								</tr>
 							</table>
 						</div>
-
 					</div>
-
-
 
 					<p>If you need a copy of a Notice of Liability, you need to
 						contact us; NOL copies are not available online.</p>
@@ -210,10 +225,12 @@
 					<h4>Enter Defense</h4>
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
-						<s:textarea name="defense" maxlength="32700" class="form-control"
-							rows="10" cols="30" style="width: 500px; height:150px"
-							labelposition="top" />
-
+						<textarea class="form-control" rows="10" cols="30" onkeyup="setDefenseValue(this);"></textarea>
+						<script>
+						function setDefenseValue(obj){
+							document.getElementById("defenseHidden").value = obj.value;
+						}
+						</script>
 					</div>
 					<hr>
 					<h4>Upload Evidence</h4>
@@ -234,21 +251,15 @@
 						hearing request and evidence by <a href="">mail</a> or in <a
 							href="">person</a> at a Finance Business Center.
 					</p>
-					<%-- <form id="file-Upload-Form" enctype="multipart/form-data"
+					<form id="file-Upload-Form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
-						class="dropzone" method="POST"></form> --%>
-					<s:form id="file-Upload-Form" enctype="multipart/form-data"
-						action="/FileUploadServlet" method="POST">
-						<div class="dropzone" id="my-dropzone" name="mainFileUploader">
-						</div>
-					</s:form>
+						class="dropzone" method="POST" ></form>
 					<br>
-					<script>
-					Dropzone.options.myDropzone = {
+					<%-- <script type="text/javascript">
+					 Dropzone.options.fileUploadForm = {
 							maxFilesize : 20, // MB
 							acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
 							addRemoveLinks : true,
-				            url: "<%=request.getContextPath()%>/FileUploadServlet",
 							autoProcessQueue : false,
 							uploadMultiple : true,
 							parallelUploads : 100,
@@ -260,9 +271,10 @@
 										.querySelector("#submit-all");
 								var wrapperThis = this;
 
-								/* submitButton.addEventListener("click", function () {
-								    wrapperThis.processQueue();
-								}); */
+								/* submitButton.addEventListener("click",
+										function() {
+											wrapperThis.processQueue();
+										}); */
 
 								this
 										.on(
@@ -303,62 +315,16 @@
 								});
 							}
 						};
-						/* Dropzone.prototype.defaultOptions.dictDefaultMessage = "";
-						Dropzone.options.fileUploadForm = {
-							maxFilesize : 20, // MB
-							acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
-							addRemoveLinks : true */
-						//init: function() {
-						//this.on("addedfile", function(file) {
-						//document.getElementById("affirmCheckBox").style.display =  "none";
-						// Create the remove button
-						/* var removeButton = Dropzone.createElement("<button>Remove file</button>");	        
-
-						// Capture the Dropzone instance as closure.
-						var _this = this;
-
-						// Listen to the click event
-						removeButton.addEventListener("click", function(e) {
-						  // Make sure the button click doesn't submit the form:
-						  e.preventDefault();
-						  e.stopPropagation();
-
-						  // Remove the file preview.
-						  _this.removeFile(file);
-						  // If you want to the delete the file on the server as well,
-						  // you can do the AJAX request here.
-						});
-
-						// Add the button to the file preview element.
-						file.previewElement.appendChild(removeButton); */
-						//});
-						//}
-						//}
 					</script>
-					<style type="text/css">
-/* *****CHAMP DROPZONE***** */
-.dropzone {
-	border: 1px dashed #cec7c7;
-	/*min-height: 360px;*/
-	height: 165px;
-	width: 700px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	background: #f3f3f3;
-	background-image:
-		url("${pageContext.request.contextPath}/images/drag.png");
-	background-repeat: no-repeat;
-	padding: 0px;
-	margin: 0px;
-}
-</style>
+ --%>
 
 					<p>You must check the box below if you are not uploading
 						evidence. By checking this box, you agree to the following:</p>
 					<s:form method="post" action="create_hearing" namespace="/Broker"
 						theme="simple" id="mainForm">
 						<p>
-						<div class="dottedborderdiv"></div>
+
+							<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
 							<label> <input type="checkbox"> I affirm that I
 								am not uploading evidence for the judge to consider. I
@@ -372,6 +338,11 @@
 							should be mailed. A hearing request confirmation will be sent to
 							your email address.</p>
 						<div class="form-group row">
+						<div style="display: none;">
+						<s:textarea id="defenseHidden" name="defense" maxlength="32700" class="form-control"
+							rows="10" cols="30" style="width: 500px; height:150px"
+							labelposition="top" />
+						</div>
 							<div class="form-group">
 								<label>First Name</label>
 								<s:textfield name="firstName" label="First Name"
@@ -408,10 +379,9 @@
 								<%-- <s:select label="State/Province" value="state" name="state"
 									class="form-control" labelposition="top"
 									headerValue="--- Please Select ---" headerKey="1"
-									list="#{'newYork':'New York','california':'California'}" /> --%>
-								<s:select label="State/Province" value="state" name="state"
-									class="form-control" labelposition="top"
-									headerValue="--- Please Select ---" headerKey="1" list="states" />
+									list="#{'newYork':'New York','california':'California'}" /> --%><s:select label="State/Province" value="state" name="state"
+								class="form-control" labelposition="top"
+								headerValue="--- Please Select ---" headerKey="1" list="states" />
 							</div>
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
@@ -453,7 +423,8 @@
 							scheduled.</p>
 						<div class="form-group">
 							<s:submit value="Submit Request" class="btn btn-primary " />
-							<a class="btn btn-link " href="#" onclick="location.reload();" >Cancel Request</a>
+							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
+								Request</a>
 						</div>
 
 					</s:form>
