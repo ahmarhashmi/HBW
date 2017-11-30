@@ -1,6 +1,5 @@
 package anh.struts2.annotated;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;

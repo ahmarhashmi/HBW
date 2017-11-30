@@ -58,17 +58,31 @@
 </style>
 
 <script type="text/javascript">
-	$(document).submit(function(event){
-	    $(window).unbind('beforeunload');
+	function setDefenseValue(obj) {
+		document.getElementById("defenseHidden").value = obj.value;
+	}
+
+	$(document).submit(function(event) {
+		//perform validations
+		if (!$('#certify')[0].checked) {
+			//return false;
+		} else {
+
+		}
+		$(window).unbind('beforeunload');
 	});
 
 	$(window).on('beforeunload', function(event) {
 		return "";
 	});
 
+	function setViolationNumber() {
+		document.getElementById("violationHidden").value = document
+				.getElementById("violationNumber").innerHTML;
+	}
 </script>
 </head>
-<body>
+<body onload="setViolationNumber();">
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -161,7 +175,8 @@
 								</thead>
 								<tr>
 									<td>Violation:</td>
-									<td><s:property value="violationNumber" /></td>
+									<td><span id="violationNumber"><s:property
+												value="violationNumber" /></span></td>
 								</tr>
 								<tr>
 									<td>Issued on:</td>
@@ -225,12 +240,8 @@
 					<h4>Enter Defense</h4>
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
-						<textarea class="form-control" rows="10" cols="30" onkeyup="setDefenseValue(this);"></textarea>
-						<script>
-						function setDefenseValue(obj){
-							document.getElementById("defenseHidden").value = obj.value;
-						}
-						</script>
+						<textarea class="form-control" rows="10" cols="30"
+							onkeyup="setDefenseValue(this);"></textarea>
 					</div>
 					<hr>
 					<h4>Upload Evidence</h4>
@@ -253,7 +264,7 @@
 					</p>
 					<form id="file-Upload-Form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
-						class="dropzone" method="POST" ></form>
+						class="dropzone" method="POST"></form>
 					<br>
 					<%-- <script type="text/javascript">
 					 Dropzone.options.fileUploadForm = {
@@ -322,9 +333,11 @@
 						evidence. By checking this box, you agree to the following:</p>
 					<s:form method="post" action="create_hearing" namespace="/Broker"
 						theme="simple" id="mainForm">
-						<p>
 
-							<div class="dottedborderdiv"></div>
+						<s:textfield id="violationHidden" name="violationNumber"
+							style="display:none" />
+						<p>
+						<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
 							<label> <input type="checkbox"> I affirm that I
 								am not uploading evidence for the judge to consider. I
@@ -337,15 +350,19 @@
 						<p>Enter your name and the address where the hearing decision
 							should be mailed. A hearing request confirmation will be sent to
 							your email address.</p>
+							
+							<s:if test="hasActionErrors()">
+							<s:actionerror style="color:red;" />
+						</s:if>
 						<div class="form-group row">
-						<div style="display: none;">
-						<s:textarea id="defenseHidden" name="defense" maxlength="32700" class="form-control"
-							rows="10" cols="30" style="width: 500px; height:150px"
-							labelposition="top" />
-						</div>
+							<div style="display: none;">
+								<s:textarea id="defenseHidden" name="defense" maxlength="32700"
+									class="form-control" rows="10" cols="30"
+									style="width: 500px; height:150px" labelposition="top" />
+							</div>
 							<div class="form-group">
 								<label>First Name</label>
-								<s:textfield name="firstName" label="First Name"
+								<s:textfield name="firstName" id="firstName" label="First Name"
 									class="form-control" labelposition="top" maxlength="30" />
 							</div>
 							<div class="form-group">
@@ -355,14 +372,14 @@
 							</div>
 							<div class="form-group">
 								<label>Last Name</label>
-								<s:textfield name="lastName" label="Last Name"
+								<s:textfield name="lastName" id="lastName" label="Last Name"
 									class="form-control" labelposition="top" maxlength="30" />
 							</div>
 
 							<div class="form-group">
 								<label>Address</label>
-								<s:textfield name="address" label="Address" class="form-control"
-									labelposition="top" maxlength="50" />
+								<s:textfield name="address" id="address" label="Address"
+									class="form-control" labelposition="top" maxlength="50" />
 							</div>
 							<div class="form-group">
 								<label>Address Line 2 (Optional)</label>
@@ -371,49 +388,51 @@
 							</div>
 							<div class="form-group">
 								<label>City</label>
-								<s:textfield name="city" label="City" labelposition="top"
-									class="form-control" maxlength="50" />
+								<s:textfield name="city" id="city" label="City"
+									labelposition="top" class="form-control" maxlength="50" />
 							</div>
 							<div class="form-group">
 								<label>State/Province</label>
 								<%-- <s:select label="State/Province" value="state" name="state"
 									class="form-control" labelposition="top"
 									headerValue="--- Please Select ---" headerKey="1"
-									list="#{'newYork':'New York','california':'California'}" /> --%><s:select label="State/Province" value="state" name="state"
-								class="form-control" labelposition="top"
-								headerValue="--- Please Select ---" headerKey="1" list="states" />
+									list="#{'newYork':'New York','california':'California'}" /> --%>
+								<s:select label="State/Province" value="state" name="state"
+									name="state" class="form-control" labelposition="top"
+									headerValue="--- Please Select ---" headerKey="1" list="states" />
 							</div>
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
-								<s:textfield name="zip" label="ZIP/Postal Code"
+								<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
 									class="form-control" labelposition="top" maxlength="10"
 									requiredLabel="true" requiredPosition="top" />
 							</div>
 							<div class="form-group">
 								<label>Email Address</label>
-								<s:textfield name="email1" label="Email Address"
+								<s:textfield name="email1" id="email1" label="Email Address"
 									class="form-control" labelposition="top" maxlength="50"
 									type="email" />
 							</div>
 							<div class="form-group">
 								<label>Confirm Email Address</label>
-								<s:textfield name="email2" label="Confirm Email Address"
-									class="form-control" labelposition="top" maxlength="50"
-									type="email" />
+								<s:textfield name="email2" id="email"
+									label="Confirm Email Address" class="form-control"
+									labelposition="top" maxlength="50" type="email" />
 							</div>
 
 
 							<p>You must check the box below to submit your hearing
 								request. By checking this box, you agree to the following:</p>
 							<div class="checkbox">
-								<label> <input type="checkbox">I certify that I
-									am the person named above or the authorized agent of such a
-									person and I am duty authorized to make this affirmation. I
-									also affirm that all statements made and information submitted
-									herein are true and accurate to the best of my knowledge and
-									any attachments are true and correct copies of originals. I
-									understand that any willful false statements made herein may
-									subject me to the penalties prescribed in the Penal Law.
+								<label> <s:checkbox id="certify" name="certify" />I
+									certify that I am the person named above or the authorized
+									agent of such a person and I am duty authorized to make this
+									affirmation. I also affirm that all statements made and
+									information submitted herein are true and accurate to the best
+									of my knowledge and any attachments are true and correct copies
+									of originals. I understand that any willful false statements
+									made herein may subject me to the penalties prescribed in the
+									Penal Law.
 								</label>
 
 							</div>

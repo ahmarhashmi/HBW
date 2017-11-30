@@ -1,6 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+
 <!DOCTYPE html>
 <!-- saved from url=(0057)file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html -->
 <html lang="en">
@@ -9,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>Dispute a Ticket</title>
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -84,7 +87,7 @@ screenshot of this page for your records.<br><br>
 An Administrative Law Judge’s decision will be sent to the email address you supplied in about 75
 days.<b> Please make sure to add NYCServ@finance.nyc.gov to your address book</b> and keep the
 email for your records.<br><br>
-Your violation number is:<b> 1234567890</b><br><br>
+Your violation number is:<b> <s:property value="violationNumber" /></b><br><br>
 If you have any questions or need assistance, you may call or visit your local <a href="Business Center">Business Center</a> and
 provide your violation number.</p>
 
@@ -100,7 +103,7 @@ provide your violation number.</p>
                              Date and time of hearing request:
                          </td>
                          <td>
-                              09/18/2017 02:10PM
+                              <s:property value="requestDate"/><!-- 09/18/2017 02:10PM -->
                          </td>
               </tr>  
                       <tr>
@@ -108,7 +111,7 @@ provide your violation number.</p>
                               Name:
                          </td>
                          <td>
-                              Thomas Miller
+                              <s:property value="firstName" /> <s:property value="lastName" />
                          </td>
                       </tr> 
                       <tr>
@@ -116,8 +119,8 @@ provide your violation number.</p>
                               Address:
                          </td>
                          <td>
-                              159 8th Avenue 23rd Floor
-                              New York, NY 10018
+                              <s:property value="address" />
+                              <s:property value="address2" />
                          </td>
                       </tr> 
                         <tr>
@@ -125,7 +128,7 @@ provide your violation number.</p>
                               Email Address:
                          </td>
                          <td>
-                              thomasm@truevgd.com
+                              <s:property value="email1" />
                          </td>
                       </tr>  
           </table>
@@ -138,7 +141,7 @@ provide your violation number.</p>
                             Plate:
                          </td>
                          <td>
-                              XBTD47
+                              <s:property value="violationInfo.vehiclePlate" />
                          </td>
                     </tr>  
                       <tr>
@@ -146,7 +149,7 @@ provide your violation number.</p>
                               Violation:
                          </td>
                          <td>
-                              8282526885
+                              <s:property value="violationNumber" />
                          </td>
                       </tr> 
                      
@@ -155,7 +158,7 @@ provide your violation number.</p>
                               Issued on:
                          </td>
                          <td>
-                             06/14/2016
+                             <s:property value="violationInfo.issuedOn" />
                          </td>
                       </tr> 
                         <tr>
@@ -164,7 +167,7 @@ provide your violation number.</p>
                          </td>
                          <td>
                              
-                            No Stopping - Day/Time Limits
+                            <s:property value="violationInfo.description" />
                          </td>
                       </tr> 
                         <tr>
@@ -173,7 +176,7 @@ provide your violation number.</p>
                          </td>
                          <td>
                              
-                            $115.00
+                            $<s:property value="violationInfo.balanceDue" />
                          </td>
                       </tr> 
           </table>

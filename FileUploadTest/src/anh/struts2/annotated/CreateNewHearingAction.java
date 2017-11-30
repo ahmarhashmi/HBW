@@ -1,5 +1,7 @@
 package anh.struts2.annotated;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,8 @@ import org.apache.struts2.convention.annotation.Results;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+import com.opensymphony.xwork2.validator.annotations.Validation;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author Ahmar Nadeem
@@ -31,6 +35,7 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
     @InterceptorRef("defaultStack"), 
     @InterceptorRef("prepare")
 })
+@Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -5864237156298942117L;
@@ -49,15 +54,29 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     private boolean certify;
     private boolean affirm;
     
+    private String violationNumber;
+    
     @Override
     public void prepare() throws Exception {
     }
 
     @Action(value = "/create_hearing")
     public String execute() {
-	HttpServletRequest request = ServletActionContext.getRequest();
-	System.out.println( request.getAttribute("defense") );
+	if(!certify) {
+	    addActionError("You must certify.");
+	    return INPUT;
+	}
+//	HttpServletRequest request = ServletActionContext.getRequest();
+//	System.out.println( request.getAttribute("violationNumber") );
 	return SUCCESS;
+    }
+    
+    /**
+     * 
+     * @return current date
+     */
+    public String getRequestDate() {
+	return DateFormat.getDateInstance().format(new Date());
     }
     
     /**
@@ -272,6 +291,20 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     public void setAffirm(boolean affirm) {
 	this.affirm = affirm;
+    }
+
+    /**
+     * @return the violationNumber
+     */
+    public String getViolationNumber() {
+        return violationNumber;
+    }
+
+    /**
+     * @param violationNumber the violationNumber to set
+     */
+    public void setViolationNumber(String violationNumber) {
+        this.violationNumber = violationNumber;
     }
 
 }
