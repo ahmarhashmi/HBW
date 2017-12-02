@@ -4,9 +4,6 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.InterceptorRefs;
@@ -18,7 +15,6 @@ import org.apache.struts2.convention.annotation.Results;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
@@ -27,19 +23,14 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  */
 @Namespace("/Broker")
 @ResultPath(value = "/")
-@Results({
-    @Result(name = "success", location = "Broker/pages/verify_info.jsp"),
-    @Result(name = "input", location = "Broker/pages/enter_defense.jsp"),
-})
-@InterceptorRefs ({
-    @InterceptorRef("defaultStack"), 
-    @InterceptorRef("prepare")
-})
+@Results({ @Result(name = "success", location = "Broker/pages/verify_info.jsp"),
+	@Result(name = "input", location = "Broker/pages/enter_defense.jsp"), })
+@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -5864237156298942117L;
-    
+
     private String defense;
     private String firstName;
     private String middleName;
@@ -53,24 +44,30 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     private String email2;
     private boolean certify;
     private boolean affirm;
-    
+
     private String violationNumber;
-    
+
     @Override
     public void prepare() throws Exception {
     }
 
+    /**
+     * The main action listener of this class.
+     */
     @Action(value = "/create_hearing")
     public String execute() {
-	if(!certify) {
+	if (!certify) {
 	    addActionError("You must certify.");
 	    return INPUT;
 	}
-//	HttpServletRequest request = ServletActionContext.getRequest();
-//	System.out.println( request.getAttribute("violationNumber") );
+
+	if (!email1.equals(email2)) {
+	    addActionError("Emails do not match.");
+	    return INPUT;
+	}
 	return SUCCESS;
     }
-    
+
     /**
      * 
      * @return current date
@@ -78,7 +75,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     public String getRequestDate() {
 	return DateFormat.getDateInstance().format(new Date());
     }
-    
+
     /**
      * @return the states
      */
@@ -108,7 +105,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the firstName
      */
-    @RequiredStringValidator(fieldName="firstName", message="Fist Name is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "firstName", message = "Fist Name is rquired.", trim = true)
     public String getFirstName() {
 	return firstName;
     }
@@ -139,7 +136,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the lastName
      */
-    @RequiredStringValidator(fieldName="lastName", message="Last Name is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "lastName", message = "Last Name is rquired.", trim = true)
     public String getLastName() {
 	return lastName;
     }
@@ -155,7 +152,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the address
      */
-    @RequiredStringValidator(fieldName="address", message="Address is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "address", message = "Address is rquired.", trim = true)
     public String getAddress() {
 	return address;
     }
@@ -186,7 +183,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the city
      */
-    @RequiredStringValidator(fieldName="city", message="City is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "city", message = "City is rquired.", trim = true)
     public String getCity() {
 	return city;
     }
@@ -202,7 +199,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the state
      */
-    @RequiredStringValidator(fieldName="state", message="Select your state.", trim=true)
+    @RequiredStringValidator(fieldName = "state", message = "Select your state.", trim = true)
     public String getState() {
 	return state;
     }
@@ -218,7 +215,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the zip
      */
-    @RequiredStringValidator(fieldName="zip", message="Zip/Postal Code is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "zip", message = "Zip/Postal Code is rquired.", trim = true)
     public String getZip() {
 	return zip;
     }
@@ -234,7 +231,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the email1
      */
-    @RequiredStringValidator(fieldName="email1", message="Email is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "email1", message = "Email is rquired.", trim = true)
     public String getEmail1() {
 	return email1;
     }
@@ -250,7 +247,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the email2
      */
-    @RequiredStringValidator(fieldName="email2", message="Confirm email is rquired.", trim=true)
+    @RequiredStringValidator(fieldName = "email2", message = "Confirm email is rquired.", trim = true)
     public String getEmail2() {
 	return email2;
     }
@@ -297,14 +294,15 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      * @return the violationNumber
      */
     public String getViolationNumber() {
-        return violationNumber;
+	return violationNumber;
     }
 
     /**
-     * @param violationNumber the violationNumber to set
+     * @param violationNumber
+     *            the violationNumber to set
      */
     public void setViolationNumber(String violationNumber) {
-        this.violationNumber = violationNumber;
+	this.violationNumber = violationNumber;
     }
 
 }

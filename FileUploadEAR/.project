@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>FileUploadEAR</name>
+	<name>HBWNonCommercialEAR</name>
 	<comment></comment>
 	<projects>
-		<project>FileUploadTest</project>
+		<project>HBWNonCommercial</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

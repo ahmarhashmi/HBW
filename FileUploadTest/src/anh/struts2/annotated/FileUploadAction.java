@@ -27,6 +27,7 @@ import org.jboss.util.file.Files;
 
 import com.opensymphony.xwork2.ActionSupport;
 
+@Deprecated
 @Namespace("/upload")
 @ResultPath(value = "/upload/")
 public class FileUploadAction extends ActionSupport {

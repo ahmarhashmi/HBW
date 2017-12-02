@@ -350,9 +350,11 @@
 						<p>Enter your name and the address where the hearing decision
 							should be mailed. A hearing request confirmation will be sent to
 							your email address.</p>
-							
-							<s:if test="hasActionErrors()">
-							<s:actionerror style="color:red;" />
+
+						<s:if test="hasActionErrors()">
+							<div class="errors" style="color:red;">
+								<s:actionerror />
+							</div>
 						</s:if>
 						<div class="form-group row">
 							<div style="display: none;">
