@@ -1,4 +1,4 @@
-package anh.struts2.annotated;
+package hbw.controller.hearing.request.action;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +26,8 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.jboss.util.file.Files;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import hbw.controller.hearing.request.common.Constants;
 
 @Deprecated
 @Namespace("/upload")

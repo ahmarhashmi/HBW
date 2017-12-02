@@ -1,4 +1,4 @@
-package anh.struts2.annotated;
+package hbw.controller.hearing.request.action;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -14,8 +14,13 @@ import org.apache.struts2.convention.annotation.Results;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.log4j2.Log4j2Logger;
+import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
+import hbw.controller.hearing.request.common.StatesSinglton;
 
 /**
  * @author Ahmar Nadeem
@@ -28,6 +33,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
+    
+    Logger LOGGER = Log4j2LoggerFactory.getLogger(CreateNewHearingAction.class);
 
     private static final long serialVersionUID = -5864237156298942117L;
 
@@ -56,6 +63,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     @Action(value = "/create_hearing")
     public String execute() {
+	LOGGER.info("Handling the create hearing request");
 	if (!certify) {
 	    addActionError("You must certify.");
 	    return INPUT;
@@ -65,6 +73,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    addActionError("Emails do not match.");
 	    return INPUT;
 	}
+	LOGGER.info("Handling the create hearing request. All validations successful.");
 	return SUCCESS;
     }
 

@@ -1,4 +1,4 @@
-package anh.struts2.annotated;
+package hbw.controller.hearing.request.action;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
+
 /**
  * @author Ahmar Nadeem
  * 
@@ -22,6 +25,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  *         and drop file upload.
  */
 public class FileUploadServlet extends HttpServlet {
+    
+    Logger LOGGER = Log4j2LoggerFactory.getLogger(FileUploadServlet.class);
+    
     private static final long serialVersionUID = 1L;
 
     /**
@@ -47,7 +53,7 @@ public class FileUploadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
 	
-	System.out.println(request.getRemoteAddr());
+	LOGGER.info("Handling request from: {}",request.getRemoteAddr());
 	
 	if (!ServletFileUpload.isMultipartContent(request)) {
 	    throw new IllegalArgumentException(
@@ -57,7 +63,7 @@ public class FileUploadServlet extends HttpServlet {
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 	PrintWriter writer = response.getWriter();
 
-	System.out.println(new File(request.getServletContext().getRealPath("/") + "images/"));
+	LOGGER.info(new File(request.getServletContext().getRealPath("/") + "images/").toString());
 	try {
 	    List<FileItem> items = uploadHandler.parseRequest(request);
 
@@ -66,12 +72,14 @@ public class FileUploadServlet extends HttpServlet {
 		    File file = new File("D:/cp/", item.getName());
 		    item.write(file);
 
-		    System.out.println("uploaded");
+		    LOGGER.info("{} File uploaded SUCCESSFULLY", file.toString());
 		}
 	    }
 	} catch (FileUploadException e) {
+	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
 	    throw new RuntimeException(e);
 	} catch (Exception e) {
+	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
 	    throw new RuntimeException(e);
 	} finally {
 	    writer.close();

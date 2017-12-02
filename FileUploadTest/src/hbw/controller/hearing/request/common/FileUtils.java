@@ -1,4 +1,4 @@
-package anh.struts2.annotated;
+package hbw.controller.hearing.request.common;
 
 import java.io.File;
 import java.io.IOException;

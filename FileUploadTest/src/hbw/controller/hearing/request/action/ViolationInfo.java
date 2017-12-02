@@ -1,7 +1,7 @@
 /**
  * 
  */
-package anh.struts2.annotated;
+package hbw.controller.hearing.request.action;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

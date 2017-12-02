@@ -1,4 +1,4 @@
-package anh.struts2.annotated;
+package hbw.controller.hearing.request.action;
 
 import java.util.List;
 
@@ -13,6 +13,8 @@ import org.apache.struts2.convention.annotation.Results;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+
+import hbw.controller.hearing.request.common.StatesSinglton;
 
 /**
  * @author Ahmar Nadeem
