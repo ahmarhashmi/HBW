@@ -9,11 +9,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
@@ -27,9 +29,9 @@ import hbw.controller.hearing.request.common.Resource;
  *         and drop file upload.
  */
 public class FileUploadServlet extends HttpServlet {
-    
+
     Logger LOGGER = Log4j2LoggerFactory.getLogger(FileUploadServlet.class);
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -54,12 +56,20 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-	
-	LOGGER.info("Handling request from: {}",request.getRemoteAddr());
-	
+
+	LOGGER.info("Handling request from: {}", request.getRemoteAddr());
+
 	if (!ServletFileUpload.isMultipartContent(request)) {
 	    throw new IllegalArgumentException(
 		    "Request is not multipart, please 'multipart/form-data' enctype for your form.");
+	}
+
+	HttpSession session = request.getSession();
+	String violationNumber = (String) session.getAttribute("violationNumber");
+	File evidencePath = new File(Resource.EVIDENCE_UPLOAD_LOCATION.getValue() + File.separator
+		+ violationNumber.trim() + File.separator + session.getId() + File.separator);
+	if (!evidencePath.exists()) {
+	    evidencePath.mkdirs();
 	}
 
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
@@ -71,7 +81,11 @@ public class FileUploadServlet extends HttpServlet {
 
 	    for (FileItem item : items) {
 		if (!item.isFormField()) {
-		    File file = new File(Resource.EVIDENCE_UPLOAD_LOCATION.getValue(), item.getName());
+		    File file = new File(evidencePath, item.getName());
+		    if (file.length() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
+			throw new IllegalArgumentException(
+				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
+		    }
 		    item.write(file);
 
 		    LOGGER.info("{} File uploaded SUCCESSFULLY", file.toString());
