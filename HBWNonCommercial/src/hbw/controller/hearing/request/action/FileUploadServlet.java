@@ -9,17 +9,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.struts2.ServletActionContext;
+import org.apache.commons.io.FileUtils;
 
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 
+import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.Resource;
 
 /**
@@ -64,13 +64,7 @@ public class FileUploadServlet extends HttpServlet {
 		    "Request is not multipart, please 'multipart/form-data' enctype for your form.");
 	}
 
-	HttpSession session = request.getSession();
-	String violationNumber = (String) session.getAttribute("violationNumber");
-	File evidencePath = new File(Resource.EVIDENCE_UPLOAD_LOCATION.getValue() + File.separator
-		+ violationNumber.trim() + File.separator + session.getId() + File.separator);
-	if (!evidencePath.exists()) {
-	    evidencePath.mkdirs();
-	}
+	File evidencePath = FileUtil.validateAndGetEvidenceUploadPath(request);
 
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 	PrintWriter writer = response.getWriter();
@@ -81,9 +75,17 @@ public class FileUploadServlet extends HttpServlet {
 
 	    for (FileItem item : items) {
 		if (!item.isFormField()) {
+		    if (evidencePath.listFiles().length == Integer.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
+			    || FileUtils.sizeOf(evidencePath) >= Long
+				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
+			throw new RuntimeException("Upload limit reached. File(s) cannot be uploaded. If\r\n"
+				+ "you want to submit more evidence, please do not\r\n"
+				+ "request a hearing online. Submit your hearing request\r\n"
+				+ "and evidence by mail or in person.");
+		    }
 		    File file = new File(evidencePath, item.getName());
 		    if (file.length() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-			throw new IllegalArgumentException(
+			throw new RuntimeException(
 				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
 		    }
 		    item.write(file);

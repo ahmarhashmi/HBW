@@ -4,19 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
@@ -27,7 +26,7 @@ import org.jboss.util.file.Files;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.Resource;
 
 @Deprecated
 @Namespace("/upload")
@@ -48,27 +47,27 @@ public class FileUploadAction extends ActionSupport {
 			    "209715200" }, value = "fileUpload"),
 		    @InterceptorRef("defaultStack"), @InterceptorRef("validation") })
     public String multiUploadFile() {
-	
-	
+
 	HttpServletRequest request = ServletActionContext.getRequest();
 	doTheStuff(request);
-	
-//	request.get
-	if (uploads.size() > Constants.MAX_NUMBER_OF_EVIDENCES) {
-	    throw new RuntimeException("Maximum of " + Constants.MAX_NUMBER_OF_EVIDENCES + " files can be uploaded.");
+
+	int maxAllowedEvidences = Integer.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue());
+	// request.get
+	if (uploads.size() > maxAllowedEvidences) {
+	    throw new RuntimeException("Maximum of " + maxAllowedEvidences + " files can be uploaded.");
 	}
 	int i = 0;
 	for (File file : uploads) {
-	    if (file.getParent().length() > Constants.MAX_TOTAL_SIZE_OF_EVIDENCE) {
-		throw new RuntimeException("Total size of files exceeds allowed "
-			+ Constants.MAX_TOTAL_SIZE_OF_EVIDENCE / (1024 * 1024) + "MB limit.");
+	    if (FileUtils.sizeOf(file) > maxAllowedEvidences) {
+		throw new RuntimeException(
+			"Total size of files exceeds allowed " + maxAllowedEvidences / (1024 * 1024) + "MB limit.");
 	    }
 	    writeFileToDisk(file, i);
 	    i++;
 	}
 	return SUCCESS;
     }
-    
+
     private void doTheStuff(HttpServletRequest request) {
 	if (!ServletFileUpload.isMultipartContent(request)) {
 	    throw new IllegalArgumentException(
@@ -76,7 +75,7 @@ public class FileUploadAction extends ActionSupport {
 	}
 
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
-//	PrintWriter writer = response.getWriter();
+	// PrintWriter writer = response.getWriter();
 
 	System.out.println(new File(request.getServletContext().getRealPath("/") + "images/"));
 	try {
@@ -95,29 +94,29 @@ public class FileUploadAction extends ActionSupport {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	} finally {
-//	    writer.close();
+	    // writer.close();
 	}
     }
 
     private void writeFileToDisk(File file, int i) {
 	try {
-//	    FileInputStream fis = new FileInputStream(file);
+	    // FileInputStream fis = new FileInputStream(file);
 	    String fileName = uploadsFileName.size() > 0 ? uploadsFileName.get(i) : file.getName();
 	    String contentType = uploadsContentType.size() > 0 ? uploadsContentType.get(i) : "multipart/formdata";
 	    System.out.println(contentType);
-	    
+
 	    File destination = new File("D:/cp/" + fileName);
-//	    FileOutputStream fos = new FileOutputStream("D:/cp/" + fileName);
-	    
+	    // FileOutputStream fos = new FileOutputStream("D:/cp/" + fileName);
+
 	    Files.copy(file, destination);
-	    
-//	    byte[] b = new byte[1024];
-//	    while (fis.read(b) != -1) {
-//		fos.write(b);
-//	    }
-//	    desc += fileName + ", ";
-//	    fos.close();
-//	    fis.close();
+
+	    // byte[] b = new byte[1024];
+	    // while (fis.read(b) != -1) {
+	    // fos.write(b);
+	    // }
+	    // desc += fileName + ", ";
+	    // fos.close();
+	    // fis.close();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}

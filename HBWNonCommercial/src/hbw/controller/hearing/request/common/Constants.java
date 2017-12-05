@@ -15,10 +15,11 @@ public final class Constants {
 	public static final String[] ALLOWED_IMAGE_TYPES = { "image/pjpeg",
 			"image/jpeg", "image/jpg", "image/tiff", "image/bmp",
 			"application/pdf" };
-
-	/** maximum allowed number of evidences to be uploaded */
-	public static final int MAX_NUMBER_OF_EVIDENCES = 50;
 	
-	/** maximum allowed size of total uploaded evidences */
-	public static final int MAX_TOTAL_SIZE_OF_EVIDENCE = (int) (Math.pow(1024, 2) * 20);// 20MB
+	public static final String BACK_SLASH = "\\";
+	
+	public static final String FRONT_SLASH = "/";
+	
+	public static final String VIOLATION_NUMBER = "violationNumber";
+
 }

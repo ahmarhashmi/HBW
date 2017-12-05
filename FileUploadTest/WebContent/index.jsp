@@ -1,1 +1,0 @@
-<jsp:forward page="Broker/pages/broker_selection.jsp"></jsp:forward>

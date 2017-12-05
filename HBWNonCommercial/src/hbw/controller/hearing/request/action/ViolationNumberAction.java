@@ -18,6 +18,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 
+import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.StatesSinglton;
 
 /**
@@ -53,7 +54,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	violationInfo = populateViolationInfo(violationNumber);
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
-	session.setAttribute("violationNumber", violationNumber);
+	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
 	return SUCCESS;
     }
 

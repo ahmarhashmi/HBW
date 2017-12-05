@@ -1,9 +1,14 @@
 package hbw.controller.hearing.request.action;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.InterceptorRefs;
@@ -15,12 +20,13 @@ import org.apache.struts2.convention.annotation.Results;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.StatesSinglton;
+import hbw.controller.hearing.request.common.ZipUtil;
 
 /**
  * @author Ahmar Nadeem
@@ -33,7 +39,7 @@ import hbw.controller.hearing.request.common.StatesSinglton;
 @InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
-    
+
     Logger LOGGER = Log4j2LoggerFactory.getLogger(CreateNewHearingAction.class);
 
     private static final long serialVersionUID = -5864237156298942117L;
@@ -74,6 +80,33 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    return INPUT;
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
+	return processHearingRequest();
+    }
+
+    /**
+     * 
+     * @return
+     */
+    private String processHearingRequest() {
+	HttpServletRequest request = ServletActionContext.getRequest();
+	File evidenceLocation = FileUtil.validateAndGetEvidenceUploadPath(request);
+	if (evidenceLocation.list().length == 0 && !affirm) {
+	    addActionError(
+		    "No evidence attached. You must affirm that you are not uploading evidence for the judge to consider.");
+	    return INPUT;
+	}
+	File zip = new File(evidenceLocation.getPath() + File.separator + evidenceLocation.getName() + ".zip");
+	try {
+	    ZipUtil.zipDirectory(evidenceLocation.getPath(), zip.getPath());
+	} catch (IOException e) {
+	    addActionError(e.getMessage());
+	    return INPUT;
+	}
+
+	if (zip.exists()) {
+	    // TODO: Do the stuff to call the service for creating hearing
+	}
+
 	return SUCCESS;
     }
 
