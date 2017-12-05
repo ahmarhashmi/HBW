@@ -83,20 +83,6 @@ public final class FileUtil {
 	    evidencePath.mkdirs();
 	}
 
-	
-	//TODO: Temporary snippet for testing. Should be deleted once POC done
-	File zip = new File(evidencePath.getPath() + File.separator + evidencePath.getName() + ".zip");
-	try {
-	    ZipUtil.zipDirectory(evidencePath.getPath(), zip.getPath());
-	} catch (IOException e) {
-	    try {
-		FileUtils.forceDelete(zip);
-	    } catch (IOException e1) {
-		e1.printStackTrace();
-	    }
-	    e.printStackTrace();
-	}
-
 	return evidencePath;
     }
 }

@@ -58,10 +58,6 @@
 </style>
 
 <script type="text/javascript">
-	function setDefenseValue(obj) {
-		document.getElementById("defenseHidden").value = obj.value;
-	}
-
 	$(document).submit(function(event) {
 		//perform validations
 		if (!$('#certify')[0].checked) {
@@ -76,11 +72,22 @@
 		return "";
 	});
 
+	function setDefenseValue(obj) {
+		document.getElementById("defenseHidden").value = obj.value;
+
+		if (obj.value.length >= 32700) {
+			document.getElementById("maxLengthReached").style.display = "block";
+		} else if (obj.value.length < 32700) {
+			document.getElementById("maxLengthReached").style.display = "none";
+		}
+	}
+
 	function setViolationNumber() {
 		document.getElementById("violationHidden").value = document
 				.getElementById("violationNumber").innerHTML;
 	}
 </script>
+
 </head>
 <body onload="setViolationNumber();">
 	<div class="topbar">
@@ -241,7 +248,11 @@
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
-							onkeyup="setDefenseValue(this);"></textarea>
+							maxlength="32700" onkeyup="javascript:setDefenseValue(this);"></textarea>
+					<span id="maxLengthReached" style="color: red; display: none;">Maximum
+						length reached. If you want to write more, please do not request a
+						hearing online. Submit your hearing request and evidence by mail
+						or in person.</span>
 					</div>
 					<hr>
 					<h4>Upload Evidence</h4>
@@ -266,15 +277,16 @@
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
 					<br>
-					<%-- <script type="text/javascript">
-					 Dropzone.options.fileUploadForm = {
+					<script type="text/javascript">
+						Dropzone.options.fileUploadForm = {
 							maxFilesize : 20, // MB
 							acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
 							addRemoveLinks : true,
-							autoProcessQueue : false,
+							autoProcessQueue : true,
 							uploadMultiple : true,
 							parallelUploads : 100,
 							maxFiles : 100,
+							canCancle: true,
 
 							init : function() {
 
@@ -283,9 +295,9 @@
 								var wrapperThis = this;
 
 								/* submitButton.addEventListener("click",
-										function() {
-											wrapperThis.processQueue();
-										}); */
+									function() {
+										wrapperThis.processQueue();
+									});  */
 
 								this
 										.on(
@@ -293,30 +305,30 @@
 												function(file) {
 
 													// Create the remove button
-													var removeButton = Dropzone
+													/* var removeButton = Dropzone
 															.createElement("<button class='btn btn-lg dark'>Remove File</button>");
-
+ */
 													// Listen to the click event
-													removeButton
-															.addEventListener(
-																	"click",
-																	function(e) {
-																		// Make sure the button click doesn't submit the form:
-																		e
-																				.preventDefault();
-																		e
-																				.stopPropagation();
+													/* 	removeButton
+																.addEventListener(
+																		"click",
+																		function(e) {
+																			// Make sure the button click doesn't submit the form:
+																			e
+																					.preventDefault();
+																			e
+																					.stopPropagation();
 
-																		// Remove the file preview.
-																		wrapperThis
-																				.removeFile(file);
-																		// If you want to the delete the file on the server as well,
-																		// you can do the AJAX request here.
-																	});
+																			// Remove the file preview.
+																			wrapperThis
+																					.removeFile(file);
+																			// If you want to the delete the file on the server as well,
+																			// you can do the AJAX request here.
+																		}); */
 
 													// Add the button to the file preview element.
-													file.previewElement
-															.appendChild(removeButton);
+													/* file.previewElement
+															.appendChild(removeButton); */
 												});
 
 								this.on('sendingmultiple', function(data, xhr,
@@ -327,7 +339,6 @@
 							}
 						};
 					</script>
- --%>
 
 					<p>You must check the box below if you are not uploading
 						evidence. By checking this box, you agree to the following:</p>
@@ -352,7 +363,7 @@
 							your email address.</p>
 
 						<s:if test="hasActionErrors()">
-							<div class="errors" style="color:red;">
+							<div class="errors" style="color: red;">
 								<s:actionerror />
 							</div>
 						</s:if>
@@ -444,7 +455,8 @@
 							scheduled.</p>
 						<div class="form-group">
 							<s:submit value="Submit Request" class="btn btn-primary " />
-							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
+							<a class="btn btn-link "
+								href="<%=request.getContextPath()%>/index.jsp">Cancel
 								Request</a>
 						</div>
 

@@ -151,7 +151,7 @@
 						</s:form>
 
 					</div>
-					<a href=""><b>What is my violation number?</b></a>
+					<a href="#Content"><b>What is my violation number?</b></a>
 					<hr>
 					<h4>When to Request a Hearing</h4>
 					<p>To avoid penalties, request a parking violation hearing
@@ -182,15 +182,15 @@
 						days. Please make sure to add NYCServ@finance.nyc.gov to your
 						address book.</p>
 					<hr>
-					<h4>What is my violation number?</h4>
+					<h4 id="Content">What is my violation number?</h4>
 					<p>Your violation or notice number is a 10-digit number that
 						appears on your ticket or Notice of Liability (NOL).</p>
 					<p>View an example:</p>
 					<ul>
-						<li><a href="">Parking Ticket</a></li>
-						<li><a href="">Red Light Violation (NOL)</a></li>
-						<li><a href="">Bus Lane Camera Violation (NOL)</a></li>
-						<li><a href="">Speed Camera Violation (NOL)</a></li>
+						<li><a target="_blank" href="">Parking Ticket</a></li>
+						<li><a target="_blank" href="">Red Light Violation (NOL)</a></li>
+						<li><a target="_blank" href="">Bus Lane Camera Violation (NOL)</a></li>
+						<li><a target="_blank" href="">Speed Camera Violation (NOL)</a></li>
 					</ul>
 					<hr>
 					<h3>Download the NYC Parking Ticket Pay or Dispute App</h3>
