@@ -86,7 +86,7 @@
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3">
 					<h1>Dispute a Ticket</h1>
-					<h3>Are you a Broker?</h3>
+					<!-- <h3>Are you a Broker?</h3>
 					<p>You may use this website if you are not a Broker requesting
 						a hearing for a commercially-plated vehicle. Select the "I AM NOT"
 						checkbox below and continue on to request a hearing.</p>
@@ -99,24 +99,25 @@
 					<p>Brokers should use one of the applications speciﬁcally set
 						up to accommodate commercial customers. Select the "I AM" checkbox
 						below and you will be redirected to the commercial use page on the
-						Finance website.</p>
+						Finance website.</p> -->
 					<h4>Select one:</h4>
 					<s:form method="post" action="broker_decision" namespace="/Broker"
 						theme="simple">
 						<div class="checkbox">
-							<label> <s:checkbox name="broker" id="broker"
+							<label> <s:checkbox name="notABroker" id="notABroker"
 									onchange="toggleCheckBox(this);">
-								</s:checkbox> <b>I AM </b> a Broker submitting a hearing request for a
-								violation issued to a commercial vehicle.
+								</s:checkbox> I own or operate the ticketed vehicle or am legally authorized
+								by the vehicle’s owner to dispute the ticket.
+
+
 							</label>
 						</div>
 						<div class="checkbox">
-							<label> <s:checkbox name="notABroker" id="notABroker"
+							<label> <s:checkbox name="broker" id="broker"
 									onchange="toggleCheckBox(this);">
-								</s:checkbox> <b> I AM NOT</b> a Broker submitting a hearing request for a
-								violation issued to a commercial vehicle.
-
-
+								</s:checkbox> I am a broker disputing a ticket on behalf of a client.
+								(Brokers will be redirected to another page to dispute their
+								tickets.)
 							</label>
 						</div>
 						<div class="clearfix gap"></div>

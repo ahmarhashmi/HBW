@@ -58,15 +58,6 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	return SUCCESS;
     }
 
-    // simple validation
-    public void validate() {
-	if (Boolean.TRUE) {
-	    addActionMessage("You are valid user!");
-	} else {
-	    addActionError("I don't know you, dont try to hack me!");
-	}
-    }
-
     /**
      * This function is responsible for calling the web-service to populate
      * violation information.

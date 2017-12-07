@@ -1,11 +1,15 @@
 package hbw.controller.hearing.request.action;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +51,46 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-	response.getWriter().append("Served at: ").append(request.getContextPath());
+	//response.getWriter().append("Served at: ").append(request.getContextPath());
+	
+	String requestedFileName = request.getParameter("file");
+	File folder = FileUtil.validateAndGetEvidenceUploadPath(request);
+//	ServletOutputStream out = response.getOutputStream();
+	   // Get the absolute path of the image
+	       ServletContext sc = getServletContext();
+	       String filename = folder.getPath()+File.separator+requestedFileName;// sc.getRealPath("image.gif");
+	    
+	       // Get the MIME type of the image
+	       String mimeType = sc.getMimeType(filename);
+	       if (mimeType == null) {
+	           sc.log("Could not get MIME type of "+filename);
+	           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	           return;
+	       }
+	    
+	       // Set content type
+	       response.setContentType(mimeType);
+	    
+	       // Set content size
+	       File file = new File(filename);
+	       response.setContentLength((int)file.length());
+	    try {
+	       // Open the file and output streams
+	       FileInputStream in = new FileInputStream(file);
+	       OutputStream out = response.getOutputStream();
+	    
+	       // Copy the contents of the file to the output stream
+	       byte[] buf = new byte[1024];
+	       int count = 0;
+	       while ((count = in.read(buf)) >= 0) {
+	           out.write(buf, 0, count);
+	       }
+	       in.close();
+	       out.close();
+	    }catch(IOException e) {
+		e.printStackTrace();
+	    }
+	   
     }
 
     /**
@@ -90,7 +133,7 @@ public class FileUploadServlet extends HttpServlet {
 		    }
 		    item.write(file);
 
-		    LOGGER.info("{} File uploaded SUCCESSFULLY", file.toString());
+		    LOGGER.info(file.getPath()+"{} File uploaded SUCCESSFULLY", file.getPath());
 		}
 	    }
 	} catch (FileUploadException e) {

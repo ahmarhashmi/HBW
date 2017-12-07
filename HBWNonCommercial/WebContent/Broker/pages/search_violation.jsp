@@ -119,12 +119,12 @@
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3">
 					<h1>Dispute a Ticket</h1>
-					<p>Use the form on the next page to plead "Not Guilty" to your
+					<!--<p>Use the form on the next page to plead "Not Guilty" to your
 						violation and request a hearing. After you submit the form and any
-						evidence you have, a judge will review the case.</p>
+						evidence you have, a judge will review the case.</p>-->
 					<h3>Enter Violation Number</h3>
-					<p>Please enter the Parking/Camera Violation number as it
-						appears on your ticket or Notice of Liability (NOL).</p>
+					<p>Please enter the parking or camera violation number that appears on your ticket or notice of liability
+(NOL). On the next page, you will be able to submit your defense and supporting evidence.</p>
 
 					<div class="form-group row ">
 						<s:form method="post" action="searchViolation" namespace="/Broker"
@@ -153,7 +153,13 @@
 					</div>
 					<a href="#Content"><b>What is my violation number?</b></a>
 					<hr>
-					<h4>When to Request a Hearing</h4>
+					<h4>Requesting a Hearing</h4>
+					<p>To avoid penalties, request a hearing to dispute your violation within 30 days of your violation or
+notice of liability date. After you submit the form and any supporting evidence, a judge will review
+your case.</p>
+<p>If your violation is in judgment, you may request a hearing up to one year after the judgment date—
+but if the judge finds you guilty, you may be required to pay all outstanding penalties.</p>
+					<!-- <h4>When to Request a Hearing</h4>
 					<p>To avoid penalties, request a parking violation hearing
 						within 30 days of the violation date and request a Camera
 						violation hearing within 30 days of the Notice of Liability (NOL)
@@ -180,33 +186,28 @@
 					<p>When you submit this hearing request, you will get an email
 						confirmation. The judge's decision will be emailed in about 75
 						days. Please make sure to add NYCServ@finance.nyc.gov to your
-						address book.</p>
+						address book.</p>-->
 					<hr>
 					<h4 id="Content">What is my violation number?</h4>
-					<p>Your violation or notice number is a 10-digit number that
-						appears on your ticket or Notice of Liability (NOL).</p>
+					<p>Your violation or notice number is a 10-digit number that appears on your ticket or notice of liability
+(NOL).</p>
 					<p>View an example:</p>
 					<ul>
-						<li><a target="_blank" href="">Parking Ticket</a></li>
-						<li><a target="_blank" href="">Red Light Violation (NOL)</a></li>
-						<li><a target="_blank" href="">Bus Lane Camera Violation (NOL)</a></li>
-						<li><a target="_blank" href="">Speed Camera Violation (NOL)</a></li>
+						<li><a href="">Parking Ticket</a></li>
+						<li><a href="">Red Light Violation (NOL)</a></li>
+						<li><a href="">Bus Lane Camera Violation (NOL)</a></li>
+						<li><a href="">Speed Camera Violation (NOL)</a></li>
 					</ul>
 					<hr>
 					<h3>Download the NYC Parking Ticket Pay or Dispute App</h3>
-					<p>“NYC Parking Ticket Pay or Dispute” is New York City’s
-						official mobile app to securely pay or dispute parking and camera
-						violations. You will be able to do the following:</p>
+					<p>“NYC Parking Ticket Pay or Dispute” is New York City’s official mobile app to securely pay or
+dispute parking and camera violations. You will be able to do the following:</p>
 					<ul>
-						<li>Pay tickets by credit card, through your bank account or
-							Apple Pay.</li>
-						<li>Dispute a ticket immediately using your device’s camera
-							to upload evidence.</li>
-						<li>Search ticket(s) using violation or license plate
-							numbers.</li>
+						<li>Pay tickets by credit card, through your bank account or Apple Pay.</li>
+						<li>Dispute a ticket immediately using your device’s camera to upload evidence.</li>
+						<li>Search ticket(s) using violation or license plate numbers.</li>
 						<li>Save tickets you have previously searched for.</li>
-						<li>Save license plate and billing information on your
-							device.</li>
+						<li>Save license plate and billing information on your device.</li>
 						<li>View payment history by ticket or license plate numbers.</li>
 					</ul>
 					<div class="clearfix gap"></div>

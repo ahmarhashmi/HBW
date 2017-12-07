@@ -22,12 +22,18 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/dropzone-struts2.js"></script>
 
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/enter_evidence.js"></script>
+
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/dropzone.css" />
+	href="${pageContext.request.contextPath}/css/dropzone.css" />
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 <%-- <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
 <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css"> --%>
@@ -248,15 +254,22 @@
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
-							maxlength="32700" onkeyup="javascript:setDefenseValue(this);"></textarea>
-					<span id="maxLengthReached" style="color: red; display: none;">Maximum
-						length reached. If you want to write more, please do not request a
-						hearing online. Submit your hearing request and evidence by mail
-						or in person.</span>
+							maxlength="32700" onkeyup="setDefenseValue(this);"></textarea>
+						<span id="maxLengthReached" style="color: red; display: none;">Maximum
+							length reached. If you want to write more, please do not request
+							a hearing online. Submit your hearing request and evidence by
+							mail or in person.</span>
 					</div>
 					<hr>
 					<h4>Upload Evidence</h4>
-					<p>If you have evidence you want the judge to consider, upload
+					<p>Use the button below to upload evidence for the judge’s consideration. Evidence can include, but is
+not limited to, testimony, photographs, repair bills, police reports, DMV or insurance company
+records, and towing bills. This will be your only opportunity to submit evidence.</p>
+<p>Acceptable file formats are: PDF, JPEG/JPG, TIFF, BMP, and non-animated GIFs.</p>
+<p>The total limit for uploaded evidence is 20MB and the maximum page count is 50 pages. If your
+evidence exceeds either the file size or the page count, do not ask for a hearing online. Submit your
+hearing request and evidence by <a href="#">mail</a> or <a href="#">in person</a> at a <a href="#">Department of Finance Business Center.</a></p>
+					<!-- <p>If you have evidence you want the judge to consider, upload
 						it below. Evidence can include, but is not limited to: testimony,
 						photographs, repair bills, police reports, DMV or insurance
 						company records, and towing bills.</p>
@@ -272,74 +285,13 @@
 						or the page count, do not ask for a hearing online. Submit your
 						hearing request and evidence by <a href="">mail</a> or in <a
 							href="">person</a> at a Finance Business Center.
-					</p>
+					</p>-->
 					<form id="file-Upload-Form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
 					<br>
-					<script type="text/javascript">
-						Dropzone.options.fileUploadForm = {
-							maxFilesize : 20, // MB
-							acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
-							addRemoveLinks : true,
-							autoProcessQueue : true,
-							uploadMultiple : true,
-							parallelUploads : 100,
-							maxFiles : 100,
-							canCancle: true,
-
-							init : function() {
-
-								var submitButton = document
-										.querySelector("#submit-all");
-								var wrapperThis = this;
-
-								/* submitButton.addEventListener("click",
-									function() {
-										wrapperThis.processQueue();
-									});  */
-
-								this
-										.on(
-												"addedfile",
-												function(file) {
-
-													// Create the remove button
-													/* var removeButton = Dropzone
-															.createElement("<button class='btn btn-lg dark'>Remove File</button>");
- */
-													// Listen to the click event
-													/* 	removeButton
-																.addEventListener(
-																		"click",
-																		function(e) {
-																			// Make sure the button click doesn't submit the form:
-																			e
-																					.preventDefault();
-																			e
-																					.stopPropagation();
-
-																			// Remove the file preview.
-																			wrapperThis
-																					.removeFile(file);
-																			// If you want to the delete the file on the server as well,
-																			// you can do the AJAX request here.
-																		}); */
-
-													// Add the button to the file preview element.
-													/* file.previewElement
-															.appendChild(removeButton); */
-												});
-
-								this.on('sendingmultiple', function(data, xhr,
-										formData) {
-									formData.append("Username", $("#Username")
-											.val());
-								});
-							}
-						};
-					</script>
-
+					
+				
 					<p>You must check the box below if you are not uploading
 						evidence. By checking this box, you agree to the following:</p>
 					<s:form method="post" action="create_hearing" namespace="/Broker"
@@ -347,27 +299,22 @@
 
 						<s:textfield id="violationHidden" name="violationNumber"
 							style="display:none" />
-						<p>
 						<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
-							<label> <input type="checkbox"> I affirm that I
-								am not uploading evidence for the judge to consider. I
-								understand that this is the only opportunity I will have to
-								upload evidence for my hearing.
+							<label> <input type="checkbox"> I affirm that I am not uploading evidence for the judge to consider. I understand that this is the
+only opportunity I will have to upload evidence for my hearing.
 							</label>
 						</div>
-						</p>
 						<h4>Enter Contact Information</h4>
-						<p>Enter your name and the address where the hearing decision
-							should be mailed. A hearing request confirmation will be sent to
-							your email address.</p>
+						<p>Enter your name and the address to which the hearing decision should be mailed. A hearing request
+confirmation will be sent to your email address.</p>
 
 						<s:if test="hasActionErrors()">
-							<div class="errors" style="color: red;">
+							<div class="errors" style="color:red;">
 								<s:actionerror />
 							</div>
 						</s:if>
-						<div class="form-group row">
+						<div class="form-group">
 							<div style="display: none;">
 								<s:textarea id="defenseHidden" name="defense" maxlength="32700"
 									class="form-control" rows="10" cols="30"
@@ -381,7 +328,7 @@
 							<div class="form-group">
 								<label>Middle Initial (Optional)</label>
 								<s:textfield name="middleName" label="Middle Initial"
-									class="form-control" labelposition="top" maxlength="1" />
+									class="form-control" style="max-width:50px;" labelposition="top" maxlength="1" />
 							</div>
 							<div class="form-group">
 								<label>Last Name</label>
@@ -411,13 +358,13 @@
 									headerValue="--- Please Select ---" headerKey="1"
 									list="#{'newYork':'New York','california':'California'}" /> --%>
 								<s:select label="State/Province" value="state" name="state"
-									name="state" class="form-control" labelposition="top"
+									name="state" class="form-control"  style="max-width:250px;" labelposition="top"
 									headerValue="--- Please Select ---" headerKey="1" list="states" />
 							</div>
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
 								<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
-									class="form-control" labelposition="top" maxlength="10"
+									class="form-control" style="max-width:250px;" labelposition="top" maxlength="10"
 									requiredLabel="true" requiredPosition="top" />
 							</div>
 							<div class="form-group">
@@ -434,29 +381,23 @@
 							</div>
 
 
-							<p>You must check the box below to submit your hearing
-								request. By checking this box, you agree to the following:</p>
+							<p>You must check the box below to submit your hearing request. By checking this box, you agree to
+the following:</p>
 							<div class="checkbox">
-								<label> <s:checkbox id="certify" name="certify" />I
-									certify that I am the person named above or the authorized
-									agent of such a person and I am duty authorized to make this
-									affirmation. I also affirm that all statements made and
-									information submitted herein are true and accurate to the best
-									of my knowledge and any attachments are true and correct copies
-									of originals. I understand that any willful false statements
-									made herein may subject me to the penalties prescribed in the
-									Penal Law.
+								<label> <s:checkbox id="certify" name="certify" />I certify that I am the person named above or the authorized agent of such person and I am
+duly authorized to make this affirmation. I also affirm that all statements made and
+information submitted herein are true and accurate to the best of my knowledge and any
+attachments are true and correct copies of the originals. I understand that any willful false
+statements made herein may subject me to the penalties prescribed in the Penal Law.
 								</label>
 
 							</div>
 						</div>
 
-						<p>Once you submit your request, your hearing will be
-							scheduled.</p>
+						<p>Once you submit your request, your hearing will be scheduled.</p>
 						<div class="form-group">
 							<s:submit value="Submit Request" class="btn btn-primary " />
-							<a class="btn btn-link "
-								href="<%=request.getContextPath()%>/index.jsp">Cancel
+							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
 								Request</a>
 						</div>
 
@@ -503,6 +444,13 @@
 		
 	</script>
 	</ body>
+
+<div id="dialog" title="Basic dialog">
+<div id="divInDialog"></div>
+	<p>This is the default dialog which is useful for displaying
+		information. The dialog window can be moved, resized and closed with
+		the 'x' icon.</p>
+</div>
 </html>
 
 
