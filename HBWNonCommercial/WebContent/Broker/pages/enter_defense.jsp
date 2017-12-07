@@ -23,7 +23,7 @@
 	src="${pageContext.request.contextPath}/resources/dropzone-struts2.js"></script>
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/enter_evidence.js"></script>
+	src="${pageContext.request.contextPath}/resources/enter_defense.js"></script>
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/dropzone.css" />
@@ -446,11 +446,7 @@ statements made herein may subject me to the penalties prescribed in the Penal L
 	</ body>
 
 <div id="dialog" title="Basic dialog">
-<div id="divInDialog"></div>
-	<p>This is the default dialog which is useful for displaying
-		information. The dialog window can be moved, resized and closed with
-		the 'x' icon.</p>
-</div>
+<img id="image" src="">
 </html>
 
 

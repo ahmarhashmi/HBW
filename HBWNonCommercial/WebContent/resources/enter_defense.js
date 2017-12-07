@@ -49,15 +49,17 @@ Dropzone.options.fileUploadForm = {
 				$("#dialog").innerHTML = file.previewElement;
 				$("#dialog").dialog(
 						{
+							width: 800,
+							height: 600,
 							closeOnEscape : true,
 							modal : true,
 							show : {
 								effect : "blind",
-								duration : 800
+								duration : 1000
 							},
 							hide : {
 								effect : "explode",
-								duration : 1000
+								duration : 800
 							},
 							open : function(event, ui) {
 								// $('#divInDialog').load('test.html',
@@ -66,15 +68,15 @@ Dropzone.options.fileUploadForm = {
 								// });
 //								$(document).appendChild("<span id=''></span>")
 								var CONTEXT_PATH = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
-								alert(CONTEXT_PATH);
+								$("#image").attr('src', CONTEXT_PATH + "/FileUploadServlet?file="+file.name);
 								
-								$.get(CONTEXT_PATH + "/FileUploadServlet?file="+file.name,
+								/*$.get(CONTEXT_PATH + "/FileUploadServlet?file="+file.name,
 										function(data) {
 											$('#dialog').html("<img src="+data+" />");
 											$('#dialog').dialog('open');
-										}, "html");
+										}, "html");*/
 							},
-							title : "Dialog Title",
+							title : "Preview of the uploaded file",
 							buttons : [ {
 								text : "Ok",
 								icon : "ui-icon-heart",
