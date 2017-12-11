@@ -25,7 +25,7 @@ Dropzone.options.fileUploadForm = {
 		});
 		
 		this.on('complete', async function(file){
-			await sleep(15000);
+			await sleep(6000);
 			$('a.dz-remove').remove();
 		});
 		

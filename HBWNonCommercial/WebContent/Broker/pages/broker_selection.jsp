@@ -12,11 +12,18 @@
 <script type="text/javascript">
 	function toggleCheckBox(obj) {
 
-		if (obj.id == "broker") {
+		if (obj.id == "broker" && obj.checked == true ) {
 			document.getElementById("notABroker").checked = false;
-		} else {
+			document.getElementById("continueButton").disabled = false;
+		} else if (obj.id == "notABroker" && obj.checked == true ){
 			document.getElementById("broker").checked = false;
+			document.getElementById("continueButton").disabled = false;
 		}
+		
+		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
+			document.getElementById("continueButton").disabled = true;
+		}
+		
 	}
 </script>
 
@@ -36,8 +43,9 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    
 </head>
-<body>
+<body onload="document.getElementById('continueButton').disabled = true;">
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -123,7 +131,7 @@
 						<div class="clearfix gap"></div>
 						<div class="form-group">
 							<s:submit class="btn btn-primary themebluebutton"
-								value="Continue"></s:submit>
+								value="Continue" id="continueButton"></s:submit>
 						</div>
 					</s:form>
 				</div>

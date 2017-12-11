@@ -443,10 +443,10 @@ statements made herein may subject me to the penalties prescribed in the Penal L
 		crossorigin="anonymous">
 		
 	</script>
-	</ body>
 
 <!--  -->
 <div id="dialog" title="Basic dialog" style="z-index:10000">
 <img id="image" src="">
 </div>
+</body>
 </html>

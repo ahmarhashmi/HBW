@@ -1,5 +1,7 @@
 package hbw.controller.hearing.request.action;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +54,20 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	// call the web service and populate the violation info based on the violation
 	// number provided by the user.
 	violationInfo = populateViolationInfo(violationNumber);
+	violationInfo.setBalanceDue(BigDecimal.TEN);
+	violationInfo.setCode("code");
+	violationInfo.setDescription("This is a computer generated ticket");
+	violationInfo.setFine(BigDecimal.valueOf(3));
+	violationInfo.setInterest(BigDecimal.valueOf(1.5));
+	violationInfo.setIssuedOn(new Date());
+	violationInfo.setLocation("New York");
+	violationInfo.setPaid(BigDecimal.valueOf(6));
+	violationInfo.setPenalty(BigDecimal.ZERO);
+	violationInfo.setReduction(BigDecimal.ZERO);
+	violationInfo.setVehicleMake("Honda");
+	violationInfo.setVehiclePlate("LV-17-1234");
+	violationInfo.setVehicleState("New York");
+	violationInfo.setVehicleType("Motor Car");
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
