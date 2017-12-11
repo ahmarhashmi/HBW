@@ -396,7 +396,21 @@
     min-height:0;
     display:table;
 }
-
+.dropzone {
+    border: 1px dashed #929292;
+    /* min-height: 360px; */
+    height: 207px;
+    width: 700px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: #f1f1f1;
+    background-image: url(../images/2.png);
+    background-repeat: no-repeat;
+    padding: 0px;
+    background-position: center;
+    margin: 0px;
+    border-radius: 5px;
+}
 .dropzone .dz-preview .dz-image {
     display: none;
 }
@@ -413,21 +427,32 @@
     font-size:16px;
     font-weight:300 !important;
     color:#000
-    }
+}
 
 .dropzone .dz-preview .dz-details .dz-size {
-    float: right;
+	float: right;
     margin: 0;
-    margin-right: 20px;
+    right: 30px;
+    position: relative;
 }
 
 .dropzone .dz-preview .dz-details {
     opacity: 1;
-    background: #deeff9;
+    background: #f1f1f1;
     position: relative;
     display: table;
     padding: 20px 10px;
     width: 100%;
+}
+
+.dropzone .dz-preview.dz-complete .dz-details {
+	background: #e4edf4;
+}
+.ui-dialog.ui-corner-all.ui-widget {
+    z-index: 500000;
+}
+.dropzone .dz-preview .dz-details .dz-filename {
+	background:#f1f1f1;
 }
 
 .dropzone .dz-preview .dz-details .dz-filename span {
@@ -436,7 +461,16 @@
     background: none !important;
     font-size:16px;
     font-weight:bold;
+    color:#000000;
+}
+
+
+.dropzone .dz-preview.dz-complete .dz-details .dz-filename span {
     color:#27547d;
+}
+
+.dropzone .dz-preview.dz-complete .dz-details .dz-filename {
+	background:#e4edf4;
 }
 
 .dropzone .dz-preview.dz-processing .dz-progress {
@@ -458,7 +492,11 @@
 .dropzone .dz-preview .dz-success-mark svg, .dropzone .dz-preview .dz-error-mark svg {
     height: 100% !important;
     width: 100% !important;
-    -webkit-filter: brightness(50%); 
+    -webkit-filter: brightness(0%); 
+}
+.dropzone .dz-preview .dz-progress .dz-upload {
+    background: none;
+    background-color: #01509b;
 }
 
 .dz-error-message {
@@ -500,5 +538,24 @@ form.dropzone.dz-started:after {
     height: 70px;
     border-radius: 5px;
     border: 2px dashed #c4c4c4;
-    
+}
+.dz-preview.dz-processing.dz-success .dz-success-mark {
+    opacity: 1;
+    animation: unset !important;
+}
+.dz-preview.dz-processing.dz-success:hover .dz-success-mark {
+    opacity: 0;
+}
+.dz-preview.dz-processing.dz-success:hover .dz-error-mark {
+    opacity: 1;
+}
+a.dz-remove {
+    position: absolute;
+    z-index: 1000000;
+    top: 17px;
+    width: 24px;
+    height: 24px;
+    right: 4px;
+    font-size: 0 !important;
+    display: block;
 }

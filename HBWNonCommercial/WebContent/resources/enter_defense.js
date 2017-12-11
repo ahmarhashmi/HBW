@@ -24,17 +24,23 @@ Dropzone.options.fileUploadForm = {
 			this.removeFile(file);
 		});
 		
-//		this.on('complete', async function(file){
-//			await sleep(6000);
-//			$('a.dz-remove').remove();
-//		});
+// this.on('complete', async function(file){
+// await sleep(6000);
+// $('a.dz-remove').remove();
+// });
+		
+		this.on("removeFileEvent", function(file){
+			alert("sdfadf");
+		});
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
 			var CONTEXT_PATH = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
 			
-			//new Promise(resolve => setTimeout(resolve, ms));
-			$.get(CONTEXT_PATH + "/FileUploadServlet?delete="+file.name, function(data) {});
+			 return Dropzone.confirm("Remove "+file.name+"?", function() {
+				 $.get(CONTEXT_PATH + "/FileUploadServlet?delete="+file.name, function(data) {});
+		          });
+			
 		});
 
 		var wrapperThis = this;
@@ -48,11 +54,6 @@ Dropzone.options.fileUploadForm = {
 				alert("File type not supported");
 			}
 			
-			file.removeFile.addEventListener("click", function() {
-				if( confirm("Remove "+file.name+"?") ){
-					alert("removed");
-				}
-			}
 			file.previewElement.addEventListener("click", function() {
 				$("#dialog").innerHTML = file.previewElement;
 				$("#dialog").dialog(

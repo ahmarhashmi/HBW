@@ -228,7 +228,10 @@
 
 						<button class="btn btn-primary" onclick="window.print();">Print</button>
 						&nbsp;&nbsp;&nbsp; 
-						<a href="nyc.gov/finance">Return to Home Page</a>
+						<s:form method="post" action="home" namespace="/Broker"
+						theme="simple" id="mainForm">
+						<s:submit action="/home" value="Return to Home Page"></s:submit>
+						</s:form>
 					</div>
 
 					<h3>Download the NYC Parking Ticket Pay or Dispute App</h3>

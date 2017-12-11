@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -82,16 +81,6 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
 	return processHearingRequest();
-    }
-    
-    /**
-     * The main action listener of this class.
-     */
-    @Action(value = "/home", results = { @Result(name = "success", location = "pages/broker_selection.jsp") })
-    public String redirectToHomePage() {
-	LOGGER.info("Redirecting to the home screen.");
-	ServletActionContext.getRequest().getSession().invalidate();
-	return SUCCESS;
     }
 
     /**
