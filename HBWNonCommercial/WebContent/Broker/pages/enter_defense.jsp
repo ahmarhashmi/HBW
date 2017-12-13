@@ -45,24 +45,6 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-<style type="text/css">
-/* *****CHAMP DROPZONE***** */
-.dropzone {
-	border: 1px dashed #cec7c7;
-	/*min-height: 360px;*/
-	height: 165px;
-	width: 700px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	background: #f3f3f3;
-	background-image:
-		url("${pageContext.request.contextPath}/images/drag.png");
-	background-repeat: no-repeat;
-	padding: 0px;
-	margin: 0px;
-}
-</style>
-
 <script type="text/javascript">
 	$(document).submit(function(event) {
 		//perform validations
@@ -396,7 +378,7 @@ statements made herein may subject me to the penalties prescribed in the Penal L
 
 						<p>Once you submit your request, your hearing will be scheduled.</p>
 						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary " />
+							<s:submit value="Submit Request" class="btn btn-primary "/>
 							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
 								Request</a>
 						</div>

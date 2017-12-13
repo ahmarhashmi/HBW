@@ -4,9 +4,11 @@ Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
 	acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
 	addRemoveLinks : true,
+	dictRemoveFileConfirmation: true,
 	autoProcessQueue : true,
 	uploadMultiple : true,
 	parallelUploads : 100,
+	dictInvalidFileType : "File type not supported.",
 	maxFiles : 100,
 
 	success : function(file, response) {
@@ -17,7 +19,7 @@ Dropzone.options.fileUploadForm = {
 	error : function(file, response) {
 		file.previewElement.classList.add("dz-error");
 	},
-
+	
 	init : function() {
 
 		this.on('maxfilesexceeded', function(file) {
@@ -29,18 +31,10 @@ Dropzone.options.fileUploadForm = {
 // $('a.dz-remove').remove();
 // });
 		
-		this.on("removeFileEvent", function(file){
-			alert("sdfadf");
-		});
-		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
 			var CONTEXT_PATH = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
-			
-			 return Dropzone.confirm("Remove "+file.name+"?", function() {
-				 $.get(CONTEXT_PATH + "/FileUploadServlet?delete="+file.name, function(data) {});
-		          });
-			
+			$.get(CONTEXT_PATH + "/FileUploadServlet?delete="+file.name, function(data) {});
 		});
 
 		var wrapperThis = this;

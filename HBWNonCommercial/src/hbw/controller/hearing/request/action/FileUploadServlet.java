@@ -18,6 +18,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpStatus;
 
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
@@ -99,8 +100,15 @@ public class FileUploadServlet extends HttpServlet {
 		    }
 		    File file = new File(evidencePath, item.getName());
 		    if (file.length() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-			throw new RuntimeException(
-				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
+//			throw new IOException(
+//				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
+			writer.write("File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
+			response.setStatus(HttpStatus.SC_PRECONDITION_FAILED);
+		    }
+		    if( file.exists() ) {
+//			throw new IOException("File with the same name already exists/uploaded.");
+			writer.write("File with the same name already exists/uploaded.");
+			response.setStatus(HttpStatus.SC_PRECONDITION_FAILED);
 		    }
 		    item.write(file);
 
@@ -109,10 +117,10 @@ public class FileUploadServlet extends HttpServlet {
 	    }
 	} catch (FileUploadException e) {
 	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
-	    throw new RuntimeException(e);
+	    throw new IOException(e);
 	} catch (Exception e) {
 	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
-	    throw new RuntimeException(e);
+	    throw new IOException(e);
 	} finally {
 	    writer.close();
 	}

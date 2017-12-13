@@ -786,7 +786,7 @@ var Dropzone = function (_Emitter) {
                 });
               } else {
                 if (_this2.options.dictRemoveFileConfirmation) {
-                  return Dropzone.confirm(_this2.options.dictRemoveFileConfirmation, function () {
+                  return Dropzone.confirm("Remove "+file.name+"?", function () {
                     return _this2.removeFile(file);
                   });
                 } else {
