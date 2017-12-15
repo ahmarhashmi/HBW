@@ -1,5 +1,24 @@
 "use strict";
 
+function callMyAction() {
+	$.ajax({
+		type : "GET",
+		url : "/create_hearing",
+		traditional: true,
+		success : function(itr) {
+			var x = "<ol>";
+			$.each(itr.dataList, function() {
+				x += "<li>" + this + "</li>";
+			});
+			x += "</ol>";
+			$("#websparrow").html(x);
+		},
+		error : function(itr) {
+			alert("No values found..!!");
+		}
+	});
+}
+
 Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
 	acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
@@ -33,8 +52,7 @@ Dropzone.options.fileUploadForm = {
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
-			var CONTEXT_PATH = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
-			$.get(CONTEXT_PATH + "/FileUploadServlet?delete="+file.name, function(data) {});
+			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
 		});
 
 		var wrapperThis = this;
@@ -65,8 +83,7 @@ Dropzone.options.fileUploadForm = {
 								duration : 800
 							},
 							open : function(event, ui) {
-								var CONTEXT_PATH = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
-								$("#image").attr('src', CONTEXT_PATH + "/FileUploadServlet?file="+file.name);
+								$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name);
 							},
 							title : file.name,
 							buttons : [ {
@@ -89,3 +106,39 @@ Dropzone.options.fileUploadForm = {
 function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
+
+function getContextPath(){
+	return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+}
+
+$(document).ready( function() {
+	$.subscribe('removeErrors', function(event,data) {
+		$('.errorLabel').html('').removeClass('errorLabel');
+		$('#formerrors').html('');
+	});
+});	
+
+function customValidation(form, errors) {
+	
+	//List for errors
+	var list = $('#formerrors');
+	
+	//Handle non field errors 
+	if (errors.errors) {
+		$.each(errors.errors, function(index, value) { 
+			list.append('<<li>'+value+'</li>\n');
+		});
+	}
+	
+	//Handle field errors 
+	if (errors.fieldErrors) {
+		$.each(errors.fieldErrors, function(index, value) { 
+			var elem = $('#'+index+'Error');
+			if(elem)
+			{
+				elem.html(value[0]);
+				elem.addClass('errorLabel');
+			}
+		});
+	}
+}

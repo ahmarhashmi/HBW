@@ -1,9 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="sj" uri="/struts-jquery-tags"%>
+<%-- <%@ taglib prefix="sx" uri="/struts-dojo-tags"%> --%>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<sx:head></sx:head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,9 +34,10 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 <%-- <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
 <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css"> --%>
@@ -45,7 +49,37 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+<script type="text/javascript"
+	src="/struts2-jquery-showcase/struts/utils.js" type="text/javascript">
+</script>
+<script type="text/javascript"
+	src="/struts2-jquery-showcase/struts/xhtml/validation.js"
+	type="text/javascript">
+</script>
+
 <script type="text/javascript">
+
+$( document ).ready(function(event){
+	
+	document.getElementById("violationHidden").value = document
+	.getElementById("violationNumber").innerHTML;
+	
+	$("#submit-date").click(function() {
+		// var processDate = $('#mainForm').val();
+		alert("fg");
+		$.ajax({
+			type : "POST",
+			url : "create_hearing",
+			/* contentType: "application/json; charset=utf-8", */
+			data : "processDateInput="+processDate,
+			dataType : "json",
+			async: true,
+			success : function(result) {
+				alert("Success");
+		}
+		});
+	});
+
 	$(document).submit(function(event) {
 		//perform validations
 		if (!$('#certify')[0].checked) {
@@ -70,14 +104,10 @@
 		}
 	}
 
-	function setViolationNumber() {
-		document.getElementById("violationHidden").value = document
-				.getElementById("violationNumber").innerHTML;
-	}
 </script>
 
 </head>
-<body onload="setViolationNumber();">
+<body>
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -244,13 +274,21 @@
 					</div>
 					<hr>
 					<h4>Upload Evidence</h4>
-					<p>Use the button below to upload evidence for the judge’s consideration. Evidence can include, but is
-not limited to, testimony, photographs, repair bills, police reports, DMV or insurance company
-records, and towing bills. This will be your only opportunity to submit evidence.</p>
-<p>Acceptable file formats are: PDF, JPEG/JPG, TIFF, BMP, and non-animated GIFs.</p>
-<p>The total limit for uploaded evidence is 20MB and the maximum page count is 50 pages. If your
-evidence exceeds either the file size or the page count, do not ask for a hearing online. Submit your
-hearing request and evidence by <a href="#">mail</a> or <a href="#">in person</a> at a <a href="#">Department of Finance Business Center.</a></p>
+					<p>Use the button below to upload evidence for the judge’s
+						consideration. Evidence can include, but is not limited to,
+						testimony, photographs, repair bills, police reports, DMV or
+						insurance company records, and towing bills. This will be your
+						only opportunity to submit evidence.</p>
+					<p>Acceptable file formats are: PDF, JPEG/JPG, TIFF, BMP, and
+						non-animated GIFs.</p>
+					<p>
+						The total limit for uploaded evidence is 20MB and the maximum page
+						count is 50 pages. If your evidence exceeds either the file size
+						or the page count, do not ask for a hearing online. Submit your
+						hearing request and evidence by <a href="#">mail</a> or <a
+							href="#">in person</a> at a <a href="#">Department of Finance
+							Business Center.</a>
+					</p>
 					<!-- <p>If you have evidence you want the judge to consider, upload
 						it below. Evidence can include, but is not limited to: testimony,
 						photographs, repair bills, police reports, DMV or insurance
@@ -272,118 +310,144 @@ hearing request and evidence by <a href="#">mail</a> or <a href="#">in person</a
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
 					<br>
-					
-				
+
+
 					<p>You must check the box below if you are not uploading
 						evidence. By checking this box, you agree to the following:</p>
-					<s:form method="post" action="create_hearing" namespace="/Broker"
-						theme="simple" id="mainForm">
+					<div id="resultDiv"></div>
+						<s:form method="post" action="create_hearing" namespace="/Broker"
+							theme="simple" id="mainForm">
 
-						<s:textfield id="violationHidden" name="violationNumber"
-							style="display:none" />
-						<div class="dottedborderdiv"></div>
-						<div class="checkbox" id="affirmCheckBox">
-							<label> <input type="checkbox"> I affirm that I am not uploading evidence for the judge to consider. I understand that this is the
-only opportunity I will have to upload evidence for my hearing.
-							</label>
-						</div>
-						<h4>Enter Contact Information</h4>
-						<p>Enter your name and the address to which the hearing decision should be mailed. A hearing request
-confirmation will be sent to your email address.</p>
+							<s:textfield id="violationHidden" name="violationNumber"
+								style="display:none" />
+							<div class="dottedborderdiv"></div>
+							<div class="checkbox" id="affirmCheckBox">
+								<label> <input type="checkbox"> I affirm that I
+									am not uploading evidence for the judge to consider. I
+									understand that this is the only opportunity I will have to
+									upload evidence for my hearing.
+								</label>
+							</div>
+							<h4>Enter Contact Information</h4>
+							<p>Enter your name and the address to which the hearing
+								decision should be mailed. A hearing request confirmation will
+								be sent to your email address.</p>
 
-						<s:if test="hasActionErrors()">
-							<div class="errors" style="color:red;">
-								<s:actionerror />
-							</div>
-						</s:if>
-						<div class="form-group">
-							<div style="display: none;">
-								<s:textarea id="defenseHidden" name="defense" maxlength="32700"
-									class="form-control" rows="10" cols="30"
-									style="width: 500px; height:150px" labelposition="top" />
-							</div>
+							<s:if test="hasActionErrors()">
+								<div class="errors" style="color: red;">
+									<s:actionerror />
+								</div>
+							</s:if>
 							<div class="form-group">
-								<label>First Name</label>
-								<s:textfield name="firstName" id="firstName" label="First Name"
-									class="form-control" labelposition="top" maxlength="30" />
-							</div>
-							<div class="form-group">
-								<label>Middle Initial (Optional)</label>
-								<s:textfield name="middleName" label="Middle Initial"
-									class="form-control" style="max-width:50px;" labelposition="top" maxlength="1" />
-							</div>
-							<div class="form-group">
-								<label>Last Name</label>
-								<s:textfield name="lastName" id="lastName" label="Last Name"
-									class="form-control" labelposition="top" maxlength="30" />
-							</div>
+								<div style="display: none;">
+									<s:textarea id="defenseHidden" name="defense" maxlength="32700"
+										class="form-control" rows="10" cols="30"
+										style="width: 500px; height:150px" labelposition="top" />
+								</div>
+								<div class="form-group">
+									<label>First Name</label>
+									<s:textfield name="firstName" id="firstName" label="First Name"
+										class="form-control" labelposition="top" maxlength="30" />
+								</div>
+								<div class="form-group">
+									<label>Middle Initial (Optional)</label>
+									<s:textfield name="middleName" label="Middle Initial"
+										class="form-control" style="max-width:50px;"
+										labelposition="top" maxlength="1" />
+								</div>
+								<div class="form-group">
+									<label>Last Name</label>
+									<s:textfield name="lastName" id="lastName" label="Last Name"
+										class="form-control" labelposition="top" maxlength="30" />
+								</div>
 
-							<div class="form-group">
-								<label>Address</label>
-								<s:textfield name="address" id="address" label="Address"
-									class="form-control" labelposition="top" maxlength="50" />
-							</div>
-							<div class="form-group">
-								<label>Address Line 2 (Optional)</label>
-								<s:textfield name="address2" maxlength="50" class="form-control"
-									label="Address Line 2 (optional)" labelposition="top" />
-							</div>
-							<div class="form-group">
-								<label>City</label>
-								<s:textfield name="city" id="city" label="City"
-									labelposition="top" class="form-control" maxlength="50" />
-							</div>
-							<div class="form-group">
-								<label>State/Province</label>
-								<%-- <s:select label="State/Province" value="state" name="state"
+								<div class="form-group">
+									<label>Address</label>
+									<s:textfield name="address" id="address" label="Address"
+										class="form-control" labelposition="top" maxlength="50" />
+								</div>
+								<div class="form-group">
+									<label>Address Line 2 (Optional)</label>
+									<s:textfield name="address2" maxlength="50"
+										class="form-control" label="Address Line 2 (optional)"
+										labelposition="top" />
+								</div>
+								<div class="form-group">
+									<label>City</label>
+									<s:textfield name="city" id="city" label="City"
+										labelposition="top" class="form-control" maxlength="50" />
+								</div>
+								<div class="form-group">
+									<label>State/Province</label>
+									<%-- <s:select label="State/Province" value="state" name="state"
 									class="form-control" labelposition="top"
 									headerValue="--- Please Select ---" headerKey="1"
 									list="#{'newYork':'New York','california':'California'}" /> --%>
-								<s:select label="State/Province" value="state" name="state"
-									name="state" class="form-control"  style="max-width:250px;" labelposition="top"
-									headerValue="--- Please Select ---" headerKey="1" list="states" />
+									<s:select label="State/Province" value="state" name="state"
+										name="state" class="form-control" style="max-width:250px;"
+										labelposition="top" headerValue="--- Please Select ---"
+										headerKey="1" list="states" />
+								</div>
+								<div class="form-group">
+									<label>ZIP/Postal Code</label>
+									<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
+										class="form-control" style="max-width:250px;"
+										labelposition="top" maxlength="10" requiredLabel="true"
+										requiredPosition="top" />
+								</div>
+								<div class="form-group">
+									<label>Email Address</label>
+									<s:textfield name="email1" id="email1" label="Email Address"
+										class="form-control" labelposition="top" maxlength="50"
+										type="email" />
+								</div>
+								<div class="form-group">
+									<label>Confirm Email Address</label>
+									<s:textfield name="email2" id="email"
+										label="Confirm Email Address" class="form-control"
+										labelposition="top" maxlength="50" type="email" />
+								</div>
+
+
+								<p>You must check the box below to submit your hearing
+									request. By checking this box, you agree to the following:</p>
+								<div class="checkbox">
+									<label> <s:checkbox id="certify" name="certify" />I
+										certify that I am the person named above or the authorized
+										agent of such person and I am duly authorized to make this
+										affirmation. I also affirm that all statements made and
+										information submitted herein are true and accurate to the best
+										of my knowledge and any attachments are true and correct
+										copies of the originals. I understand that any willful false
+										statements made herein may subject me to the penalties
+										prescribed in the Penal Law.
+									</label>
+
+								</div>
 							</div>
+
+							<p>Once you submit your request, your hearing will be
+								scheduled.</p>
 							<div class="form-group">
-								<label>ZIP/Postal Code</label>
-								<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
-									class="form-control" style="max-width:250px;" labelposition="top" maxlength="10"
-									requiredLabel="true" requiredPosition="top" />
+								<%-- <sx:submit formId="mainForm" cssClass="btn btn-primary" type="button" executeScripts="alert('jk');"
+						afterNotifyTopics="mainForm" loadingText="Loading" value="Submit" targets="verify_info" ></sx:submit> --%>
+								
+								<s:url id="simpleecho" value="/create_hearing"/>
+								<sj:submit formId="mainForm" value="Submit Request" 
+									class="btn btn-primary " button="true" targets="formResult"
+									onCompleteTopics="alert('lll');" href="%{simpleecho}"
+									validate="true"
+				validateFunction="customValidation"
+				onBeforeTopics="removeErrors"
+				onSuccessTopics="removeErrors"
+									/>
+									
+								<input id="submit-date" type="button" class="btn btn-primary"
+									value="Search" /> <a class="btn btn-link " href="#"
+									onclick="location.reload();">Cancel Request</a>
 							</div>
-							<div class="form-group">
-								<label>Email Address</label>
-								<s:textfield name="email1" id="email1" label="Email Address"
-									class="form-control" labelposition="top" maxlength="50"
-									type="email" />
-							</div>
-							<div class="form-group">
-								<label>Confirm Email Address</label>
-								<s:textfield name="email2" id="email"
-									label="Confirm Email Address" class="form-control"
-									labelposition="top" maxlength="50" type="email" />
-							</div>
 
-
-							<p>You must check the box below to submit your hearing request. By checking this box, you agree to
-the following:</p>
-							<div class="checkbox">
-								<label> <s:checkbox id="certify" name="certify" />I certify that I am the person named above or the authorized agent of such person and I am
-duly authorized to make this affirmation. I also affirm that all statements made and
-information submitted herein are true and accurate to the best of my knowledge and any
-attachments are true and correct copies of the originals. I understand that any willful false
-statements made herein may subject me to the penalties prescribed in the Penal Law.
-								</label>
-
-							</div>
-						</div>
-
-						<p>Once you submit your request, your hearing will be scheduled.</p>
-						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary "/>
-							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
-								Request</a>
-						</div>
-
-					</s:form>
+						</s:form>
 				</div>
 			</div>
 		</div>
@@ -426,9 +490,9 @@ statements made herein may subject me to the penalties prescribed in the Penal L
 		
 	</script>
 
-<!--  -->
-<div id="dialog" title="Basic dialog" style="z-index:10000">
-<img id="image" src="">
-</div>
+	<!--  -->
+	<div id="dialog" title="Basic dialog" style="z-index: 10000">
+		<img id="image" src="">
+	</div>
 </body>
 </html>

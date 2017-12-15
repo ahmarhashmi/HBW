@@ -36,7 +36,7 @@ import hbw.controller.hearing.request.common.ZipUtil;
 @ResultPath(value = "/")
 @Results({ @Result(name = "success", location = "Broker/pages/verify_info.jsp"),
 	@Result(name = "input", location = "Broker/pages/enter_defense.jsp"), })
-@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
+@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare")/*, @InterceptorRef("ajaxValidation")*/ })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
