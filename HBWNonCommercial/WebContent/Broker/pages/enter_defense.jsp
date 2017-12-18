@@ -1,12 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@ taglib prefix="sj" uri="/struts-jquery-tags"%>
-<%-- <%@ taglib prefix="sx" uri="/struts-dojo-tags"%> --%>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<sx:head></sx:head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,43 +46,79 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-<script type="text/javascript"
-	src="/struts2-jquery-showcase/struts/utils.js" type="text/javascript">
-</script>
-<script type="text/javascript"
-	src="/struts2-jquery-showcase/struts/xhtml/validation.js"
-	type="text/javascript">
-</script>
-
 <script type="text/javascript">
+	function getFilesCount() {
+		return fileUploadForm.files.length;
+		//return fileUploadForm;
 
-$( document ).ready(function(event){
-	
-	document.getElementById("violationHidden").value = document
-	.getElementById("violationNumber").innerHTML;
-	
-	$("#submit-date").click(function() {
-		// var processDate = $('#mainForm').val();
-		alert("fg");
-		$.ajax({
-			type : "POST",
-			url : "create_hearing",
-			/* contentType: "application/json; charset=utf-8", */
-			data : "processDateInput="+processDate,
-			dataType : "json",
-			async: true,
-			success : function(result) {
-				alert("Success");
-		}
-		});
-	});
+	}
 
 	$(document).submit(function(event) {
-		//perform validations
+		var isValid = true;
+		// perform validations
 		if (!$('#certify')[0].checked) {
-			//return false;
+			$('#notCertified').css("color", "red");
+			isValid = false;
 		} else {
+			$('#notCertified').css("color", "black");
+		}
+		if (!$('#firstName').val()) {
+			$('#firstNameMsg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#firstNameMsg').css("display", "none");
+		}
+		if (!$('#lastName').val()) {
+			$('#lastNameMsg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#lastNameMsg').css("display", "none");
+		}
+		if (!$('#address').val()) {
+			$('#addressMsg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#addressMsg').css("display", "none");
+		}
+		if (!$('#city').val()) {
+			$('#cityMsg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#cityMsg').css("display", "none");
+		}
+		if ($('#state').val() == 1) {
+			$('#stateMsg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#stateMsg').css("display", "none");
+		}
+		if (!$('#zip').val()) {
+			$('#zipMsg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#zipMsg').css("display", "none");
+		}
+		if (!$('#email1').val()) {
+			$('#email1Msg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#email1Msg').css("display", "none");
+		}
+		if (!$('#email2').val()) {
+			$('#email2Msg').css("display", "block");
+			isValid = false;
+		} else {
+			$('#email2Msg').css("display", "none");
+		}
+		if ($('#affirm').is(":visible") && !$('#affirm')[0].checked) {
+			$('#affirmMsg').css("color", "red");
+			isValid = false;
+		} else {
+			$('#affirmMsg').css("color", "black");
+		}
 
+		if (!isValid) {
+			return false;
 		}
 		$(window).unbind('beforeunload');
 	});
@@ -93,21 +126,10 @@ $( document ).ready(function(event){
 	$(window).on('beforeunload', function(event) {
 		return "";
 	});
-
-	function setDefenseValue(obj) {
-		document.getElementById("defenseHidden").value = obj.value;
-
-		if (obj.value.length >= 32700) {
-			document.getElementById("maxLengthReached").style.display = "block";
-		} else if (obj.value.length < 32700) {
-			document.getElementById("maxLengthReached").style.display = "none";
-		}
-	}
-
 </script>
 
 </head>
-<body>
+<body onload="setViolationNumber();">
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -306,148 +328,150 @@ $( document ).ready(function(event){
 						hearing request and evidence by <a href="">mail</a> or in <a
 							href="">person</a> at a Finance Business Center.
 					</p>-->
-					<form id="file-Upload-Form" enctype="multipart/form-data"
+					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
 					<br>
 
 
-					<p>You must check the box below if you are not uploading
+					<p id="affirmCheckBoxPrompt">You must check the box below if you are not uploading
 						evidence. By checking this box, you agree to the following:</p>
-					<div id="resultDiv"></div>
-						<s:form method="post" action="create_hearing" namespace="/Broker"
-							theme="simple" id="mainForm">
+					<s:form method="post" action="create_hearing" namespace="/Broker"
+						theme="simple" id="mainForm">
 
-							<s:textfield id="violationHidden" name="violationNumber"
-								style="display:none" />
-							<div class="dottedborderdiv"></div>
-							<div class="checkbox" id="affirmCheckBox">
-								<label> <input type="checkbox"> I affirm that I
-									am not uploading evidence for the judge to consider. I
-									understand that this is the only opportunity I will have to
-									upload evidence for my hearing.
-								</label>
+						<s:textfield id="violationHidden" name="violationNumber"
+							style="display:none" />
+						<div class="dottedborderdiv"></div>
+						<div class="checkbox" id="affirmCheckBox">
+							<label id="affirmMsg"> <s:checkbox id="affirm"
+									name="affirm" /> I affirm that I am not uploading evidence for
+								the judge to consider. I understand that this is the only
+								opportunity I will have to upload evidence for my hearing.
+							</label>
+						</div>
+						<h4>Enter Contact Information</h4>
+						<p>Enter your name and the address to which the hearing
+							decision should be mailed. A hearing request confirmation will be
+							sent to your email address.</p>
+
+						<s:if test="hasActionErrors()">
+							<div class="errors" style="color: red;">
+								<s:actionerror />
 							</div>
-							<h4>Enter Contact Information</h4>
-							<p>Enter your name and the address to which the hearing
-								decision should be mailed. A hearing request confirmation will
-								be sent to your email address.</p>
-
-							<s:if test="hasActionErrors()">
-								<div class="errors" style="color: red;">
-									<s:actionerror />
-								</div>
-							</s:if>
+						</s:if>
+						<div class="form-group">
+							<div style="display: none;">
+								<s:textarea id="defenseHidden" name="defense" maxlength="32700"
+									class="form-control" rows="10" cols="30"
+									style="width: 500px; height:150px" labelposition="top" />
+							</div>
 							<div class="form-group">
-								<div style="display: none;">
-									<s:textarea id="defenseHidden" name="defense" maxlength="32700"
-										class="form-control" rows="10" cols="30"
-										style="width: 500px; height:150px" labelposition="top" />
-								</div>
-								<div class="form-group">
-									<label>First Name</label>
-									<s:textfield name="firstName" id="firstName" label="First Name"
-										class="form-control" labelposition="top" maxlength="30" />
-								</div>
-								<div class="form-group">
-									<label>Middle Initial (Optional)</label>
-									<s:textfield name="middleName" label="Middle Initial"
-										class="form-control" style="max-width:50px;"
-										labelposition="top" maxlength="1" />
-								</div>
-								<div class="form-group">
-									<label>Last Name</label>
-									<s:textfield name="lastName" id="lastName" label="Last Name"
-										class="form-control" labelposition="top" maxlength="30" />
-								</div>
+								<label>First Name</label>
+								<s:textfield name="firstName" id="firstName" label="First Name"
+									class="form-control" labelposition="top" maxlength="30" />
+								<span id="firstNameMsg" style="color: red; display: none;">First
+									Name is required.</span>
+							</div>
+							<div class="form-group">
+								<label>Middle Initial (Optional)</label>
+								<s:textfield name="middleName" label="Middle Initial"
+									class="form-control" style="max-width:50px;"
+									labelposition="top" maxlength="1" />
+							</div>
+							<div class="form-group">
+								<label>Last Name</label>
+								<s:textfield name="lastName" id="lastName" label="Last Name"
+									class="form-control" labelposition="top" maxlength="30" />
+								<span id="lastNameMsg" style="color: red; display: none;">Last
+									Name is required.</span>
+							</div>
 
-								<div class="form-group">
-									<label>Address</label>
-									<s:textfield name="address" id="address" label="Address"
-										class="form-control" labelposition="top" maxlength="50" />
-								</div>
-								<div class="form-group">
-									<label>Address Line 2 (Optional)</label>
-									<s:textfield name="address2" maxlength="50"
-										class="form-control" label="Address Line 2 (optional)"
-										labelposition="top" />
-								</div>
-								<div class="form-group">
-									<label>City</label>
-									<s:textfield name="city" id="city" label="City"
-										labelposition="top" class="form-control" maxlength="50" />
-								</div>
-								<div class="form-group">
-									<label>State/Province</label>
-									<%-- <s:select label="State/Province" value="state" name="state"
+							<div class="form-group">
+								<label>Address</label>
+								<s:textfield name="address" id="address" label="Address"
+									class="form-control" labelposition="top" maxlength="50" />
+								<span id="addressMsg" style="color: red; display: none;">Address
+									is required.</span>
+							</div>
+							<div class="form-group">
+								<label>Address Line 2 (Optional)</label>
+								<s:textfield name="address2" maxlength="50" class="form-control"
+									label="Address Line 2 (optional)" labelposition="top" />
+							</div>
+							<div class="form-group">
+								<label>City</label>
+								<s:textfield name="city" id="city" label="City"
+									labelposition="top" class="form-control" maxlength="50" />
+								<span id="cityMsg" style="color: red; display: none;">City
+									is required.</span>
+							</div>
+							<div class="form-group">
+								<label>State/Province</label>
+								<%-- <s:select label="State/Province" value="state" name="state"
 									class="form-control" labelposition="top"
 									headerValue="--- Please Select ---" headerKey="1"
 									list="#{'newYork':'New York','california':'California'}" /> --%>
-									<s:select label="State/Province" value="state" name="state"
-										name="state" class="form-control" style="max-width:250px;"
-										labelposition="top" headerValue="--- Please Select ---"
-										headerKey="1" list="states" />
-								</div>
-								<div class="form-group">
-									<label>ZIP/Postal Code</label>
-									<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
-										class="form-control" style="max-width:250px;"
-										labelposition="top" maxlength="10" requiredLabel="true"
-										requiredPosition="top" />
-								</div>
-								<div class="form-group">
-									<label>Email Address</label>
-									<s:textfield name="email1" id="email1" label="Email Address"
-										class="form-control" labelposition="top" maxlength="50"
-										type="email" />
-								</div>
-								<div class="form-group">
-									<label>Confirm Email Address</label>
-									<s:textfield name="email2" id="email"
-										label="Confirm Email Address" class="form-control"
-										labelposition="top" maxlength="50" type="email" />
-								</div>
-
-
-								<p>You must check the box below to submit your hearing
-									request. By checking this box, you agree to the following:</p>
-								<div class="checkbox">
-									<label> <s:checkbox id="certify" name="certify" />I
-										certify that I am the person named above or the authorized
-										agent of such person and I am duly authorized to make this
-										affirmation. I also affirm that all statements made and
-										information submitted herein are true and accurate to the best
-										of my knowledge and any attachments are true and correct
-										copies of the originals. I understand that any willful false
-										statements made herein may subject me to the penalties
-										prescribed in the Penal Law.
-									</label>
-
-								</div>
+								<s:select label="State/Province" value="state" name="state"
+									id="state" name="state" class="form-control"
+									style="max-width:250px;" labelposition="top"
+									headerValue="--- Please Select ---" headerKey="1" list="states" />
+								<span id="stateMsg" style="color: red; display: none;">Please
+									select the State/Province.</span>
 							</div>
-
-							<p>Once you submit your request, your hearing will be
-								scheduled.</p>
 							<div class="form-group">
-								<%-- <sx:submit formId="mainForm" cssClass="btn btn-primary" type="button" executeScripts="alert('jk');"
-						afterNotifyTopics="mainForm" loadingText="Loading" value="Submit" targets="verify_info" ></sx:submit> --%>
-								
-								<s:url id="simpleecho" value="/create_hearing"/>
-								<sj:submit formId="mainForm" value="Submit Request" 
-									class="btn btn-primary " button="true" targets="formResult"
-									onCompleteTopics="alert('lll');" href="%{simpleecho}"
-									validate="true"
-				validateFunction="customValidation"
-				onBeforeTopics="removeErrors"
-				onSuccessTopics="removeErrors"
-									/>
-									
-								<input id="submit-date" type="button" class="btn btn-primary"
-									value="Search" /> <a class="btn btn-link " href="#"
-									onclick="location.reload();">Cancel Request</a>
+								<label>ZIP/Postal Code</label>
+								<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
+									class="form-control" style="max-width:250px;"
+									labelposition="top" maxlength="10" requiredLabel="true"
+									requiredPosition="top" />
+								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
+									Code is required.</span>
+							</div>
+							<div class="form-group">
+								<label>Email Address</label>
+								<s:textfield name="email1" id="email1" label="Email Address"
+									class="form-control" labelposition="top" maxlength="50"
+									type="email" />
+								<span id="email1Msg" style="color: red; display: none;">Email
+									is required.</span>
+							</div>
+							<div class="form-group">
+								<label>Confirm Email Address</label>
+								<s:textfield name="email2" id="email"
+									label="Confirm Email Address" class="form-control"
+									labelposition="top" maxlength="50" type="email" />
+								<span id="email2Msg" style="color: red; display: none;">Please
+									confirm your email.</span>
 							</div>
 
-						</s:form>
+
+							<p id="notCertified">You must check the box below to submit
+								your hearing request. By checking this box, you agree to the
+								following:</p>
+							<div class="checkbox">
+								<label> <s:checkbox id="certify" name="certify" />I
+									certify that I am the person named above or the authorized
+									agent of such person and I am duly authorized to make this
+									affirmation. I also affirm that all statements made and
+									information submitted herein are true and accurate to the best
+									of my knowledge and any attachments are true and correct copies
+									of the originals. I understand that any willful false
+									statements made herein may subject me to the penalties
+									prescribed in the Penal Law.
+								</label>
+
+							</div>
+						</div>
+
+						<p>Once you submit your request, your hearing will be
+							scheduled.</p>
+						<div class="form-group">
+							<s:submit value="Submit Request" class="btn btn-primary " />
+							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
+								Request</a>
+						</div>
+
+					</s:form>
 				</div>
 			</div>
 		</div>

@@ -1,23 +1,23 @@
 "use strict";
 
-function callMyAction() {
-	$.ajax({
-		type : "GET",
-		url : "/create_hearing",
-		traditional: true,
-		success : function(itr) {
-			var x = "<ol>";
-			$.each(itr.dataList, function() {
-				x += "<li>" + this + "</li>";
-			});
-			x += "</ol>";
-			$("#websparrow").html(x);
-		},
-		error : function(itr) {
-			alert("No values found..!!");
-		}
-	});
-}
+// function callMyAction() {
+// $.ajax({
+// type : "GET",
+// url : getContextPath()" + "/FileUploadServlet?delete="+file.name",
+// success : function(itr) {
+// var x = "<ol>";
+// $.each(itr.dataList, function() {
+// x += "<li>" + this + "</li>";
+// });
+// x += "</ol>";
+// $("#websparrow").html(x);
+// },
+// error : function(itr) {
+// alert("No values found..!!");
+// }
+// });
+// }
+var filesCount = 0;
 
 Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
@@ -31,9 +31,12 @@ Dropzone.options.fileUploadForm = {
 	maxFiles : 100,
 
 	success : function(file, response) {
+		filesCount = this.files.length;
 		var imgName = response;
 		file.previewElement.classList.add("dz-success");
-		console.log("Successfully uploaded :" + file.name);
+		$('#affirm').attr("checked", false);
+		$('#affirmCheckBox').css("display", "none");
+		$('#affirmCheckBoxPrompt').css("display", "none");
 	},
 	error : function(file, response) {
 		file.previewElement.classList.add("dz-error");
@@ -53,6 +56,10 @@ Dropzone.options.fileUploadForm = {
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
 			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
+			if(this.getAcceptedFiles().length == 0){
+				$('#affirmCheckBox').css("display", "block");
+				$('#affirmCheckBoxPrompt').css("display", "block");
+			}
 		});
 
 		var wrapperThis = this;
@@ -103,6 +110,21 @@ Dropzone.options.fileUploadForm = {
 	}
 };
 
+function setDefenseValue(obj) {
+	document.getElementById("defenseHidden").value = obj.value;
+
+	if (obj.value.length >= 32700) {
+		document.getElementById("maxLengthReached").style.display = "block";
+	} else if (obj.value.length < 32700) {
+		document.getElementById("maxLengthReached").style.display = "none";
+	}
+}
+
+function setViolationNumber() {
+	document.getElementById("violationHidden").value = document
+			.getElementById("violationNumber").innerHTML;
+}
+
 function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
@@ -111,34 +133,3 @@ function getContextPath(){
 	return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
 }
 
-$(document).ready( function() {
-	$.subscribe('removeErrors', function(event,data) {
-		$('.errorLabel').html('').removeClass('errorLabel');
-		$('#formerrors').html('');
-	});
-});	
-
-function customValidation(form, errors) {
-	
-	//List for errors
-	var list = $('#formerrors');
-	
-	//Handle non field errors 
-	if (errors.errors) {
-		$.each(errors.errors, function(index, value) { 
-			list.append('<<li>'+value+'</li>\n');
-		});
-	}
-	
-	//Handle field errors 
-	if (errors.fieldErrors) {
-		$.each(errors.fieldErrors, function(index, value) { 
-			var elem = $('#'+index+'Error');
-			if(elem)
-			{
-				elem.html(value[0]);
-				elem.addClass('errorLabel');
-			}
-		});
-	}
-}
