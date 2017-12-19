@@ -23,7 +23,7 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
  * @author Ahmar
  *
  */
-@Namespace("/Broker")
+@Namespace("/dispute")
 @ResultPath(value = "/")
 public class HomeAction extends ActionSupport {
 
@@ -33,7 +33,7 @@ public class HomeAction extends ActionSupport {
     /**
      * The main action listener of this class.
      */
-    @Action(value = "/home", results = { @Result(name = "success", location = "pages/broker_selection.jsp") })
+    @Action(value = "/home", results = { @Result(name = "success", location = "ticket/broker_selection.jsp") })
     public String execute() {
 	LOGGER.info("Redirecting to the home screen.");
 	ServletActionContext.getRequest().getSession().invalidate();

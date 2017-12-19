@@ -336,7 +336,7 @@
 
 					<p id="affirmCheckBoxPrompt">You must check the box below if you are not uploading
 						evidence. By checking this box, you agree to the following:</p>
-					<s:form method="post" action="create_hearing" namespace="/Broker"
+					<s:form method="post" action="create_hearing" namespace="/dispute"
 						theme="simple" id="mainForm">
 
 						<s:textfield id="violationHidden" name="violationNumber"
@@ -437,7 +437,7 @@
 							</div>
 							<div class="form-group">
 								<label>Confirm Email Address</label>
-								<s:textfield name="email2" id="email"
+								<s:textfield name="email2" id="email2"
 									label="Confirm Email Address" class="form-control"
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please

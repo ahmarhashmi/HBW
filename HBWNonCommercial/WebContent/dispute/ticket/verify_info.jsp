@@ -5,7 +5,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
 <!DOCTYPE html>
-<!-- saved from url=(0057)file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html -->
 <html lang="en">
 <head>
 <meta charset="utf-8">

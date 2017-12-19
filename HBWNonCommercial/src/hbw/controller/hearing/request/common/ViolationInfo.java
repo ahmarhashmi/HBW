@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hbw.controller.hearing.request.action;
+package hbw.controller.hearing.request.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

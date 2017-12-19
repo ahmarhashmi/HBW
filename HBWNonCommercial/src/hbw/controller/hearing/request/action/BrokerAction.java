@@ -19,7 +19,7 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
  * @author Ahmar Nadeem
  * 
  */
-@Namespace("/Broker")
+@Namespace("/dispute")
 @ResultPath(value = "/")
 public class BrokerAction extends ActionSupport {
 
@@ -30,7 +30,7 @@ public class BrokerAction extends ActionSupport {
     private boolean broker;
     private boolean notABroker;
 
-    @Action(value = "broker_decision", results = { @Result(name = "success", location = "pages/search_violation.jsp") })
+    @Action(value = "broker_decision", results = { @Result(name = "success", location = "ticket/search_violation.jsp") })
     public String execute() throws Exception {
 
 	if (notABroker) {

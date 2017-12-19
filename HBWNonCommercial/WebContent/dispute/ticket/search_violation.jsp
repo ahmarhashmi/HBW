@@ -127,7 +127,7 @@
 (NOL). On the next page, you will be able to submit your defense and supporting evidence.</p>
 
 					<div class="form-group row ">
-						<s:form method="post" action="searchViolation" namespace="/Broker"
+						<s:form method="post" action="searchViolation" namespace="/dispute"
 							theme="simple" onsubmit="return validate();">
 							<div class="col-xs-3">
 								<s:textfield type="tel" id="violationNumber" autocorrect="off"

@@ -1,1 +1,1 @@
-<jsp:forward page="Broker/pages/broker_selection.jsp"></jsp:forward>
+<jsp:forward page="dispute/ticket/broker_selection.jsp"></jsp:forward>

@@ -109,7 +109,7 @@
 						below and you will be redirected to the commercial use page on the
 						Finance website.</p> -->
 					<h4>Select one:</h4>
-					<s:form method="post" action="broker_decision" namespace="/Broker"
+					<s:form method="post" action="broker_decision" namespace="/dispute"
 						theme="simple">
 						<div class="checkbox">
 							<label> <s:checkbox name="notABroker" id="notABroker"
