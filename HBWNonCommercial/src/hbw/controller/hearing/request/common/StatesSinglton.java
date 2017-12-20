@@ -12,10 +12,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-
 /**
  * @author Ahmar
  *
@@ -36,20 +32,18 @@ public class StatesSinglton {
 	return states;
     }
 
-    @SuppressWarnings("unchecked")
     private static List<String> populateStates() {
-	
-	
+
 	List<String> states = new ArrayList<String>();
 	states.add("New York");
 	states.add("New Jersey");
 	states.add("New Hampshire");
 	states.add("California");
 	states.add("Virgin Islands");
-	
-	if( Boolean.TRUE )
+
+	if (Boolean.TRUE)
 	    return states;
-	
+
 	String jsonResponse = "";
 	try {
 	    URL url = new URL("http://localhost:8080/violation/");
@@ -76,19 +70,9 @@ public class StatesSinglton {
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
 	}
-	
-	ObjectMapper parser = new ObjectMapper();
+
 	List<String> result = null;
-	try {
-	    result = parser.readValue(jsonResponse, List.class);
-	} catch (JsonParseException e) {
-	    e.printStackTrace();
-	} catch (JsonMappingException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
 	return result;
     }
-    
+
 }

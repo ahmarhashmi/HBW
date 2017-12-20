@@ -1,24 +1,5 @@
 "use strict";
 
-// function callMyAction() {
-// $.ajax({
-// type : "GET",
-// url : getContextPath()" + "/FileUploadServlet?delete="+file.name",
-// success : function(itr) {
-// var x = "<ol>";
-// $.each(itr.dataList, function() {
-// x += "<li>" + this + "</li>";
-// });
-// x += "</ol>";
-// $("#websparrow").html(x);
-// },
-// error : function(itr) {
-// alert("No values found..!!");
-// }
-// });
-// }
-var filesCount = 0;
-
 Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
 	acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
@@ -31,7 +12,6 @@ Dropzone.options.fileUploadForm = {
 	maxFiles : 100,
 
 	success : function(file, response) {
-		filesCount = this.files.length;
 		var imgName = response;
 		file.previewElement.classList.add("dz-success");
 		$('#affirm').attr("checked", false);
@@ -43,7 +23,6 @@ Dropzone.options.fileUploadForm = {
 	},
 	
 	init : function() {
-
 		this.on('maxfilesexceeded', function(file) {
 			this.removeFile(file);
 		});
@@ -52,7 +31,6 @@ Dropzone.options.fileUploadForm = {
 // await sleep(6000);
 // $('a.dz-remove').remove();
 // });
-		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
 			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
@@ -75,32 +53,31 @@ Dropzone.options.fileUploadForm = {
 			
 			file.previewElement.addEventListener("click", function() {
 				$("#dialog").innerHTML = file.previewElement;
-				$("#dialog").dialog(
-						{
-							width: 800,
-							height: 600,
-							closeOnEscape : true,
-							modal : true,
-							show : {
-								effect : "blind",
-								duration : 1000
-							},
-							hide : {
-								effect : "explode",
-								duration : 800
-							},
-							open : function(event, ui) {
-								$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name);
-							},
-							title : file.name,
-							buttons : [ {
-								text : "Ok",
-								icon : "ui-icon-heart",
-								click : function() {
-									$(this).dialog("close");
-								}
-							} ]
-						});
+				$("#dialog").dialog({
+					width: 800,
+					height: 600,
+					closeOnEscape : true,
+					modal : true,
+					show : {
+						effect : "blind",
+						duration : 1000
+					},
+					hide : {
+						effect : "explode",
+						duration : 800
+					},
+					open : function(event, ui) {
+						$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name);
+					},
+					title : file.name,
+					buttons : [ {
+						text : "Ok",
+						icon : "ui-icon-heart",
+						click : function() {
+							$(this).dialog("close");
+						}
+					} ]
+				});
 			});
 		});
 

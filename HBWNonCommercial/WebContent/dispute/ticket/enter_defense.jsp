@@ -110,6 +110,12 @@
 		} else {
 			$('#email2Msg').css("display", "none");
 		}
+		if($('#email1').val() != $('#email2').val()){
+			$('#emailMatchMsg').css("display", "block");
+			isValid = false;
+		} else{
+			$('#emailMatchMsg').css("display", "none");
+		}
 		if ($('#affirm').is(":visible") && !$('#affirm')[0].checked) {
 			$('#affirmMsg').css("color", "red");
 			isValid = false;
@@ -442,6 +448,7 @@
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
 									confirm your email.</span>
+								<span id="emailMatchMsg" style="color: red; display: none;">Email does not match.</span>
 							</div>
 
 

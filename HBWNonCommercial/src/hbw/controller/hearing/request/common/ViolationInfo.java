@@ -5,11 +5,8 @@ package hbw.controller.hearing.request.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.log4j.helpers.DateTimeDateFormat;
-
-import sun.util.calendar.ZoneInfo;
 
 /**
  * @author Ahmar
@@ -115,7 +112,7 @@ public class ViolationInfo {
      */
     public String getIssuedOn() {
 	if (issuedOn != null) {
-	    DateTimeDateFormat df = new DateTimeDateFormat(ZoneInfo.getDefault());
+	    SimpleDateFormat df = new SimpleDateFormat("mm/dd/yyyy");
 	    return df.format(issuedOn);
 	}
 	return "";

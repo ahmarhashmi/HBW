@@ -95,16 +95,15 @@
 						Your hearing request has been received. A confirmation email
 						containing the information you submitted will be sent to your
 						email address. Print and save a copy of the email or make a
-						screenshot of this page for your records.<br>
-						<br> An Administrative Law Judge’s decision will be sent to
-						the email address you supplied in about 75 days.<b> Please
-							make sure to add NYCServ@finance.nyc.gov to your address book</b> and
-						keep the email for your records.<br>
-						<br> Your violation number is:<b> <s:property
-								value="violationNumber" /></b><br>
-						<br> If you have any questions or need assistance, you may
-						call or visit your local <a href="Business Center">Business
-							Center</a> and provide your violation number.
+						screenshot of this page for your records.<br> <br> An
+						Administrative Law Judge’s decision will be sent to the email
+						address you supplied in about 75 days.<b> Please make sure to
+							add NYCServ@finance.nyc.gov to your address book</b> and keep the
+						email for your records.<br> <br> Your violation number
+						is:<b> <s:property value="violationNumber" /></b><br> <br>
+						If you have any questions or need assistance, you may call or
+						visit your local <a href="Business Center">Business Center</a> and
+						provide your violation number.
 					</p>
 
 					<h3>Hearing Request Summary</h3>
@@ -118,8 +117,7 @@
 						</thead>
 						<tr>
 							<td>Date and time of hearing request:</td>
-							<td><s:property value="requestDate" />
-								<!-- 09/18/2017 02:10PM --></td>
+							<td><s:property value="requestDate" /> <!-- 09/18/2017 02:10PM --></td>
 						</tr>
 						<tr>
 							<td>Name:</td>
@@ -175,8 +173,7 @@
 						<tr>
 							<td>
 								<p>Your statement as to why you believe the violation should
-									be dismissed.</p>
-								<br>
+									be dismissed.</p> <br>
 								<p>
 									<s:property value="defense" />
 								</p>
@@ -185,51 +182,29 @@
 					</table>
 					<table width="100%">
 						<tr>
-
 							<th>Uploaded Files</th>
-
 						</tr>
-						<br>
-
 						<tr>
-
 							<th>File Name</th>
-
-
 							<th>Page Count</th>
-
-
 							<th>File Size</th>
-
 						</tr>
-						<br>
-						<tr>
-							<td>03947156.jpg</td>
-							<td>1</td>
-							<td>500.00 KB</td>
-						</tr>
-						<br>
-						<tr>
-							<td>ansfgxnbfsxfvhaqw.jpg</td>
-							<td>1</td>
-							<td>250.00 KB</td>
-						</tr>
-						<br>
-						<tr>
-							<td>9073684.jpg</td>
-							<td>1</td>
-							<td>200.00 KB</td>
-						</tr>
+						<s:iterator value="files">
+							<tr>
+								<td><s:property value="fileName" /></td>
+								<td><s:property value="pageCount" /></td>
+								<td><s:property value="fileSize" /></td>
+							</tr>
+						</s:iterator>
 					</table>
 					<br>
 
 					<div>
-
 						<button class="btn btn-primary" onclick="window.print();">Print</button>
-						&nbsp;&nbsp;&nbsp; 
+						&nbsp;&nbsp;&nbsp;
 						<s:form method="post" action="home" namespace="/Broker"
-						theme="simple" id="mainForm">
-						<s:submit action="/home" value="Return to Home Page"></s:submit>
+							theme="simple" id="mainForm">
+							<s:submit action="/home" value="Return to Home Page"></s:submit>
 						</s:form>
 					</div>
 

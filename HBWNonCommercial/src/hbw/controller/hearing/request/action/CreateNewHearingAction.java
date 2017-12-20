@@ -2,11 +2,15 @@ package hbw.controller.hearing.request.action;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -16,7 +20,14 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.example.nycservmobileapp.Address;
+import org.example.nycservmobileapp.CreateNewHearingRequest;
+import org.example.nycservmobileapp.CreateNewHearingResult;
+import org.example.nycservmobileapp.NYCServMobileApp;
+import org.example.nycservmobileapp.Name;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfReader;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.util.logging.Logger;
@@ -24,8 +35,12 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
+import hbw.controller.hearing.request.common.HBWClient;
 import hbw.controller.hearing.request.common.StatesSinglton;
+import hbw.controller.hearing.request.common.UploadedFiles;
+import hbw.controller.hearing.request.common.ViolationInfo;
 import hbw.controller.hearing.request.common.ZipUtil;
 
 /**
@@ -36,13 +51,16 @@ import hbw.controller.hearing.request.common.ZipUtil;
 @ResultPath(value = "/")
 @Results({ @Result(name = "success", location = "dispute/ticket/verify_info.jsp"),
 	@Result(name = "input", location = "dispute/ticket/enter_defense.jsp"), })
-@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare")/*, @InterceptorRef("ajaxValidation")*/ })
+@InterceptorRefs({ @InterceptorRef("defaultStack"),
+	@InterceptorRef("prepare")/* , @InterceptorRef("ajaxValidation") */ })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
-    Logger LOGGER = Log4j2LoggerFactory.getLogger(CreateNewHearingAction.class);
+    private static Logger LOGGER = Log4j2LoggerFactory.getLogger(CreateNewHearingAction.class);
 
     private static final long serialVersionUID = -5864237156298942117L;
+
+    private ViolationInfo violationInfo;
 
     private String defense;
     private String firstName;
@@ -60,6 +78,8 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
     private String violationNumber;
 
+    private List<UploadedFiles> files;
+
     @Override
     public void prepare() throws Exception {
     }
@@ -69,6 +89,35 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     @Action(value = "/create_hearing")
     public String execute() {
+	HttpServletRequest request = ServletActionContext.getRequest();
+	HttpSession session = request.getSession();
+	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
+	files = new ArrayList<UploadedFiles>();
+	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
+	if (uploadedFiles.exists()) {
+	    UploadedFiles uploadedFile;
+	    for (File file : uploadedFiles.listFiles()) {
+		uploadedFile = new UploadedFiles();
+		uploadedFile.setFileName(file.getName());
+		uploadedFile.setFileSize(file.length()/1024);
+		uploadedFile.setPageCount(1);
+
+		String mimeType = new MimetypesFileTypeMap().getContentType(file);
+		if (mimeType.equals(Constants.PDF) || mimeType.equals("application/octet-stream")) {
+		    try {
+			Document document = new Document();
+			document.open();
+			PdfReader reader;
+			reader = new PdfReader(file.getPath());
+			uploadedFile.setPageCount(reader.getNumberOfPages());
+		    } catch (IOException e) {
+			e.printStackTrace();
+		    }
+		}
+		files.add(uploadedFile);
+	    }
+	}
+
 	LOGGER.info("Handling the create hearing request");
 	if (!certify) {
 	    addActionError("You must certify.");
@@ -80,6 +129,12 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    return INPUT;
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
+	try {
+	    createNewHearing();
+	} catch (MalformedURLException e) {
+	    addActionError(e.getLocalizedMessage());
+	    return INPUT;
+	}
 	return processHearingRequest();
     }
 
@@ -108,6 +163,40 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	}
 
 	return SUCCESS;
+    }
+
+    /**
+     * 
+     * @throws MalformedURLException
+     */
+    public void createNewHearing() throws MalformedURLException {
+	NYCServMobileApp port = HBWClient.getConnection();
+	LOGGER.debug("Invoking createNewHearing...");
+	CreateNewHearingRequest request = new CreateNewHearingRequest();
+	request.setCredentials(HBWClient.getCredentials());
+
+	/** address object */
+	Address address = new Address();
+	address.setAddressLine1(this.address);
+	address.setAddressLine2(this.address2);
+	address.setCity(city);
+	address.setStateProvince(state);
+	address.setZipCode(zip);
+	request.setAddress(address);
+
+	/** name object */
+	Name name = new Name();
+	name.setFirstName(firstName);
+	name.setMiddleName(middleName);
+	name.setLastName(lastName);
+	request.setName(name);
+
+	request.setDefense(defense);
+	request.setEmail(email1);
+	request.setViolationNumber(violationNumber);
+	request.setEvidenceToBeUploaded(!affirm);
+	CreateNewHearingResult response = port.createNewHearing(request);
+	LOGGER.debug("createNewHearing.result=" + response);
     }
 
     /**
@@ -345,6 +434,36 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     public void setViolationNumber(String violationNumber) {
 	this.violationNumber = violationNumber;
+    }
+
+    /**
+     * @return the violationInfo
+     */
+    public ViolationInfo getViolationInfo() {
+	return violationInfo;
+    }
+
+    /**
+     * @param violationInfo
+     *            the violationInfo to set
+     */
+    public void setViolationInfo(ViolationInfo violationInfo) {
+	this.violationInfo = violationInfo;
+    }
+
+    /**
+     * @return the files
+     */
+    public List<UploadedFiles> getFiles() {
+	return files;
+    }
+
+    /**
+     * @param files
+     *            the files to set
+     */
+    public void setFiles(List<UploadedFiles> files) {
+	this.files = files;
     }
 
 }
