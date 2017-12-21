@@ -5,6 +5,7 @@ package hbw.controller.hearing.request.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,6 +22,7 @@ public class ViolationInfo {
 
     private String violationNumber;
     private Date issuedOn;
+    private String issueTime;
     private String description;
     private String code;
     private String location;
@@ -31,6 +33,11 @@ public class ViolationInfo {
     private BigDecimal reduction;
     private BigDecimal paid;
     private BigDecimal balanceDue;
+
+    public String getAsOf() {
+	// Wednesday, Sep 6, 2017 03:15 PM
+	return DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG).format(new Date());
+    }
 
     /**
      * @return the vehiclePlate
@@ -112,8 +119,9 @@ public class ViolationInfo {
      */
     public String getIssuedOn() {
 	if (issuedOn != null) {
-	    SimpleDateFormat df = new SimpleDateFormat("mm/dd/yyyy");
-	    return df.format(issuedOn);
+	    SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+	    String date = df.format(issuedOn);
+	    return date + " " + issueTime;
 	}
 	return "";
     }
@@ -277,6 +285,21 @@ public class ViolationInfo {
      */
     public void setBalanceDue(BigDecimal balanceDue) {
 	this.balanceDue = balanceDue;
+    }
+
+    /**
+     * @return the issueTime
+     */
+    public String getIssueTime() {
+	return issueTime;
+    }
+
+    /**
+     * @param issueTime
+     *            the issueTime to set
+     */
+    public void setIssueTime(String issueTime) {
+	this.issueTime = issueTime;
     }
 
 }

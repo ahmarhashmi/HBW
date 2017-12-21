@@ -222,7 +222,8 @@
 								<thead>
 									<tr>
 										<th class="bg-primary" colspan="2">Violation Details <small>(as
-												of Wednesday, Sep 6, 2017 03:15 PM)</small>
+												of <s:property value="violationInfo.asOf" />)</small>
+												<!-- Wednesday, Sep 6, 2017 03:15 PM -->
 										</th>
 									</tr>
 								</thead>
