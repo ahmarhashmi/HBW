@@ -100,7 +100,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    for (File file : uploadedFiles.listFiles()) {
 		uploadedFile = new UploadedFiles();
 		uploadedFile.setFileName(file.getName());
-		uploadedFile.setFileSize(file.length()/1024);
+		uploadedFile.setFileSize(file.length() / 1024);
 		uploadedFile.setPageCount(1);
 
 		String mimeType = new MimetypesFileTypeMap().getContentType(file);
@@ -206,7 +206,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      * @return current date
      */
     public String getRequestDate() {
-	return DateFormat.getDateInstance().format(new Date());
+	return DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT).format(new Date());
     }
 
     /**

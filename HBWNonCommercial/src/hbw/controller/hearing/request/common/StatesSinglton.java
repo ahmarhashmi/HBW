@@ -3,12 +3,6 @@
  */
 package hbw.controller.hearing.request.common;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,44 +29,110 @@ public class StatesSinglton {
     private static List<String> populateStates() {
 
 	List<String> states = new ArrayList<String>();
-	states.add("New York");
-	states.add("New Jersey");
-	states.add("New Hampshire");
+	states.add("Newfoundland and Labrador");
+	states.add("Prince Edward Island");
+	states.add("Nova Scotia");
+	states.add("New Brunswick");
+	states.add("Quebec");
+	states.add("Ontario");
+	states.add("Manitoba");
+	states.add("Saskatchewan");
+	states.add("Alberta");
+	states.add("British Columbia");
+	states.add("Yukon");
+	states.add("Northwest Territories");
+	states.add("Nunavut");
+	states.add("Alabama");
+	states.add("Alaska");
+	states.add("Arizona");
+	states.add("Arkansas");
 	states.add("California");
+	states.add("Colorado");
+	states.add("Connecticut");
+	states.add("Delaware");
+	states.add("Florida");
+	states.add("Georgia");
+	states.add("Hawaii");
+	states.add("Idaho");
+	states.add("Illinois");
+	states.add("Indiana");
+	states.add("Iowa");
+	states.add("Kansas");
+	states.add("Kentucky");
+	states.add("Louisiana");
+	states.add("Maine");
+	states.add("Maryland");
+	states.add("Massachusetts");
+	states.add("Michigan");
+	states.add("Minnesota");
+	states.add("Mississippi");
+	states.add("Missouri");
+	states.add("Montana");
+	states.add("Nebraska");
+	states.add("Nevada");
+	states.add("New Hampshire");
+	states.add("New Jersey");
+	states.add("New Mexico");
+	states.add("New York");
+	states.add("North Carolina");
+	states.add("North Dakota");
+	states.add("Ohio");
+	states.add("Oklahoma");
+	states.add("Oregon");
+	states.add("Pennsylvania");
+	states.add("Rhode Island");
+	states.add("South Carolina");
+	states.add("South Dakota");
+	states.add("Tennessee");
+	states.add("Texas");
+	states.add("Utah");
+	states.add("Vermont");
+	states.add("Virginia");
+	states.add("Washington");
+	states.add("West Virginia");
+	states.add("Wisconsin");
+	states.add("Wyoming");
+	// Commonwealth/Territory:
+	states.add("American Samoa");
+	states.add("District of Columbia");
+	states.add("Federated States of Micronesia");
+	states.add("Guam");
+	states.add("Marshall Islands");
+	states.add("Northern Mariana Islands");
+	states.add("Palau");
+	states.add("Puerto Rico");
 	states.add("Virgin Islands");
 
-	if (Boolean.TRUE)
-	    return states;
+	// String jsonResponse = "";
+	// try {
+	// URL url = new URL("http://localhost:8080/violation/");
+	// HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	// conn.setRequestMethod("GET");
+	// conn.setRequestProperty("Accept", "application/json");
+	//
+	// if (conn.getResponseCode() != 200) {
+	// throw new RuntimeException("Failed : HTTP error code : " +
+	// conn.getResponseCode());
+	// }
+	//
+	// BufferedReader br = new BufferedReader(new
+	// InputStreamReader((conn.getInputStream())));
+	//
+	// String output;
+	// System.out.println("Output from Server .... \n");
+	// while ((output = br.readLine()) != null) {
+	// jsonResponse += output;
+	// }
+	//
+	// conn.disconnect();
+	//
+	// } catch (MalformedURLException e) {
+	// throw new RuntimeException(e);
+	// } catch (IOException e) {
+	// throw new RuntimeException(e);
+	// }
 
-	String jsonResponse = "";
-	try {
-	    URL url = new URL("http://localhost:8080/violation/");
-	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	    conn.setRequestMethod("GET");
-	    conn.setRequestProperty("Accept", "application/json");
-
-	    if (conn.getResponseCode() != 200) {
-		throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-	    }
-
-	    BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-
-	    String output;
-	    System.out.println("Output from Server .... \n");
-	    while ((output = br.readLine()) != null) {
-		jsonResponse += output;
-	    }
-
-	    conn.disconnect();
-
-	} catch (MalformedURLException e) {
-	    throw new RuntimeException(e);
-	} catch (IOException e) {
-	    throw new RuntimeException(e);
-	}
-
-	List<String> result = null;
-	return result;
+	return states;
     }
 
 }

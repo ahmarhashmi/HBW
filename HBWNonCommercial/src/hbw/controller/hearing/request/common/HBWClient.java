@@ -155,6 +155,7 @@ public final class HBWClient {
 	info.setCode(violation.getViolationCode());
 	info.setDescription(violation.getViolationDescription());
 	info.setIssuedOn(CommonUtil.convertGeorgeonDateToDate(violation.getIssueDate()));
+	info.setIssueTime(violation.getIssueTime());
 	Location location = violation.getViolationLocation();
 	if( location != null ) {
 	    info.setLocation(
