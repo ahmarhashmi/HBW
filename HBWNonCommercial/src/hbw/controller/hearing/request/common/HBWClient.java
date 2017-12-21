@@ -51,6 +51,8 @@ public final class HBWClient {
 	IsViolationInSystemRequest request = new IsViolationInSystemRequest();
 	request.setCredentials(getCredentials());
 	request.setViolationNumber(violationNumber);
+	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
+	
 	IsViolationInSystemResult response = port.isViolationInSystem(request);
 	LOGGER.info("isViolationInSystem.result= " + String.valueOf(response.isViolationInSystem()));
 
@@ -70,6 +72,8 @@ public final class HBWClient {
 	IsViolationEligibleForHearingRequest request = new IsViolationEligibleForHearingRequest();
 	request.setCredentials(getCredentials());
 	request.setViolationNumber(violationNumber);
+	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
+	
 	IsViolationEligibleForHearingResult response = port.isViolationEligibleForHearing(request);
 	LOGGER.debug("isViolationEligibleForHearing.result=" + response.isViolationEligibleForHearing());
 
@@ -90,8 +94,9 @@ public final class HBWClient {
 	GetViolationInfoRequest request = new GetViolationInfoRequest();
 	request.setCredentials(getCredentials());
 	request.setViolationNumber(violationNumber);
+	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
+	
 	GetViolationInfoResult response = port.getViolationInfo(request);
-
 	ParkingViolation violation = response.getViolation();
 	if (violation != null) {
 	    return parseToViolationInfo(violation);
@@ -111,11 +116,15 @@ public final class HBWClient {
 	GetViolationInfoForPlateRequest request = new GetViolationInfoForPlateRequest();
 	request.setCredentials(getCredentials());
 	request.setPlateNumber(violationNumber);
+	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
+	
 	GetViolationInfoForPlateResult response = port.getViolationInfoForPlate(request);
 	List<ParkingViolation> violations = response.getParkingViolations();
 
+	
 	// FIXME: Need to make sure how will we sort out which violation is the user
 	// going to contest for
+	/** DECIDED: We will not consider Vehicle Plate Number */
 	return parseToViolationInfo(violations.get(0));
     }
 

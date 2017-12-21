@@ -38,6 +38,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.Resource;
 import hbw.controller.hearing.request.common.StatesSinglton;
 import hbw.controller.hearing.request.common.UploadedFiles;
 import hbw.controller.hearing.request.common.ViolationInfo;
@@ -174,6 +175,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	LOGGER.debug("Invoking createNewHearing...");
 	CreateNewHearingRequest request = new CreateNewHearingRequest();
 	request.setCredentials(HBWClient.getCredentials());
+	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
 
 	/** address object */
 	Address address = new Address();
