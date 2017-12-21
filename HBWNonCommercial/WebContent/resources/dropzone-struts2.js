@@ -786,7 +786,9 @@ var Dropzone = function (_Emitter) {
                 });
               } else {
                 if (_this2.options.dictRemoveFileConfirmation) {
-                  return Dropzone.confirm("Remove "+file.name+"?", function () {
+        			file.previewElement.classList.add("dz-delete-cofirmation"); 
+           			return null;
+                  return Dropzone.confirm("Delete "+file.name+"?", function () {
                     return _this2.removeFile(file);
                   });
                 } else {
@@ -3035,12 +3037,29 @@ var camelize = function camelize(str) {
 };
 
 // Creates an element from string
-Dropzone.createElement = function (string) {
-  var div = document.createElement("div");
-  div.innerHTML = string;
-  return div.childNodes[0];
-};
+//Dropzone.createElement = function (string) {
+//  var div = document.createElement("div");
+//  div.innerHTML = string;
+//  return div.childNodes[0];
+//};
+Dropzone.createElement = function(string) {
+ 
+ //alert("Hi ---  " + string);
+ 
+    var div;
+    div = document.createElement("div");
+    div.innerHTML = string;
+    var elementNode = div.childNodes[0];
 
+    // Handle creating a `tr` element
+    if (elementNode.nodeType != Node.ELEMENT_NODE) {
+      var tbody = document.createElement('tbody');
+      tbody.innerHTML = string;
+      elementNode = tbody.childNodes[0];
+    }
+
+    return elementNode;
+  };
 // Tests if given element is inside (or simply is) the container
 Dropzone.elementInside = function (element, container) {
   if (element === container) {

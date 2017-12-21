@@ -19,7 +19,8 @@ public enum Resource {
     MAX_TOTAL_SIZE_OF_EVIDENCE,
     WSDL_URI,
     USER_ID,
-    PASSWORD,
+    PASSWORD, 
+    WS_CHANNEL,
     
 
     ;
