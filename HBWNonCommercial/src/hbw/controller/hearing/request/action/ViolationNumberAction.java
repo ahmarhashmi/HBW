@@ -70,7 +70,8 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		violationInfo = HBWClient.getViolationInfoByPlateNubmer(violationNumber);
 	    }
 	} catch (Exception e) {
-	    addActionError(e.getLocalizedMessage());
+	    addActionError(
+		    "We are having trouble connecting to your system. We are aware of the issue and actively working on it. Please try again later.");
 	    return INPUT;
 	}
 

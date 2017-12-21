@@ -23,12 +23,16 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
 
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/common.js"></script>
+
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
 </head>
 <body>
 	<div class="topbar">
@@ -102,7 +106,7 @@
 						email for your records.<br> <br> Your violation number
 						is:<b> <s:property value="violationNumber" /></b><br> <br>
 						If you have any questions or need assistance, you may call or
-						visit your local <a href="Business Center">Business Center</a> and
+						visit your local <a href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Business Center</a> and
 						provide your violation number.
 					</p>
 
@@ -180,32 +184,32 @@
 							</td>
 						</tr>
 					</table>
-					<table width="100%">
-						<tr>
-							<th>Uploaded Files</th>
-						</tr>
-						<tr>
-							<th>File Name</th>
-							<th>Page Count</th>
-							<th>File Size</th>
-						</tr>
-						<s:iterator value="files">
+					<s:if test="%{!affirm}">
+						<table width="100%">
 							<tr>
-								<td><s:property value="fileName" /></td>
-								<td align="center"><s:property value="pageCount" /></td>
-								<td align="center"><s:property value="fileSize" />&nbsp;KB</td>
+								<th>Uploaded Files</th>
 							</tr>
-						</s:iterator>
-					</table>
+
+							<tr>
+								<th>File Name</th>
+								<th>Page Count</th>
+								<th>File Size</th>
+							</tr>
+							<s:iterator value="files">
+								<tr>
+									<td><s:property value="fileName" /></td>
+									<td align="center"><s:property value="pageCount" /></td>
+									<td align="center"><s:property value="fileSize" />&nbsp;KB</td>
+								</tr>
+							</s:iterator>
+						</table>
+					</s:if>
 					<br>
 
 					<div>
 						<button class="btn btn-primary" onclick="window.print();">Print</button>
-						&nbsp;&nbsp;&nbsp;
-						<s:form method="post" action="home" namespace="/Broker"
-							theme="simple" id="mainForm">
-							<s:submit action="/home" value="Return to Home Page"></s:submit>
-						</s:form>
+						&nbsp;&nbsp;&nbsp; <input type="button"
+							value="Return to Home Page" onclick="startAfresh();">
 					</div>
 
 					<h3>Download the NYC Parking Ticket Pay or Dispute App</h3>

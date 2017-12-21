@@ -14,11 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpStatus;
 
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
@@ -62,6 +60,9 @@ public class FileUploadServlet extends HttpServlet {
 		response.getWriter().append("FileDeleted: ").append(deleteFile);
 	    }
 	}
+	if (request.getParameter("reset") != null) {
+	    request.getSession().invalidate();
+	}
 
     }
 
@@ -84,7 +85,6 @@ public class FileUploadServlet extends HttpServlet {
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 	PrintWriter writer = response.getWriter();
 
-	LOGGER.info(new File(request.getServletContext().getRealPath("/") + "images/").toString());
 	try {
 	    List<FileItem> items = uploadHandler.parseRequest(request);
 
@@ -100,27 +100,31 @@ public class FileUploadServlet extends HttpServlet {
 		    }
 		    File file = new File(evidencePath, item.getName());
 		    if (file.length() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-//			throw new IOException(
-//				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
 			writer.write("File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
-			response.setStatus(HttpStatus.SC_PRECONDITION_FAILED);
+			response.setStatus(500);
+			return;
 		    }
-		    if( file.exists() ) {
-//			throw new IOException("File with the same name already exists/uploaded.");
+		    if (file.exists()) {
 			writer.write("File with the same name already exists/uploaded.");
-			response.setStatus(HttpStatus.SC_PRECONDITION_FAILED);
+			response.setStatus(500);
+			return;
 		    }
+		    
 		    item.write(file);
+		    if (getServletContext().getMimeType(file.getName()).contains("gif") && FileUtil.isAnimatedGIF(file)) {
+			file.delete();
+			writer.write("Animated giffs are not allowed to upload");
+			response.setStatus(500);
+			return;
+		    }
 
 		    LOGGER.info(file.getPath() + "{} File uploaded SUCCESSFULLY", file.getPath());
 		}
 	    }
-	} catch (FileUploadException e) {
-	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
-	    throw new IOException(e);
 	} catch (Exception e) {
 	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
-	    throw new IOException(e);
+	    e.printStackTrace();
+	    writer.write(e.getLocalizedMessage());
 	} finally {
 	    writer.close();
 	}
