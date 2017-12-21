@@ -192,8 +192,8 @@
 						<s:iterator value="files">
 							<tr>
 								<td><s:property value="fileName" /></td>
-								<td><s:property value="pageCount" /></td>
-								<td><s:property value="fileSize" /></td>
+								<td align="center"><s:property value="pageCount" /></td>
+								<td align="center"><s:property value="fileSize" />&nbsp;KB</td>
 							</tr>
 						</s:iterator>
 					</table>

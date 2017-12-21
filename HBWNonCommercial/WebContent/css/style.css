@@ -249,10 +249,29 @@ img#image[src=""] {
 ul li {
     font-size: 16px;
 }
-@media(max-width:767px){
-	.topbar {}
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+    background: #959595;
+    border-color: #959595;
+    opacity:1;
+}
+.btn-primary {
+    background-color: #00529b;
+    border-color: #00529b;
+}
+a.btn.btn-link {
+    color: #3d3d3d;
+}
+input#continueButton {
+    font-size: 16px;
+}
 
-.topbar .pull-left {}
+
+/*mobile site updates*/
+@media(max-width:767px){
+input#continueButton {
+    width: 100%;
+}
+
 
 .topbar ul li {
     border: 0 none transparent;
