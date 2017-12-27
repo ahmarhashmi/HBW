@@ -20,47 +20,8 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
 
-<script type="text/javascript">
-	function enableDisableSearchButton(obj) {
-		var val = obj.value.trim();
-		if (val.length >= 10) {
-			document.getElementById('searchBtn').disabled = false;
-		}
-		if (obj.value.length < 10) {
-			document.getElementById('searchBtn').disabled = true;
-		}
-	}
-
-	function validate() {
-		var violation = document.getElementById("violationNumber");
-		var val = violation.value.trim();
-		if (val.length < 10) {
-			document.getElementById("errorMessage").innerHTML = "Violation Number cannot be empty or less than 10 characters.";
-			return false;
-		}
-		if (val.length >= 10) {
-			var isValid = "";
-			if (val.length == 10) {
-				isValid = /^\d+$/.test(val);
-				if (!isValid) {
-					violation.focus(true);
-					document.getElementById("errorMessage").innerHTML = "A 10-digit Violation Number can only contain numbers.";
-					document.getElementById("errorDiv").style.display = "block";
-					return false;
-				}
-			} else {
-				isValid = /^(\d{9}-)?\d{1}$/.test(val);
-				if (!isValid) {
-					violation.focus(true);
-					document.getElementById("errorMessage").innerHTML = "An 11-digit Violation Number can only contain numbers with a hyphen before last number.";
-					document.getElementById("errorDiv").style.display = "block";
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-</script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/common.js"></script>
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -200,10 +161,10 @@
 						appears on your ticket or notice of liability (NOL).</p>
 					<p>View an example:</p>
 					<ul>
-						<li><a href="">Parking Ticket</a></li>
-						<li><a href="">Red Light Violation (NOL)</a></li>
-						<li><a href="">Bus Lane Camera Violation (NOL)</a></li>
-						<li><a href="">Speed Camera Violation (NOL)</a></li>
+						<li><a href="javascript:openTicketPopUp()">Parking Ticket</a></li>
+						<li><a href="javascript:openRedlightTicketPopup()">Red Light Violation (NOL)</a></li>
+						<li><a href="javascript:openBusLaneCameraViolationPopup()">Bus Lane Camera Violation (NOL)</a></li>
+						<li><a href="javascript:openSpeedCameraViolationPopup()">Speed Camera Violation (NOL)</a></li>
 					</ul>
 					<hr>
 					<h3>Download the NYC Parking Ticket Pay or Dispute App</h3>

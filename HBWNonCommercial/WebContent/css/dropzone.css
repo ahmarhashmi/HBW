@@ -510,7 +510,7 @@
     padding: 20px 10px !important;
 }
 form.dz-started {
-    display: table;
+    display: block;
     background: none;
     border: 0 none transparent;
     width: 100%;
@@ -662,10 +662,32 @@ input.cancelbutton {
     display: none !important;
 }
 .captionfiledel {
+    width: 75%;
     white-space: nowrap;
-    max-width: 75%;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.dropzone .dz-preview.dz-processing.dz-complete.dz-image-preview .dz-filename {
+    width: 75%;
+    text-overflow: ellipsis;
+    overflow: hidden !important;
+    white-space: nowrap;
+    display: block;
+    text-align: left;
+}
+
+.dz-preview {
+    max-width: 100%;
+    display: block !important;
+    overflow: hidden;
+}
+
+.dropzone .dz-preview.dz-success .dz-details,
+.dropzone .dz-preview.dz-error .dz-details {
+    max-width: 100% !important;
+    overflow: hidden;
+    display: block;
 }
 /*mobile site updates*/
 @media(max-width:767px){
@@ -713,6 +735,9 @@ form.dropzone.dz-started:after {
 form.dropzone.dz-started {
     border-bottom: 2px solid #ccc;
     padding-bottom: 20px;
+    width: 100%;
+    max-width: 100%;
+    display: block;
 }
 form.dropzone {
     border: 0 none transparent;

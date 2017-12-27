@@ -475,7 +475,7 @@
 							scheduled.</p>
 						<div class="form-group">
 							<s:submit value="Submit Request" class="btn btn-primary " />
-							<a class="btn btn-link " href="#" onclick="location.reload();">Cancel
+							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>
 

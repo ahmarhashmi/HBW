@@ -3,7 +3,7 @@
 var NOACTION = false;
 Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
-	acceptedFiles : "image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
+	acceptedFiles : "image/gif,image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
 	addRemoveLinks : true,
 	dictRemoveFileConfirmation: true,
 	autoProcessQueue : true,
@@ -140,5 +140,17 @@ function sleep(ms) {
 
 function getContextPath(){
 	return window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+}
+
+function cancelRequest(){
+	if(confirm("You will lose any information and files entered into this form.")){
+		$(window).unbind('beforeunload');
+		startAfresh();		
+	}
+}
+
+function startAfresh(){
+	$.get(getContextPath() + "/FileUploadServlet?reset=true", function(data) {});
+	window.location='ticket/broker_selection.jsp';
 }
 
