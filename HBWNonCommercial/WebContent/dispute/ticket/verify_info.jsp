@@ -22,10 +22,29 @@
 	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
-
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/header.css">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/common.js"></script>
+<script>
+$(document).ready(function(){
+    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
+      $('.goog-te-menu-value span:first').html('Translate');
+      $('.goog-te-menu-frame.skiptranslate').load(function(){
+        setTimeout(function(){
+          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
+        }, 100);
+      });
+    });
+  });
+</script>
+<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script>
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -35,6 +54,8 @@
 
 </head>
 <body>
+<jsp:include page="header.jsp"></jsp:include>
+<%--
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -88,6 +109,8 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
+
+	 --%>
 	<div class="content-holder">
 
 		<div class="container">
@@ -206,9 +229,9 @@
 					</s:if>
 					<br>
 
-					<div>
+					<div class="final_stage">
 						<button class="btn btn-primary" onclick="window.print();">Print</button>
-						&nbsp;&nbsp;&nbsp; <input type="button"
+						&nbsp;&nbsp;&nbsp; <input class="btn btn-link" type="button"
 							value="Return to Home Page" onclick="startAfresh();">
 					</div>
 
@@ -240,6 +263,8 @@
 		</div>
 
 	</div>
+	<jsp:include page="footer.jsp"></jsp:include>
+	<%--
 	<footer>
 		<div class="votensubscripbeholder">
 			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
@@ -272,7 +297,8 @@
 	</footer>
 
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script
+	 --%>
+	 <script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 

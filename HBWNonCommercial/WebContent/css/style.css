@@ -8,7 +8,9 @@ ul.topmenu {
     margin: 0;
     list-style: none;
 }
-
+.container {
+    width: 100%;
+}
 .topbar {
     background: #000;
     line-height: 0;
@@ -264,7 +266,16 @@ a.btn.btn-link {
 input#continueButton {
     font-size: 16px;
 }
+.final_stage .btn {
+    padding: 8px 60px;
+    font-size: 16px;
+}
 
+.final_stage input.btn.btn-link {
+    color: #333;
+    font-weight: 900;
+    padding: 8px;
+}
 
 /*mobile site updates*/
 @media(max-width:767px){
