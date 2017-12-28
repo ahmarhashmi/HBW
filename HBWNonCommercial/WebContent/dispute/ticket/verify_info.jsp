@@ -229,9 +229,9 @@ function googleTranslateElementInit() {
 					</s:if>
 					<br>
 
-					<div>
+					<div class="final_stage">
 						<button class="btn btn-primary" onclick="window.print();">Print</button>
-						&nbsp;&nbsp;&nbsp; <input type="button"
+						&nbsp;&nbsp;&nbsp; <input class="btn btn-link" type="button"
 							value="Return to Home Page" onclick="startAfresh();">
 					</div>
 
