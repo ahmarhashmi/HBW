@@ -25,7 +25,25 @@
 		}
 		
 	}
-</script>
+	
+	  $(document).ready(function(){
+	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
+	      $('.goog-te-menu-value span:first').html('Translate');
+	      $('.goog-te-menu-frame.skiptranslate').load(function(){
+	        setTimeout(function(){
+	          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
+	        }, 100);
+	      });
+	    });
+	  });
+	</script>
+	<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+	<script type="text/javascript">
+	function googleTranslateElementInit() {
+	  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+	}
+	</script>
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
@@ -36,6 +54,8 @@
 	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/header.css">
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -46,7 +66,7 @@
     
 </head>
 <body onload="document.getElementById('continueButton').disabled = true;">
-	<div class="topbar">
+	<%-- <div class="topbar">
 		<div class="container">
 			<div class="pull-left">
 				<ul class="topmenu">
@@ -87,7 +107,8 @@
 			</div>
 		</div>
 		<div class="clearfix"></div>
-	</div>
+	</div> --%>
+	<jsp:include page="header.jsp"></jsp:include>
 	<div class="content-holder">
 
 		<div class="container">
@@ -139,7 +160,9 @@
 		</div>
 
 	</div>
-	<footer>
+	
+	<jsp:include page="footer.jsp"></jsp:include>
+	<%-- <footer>
 		<div class="votensubscripbeholder">
 			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
 				Register to Vote </a> <a class="buttonssubcriptnvote"><i
@@ -168,7 +191,7 @@
 				</div>
 			</div>
 		</div>
-	</footer>
+	</footer> --%>
 
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script

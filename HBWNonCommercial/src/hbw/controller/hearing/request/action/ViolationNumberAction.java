@@ -56,6 +56,8 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
      */
     @Action(value = "searchViolation")
     public String execute() {
+    	if(Boolean.TRUE)
+    	return SUCCESS;
 	try {
 	    if (!HBWClient.isViolationInSystem(violationNumber)) {
 		addActionError("Violation does not exist in the system.");

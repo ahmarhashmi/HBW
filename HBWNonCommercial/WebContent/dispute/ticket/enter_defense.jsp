@@ -35,7 +35,8 @@
 
 <link rel="stylesheet"
 	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/header.css">
 <%-- <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
 <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css"> --%>
 
@@ -133,9 +134,44 @@
 		return "";
 	});
 </script>
+<script type="text/javascript">
+	function toggleCheckBox(obj) {
 
+		if (obj.id == "broker" && obj.checked == true ) {
+			document.getElementById("notABroker").checked = false;
+			document.getElementById("continueButton").disabled = false;
+		} else if (obj.id == "notABroker" && obj.checked == true ){
+			document.getElementById("broker").checked = false;
+			document.getElementById("continueButton").disabled = false;
+		}
+		
+		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
+			document.getElementById("continueButton").disabled = true;
+		}
+		
+	}
+	
+	  $(document).ready(function(){
+	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
+	      $('.goog-te-menu-value span:first').html('Translate');
+	      $('.goog-te-menu-frame.skiptranslate').load(function(){
+	        setTimeout(function(){
+	          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
+	        }, 100);
+	      });
+	    });
+	  });
+	</script>
+	<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+	<script type="text/javascript">
+	function googleTranslateElementInit() {
+	  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+	}
+	</script>
 </head>
 <body onload="setViolationNumber();">
+	<%--
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -178,6 +214,9 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
+	
+	--%>
+	<jsp:include page="header.jsp"></jsp:include>
 	<div class="content-holder">
 
 		<div class="container">
@@ -288,8 +327,7 @@
 						</div>
 					</div>
 
-					<p>If you need a copy of a Notice of Liability, you need to
-						contact us; NOL copies are not available online.</p>
+					<div class="gap"></div>
 					<hr>
 					<h4>Enter Defense</h4>
 					<p>Explain why you believe the violation should be dismissed.</p>
@@ -485,7 +523,8 @@
 		</div>
 
 	</div>
-	<footer>
+	<jsp:include page="footer.jsp"></jsp:include>
+	<%-- <footer>
 		<div class="votensubscripbeholder">
 			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
 				Register to Vote </a> <a class="buttonssubcriptnvote"><i
@@ -510,7 +549,7 @@
 				</div>
 			</div>
 		</div>
-	</footer>
+	</footer> --%>
 
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 
