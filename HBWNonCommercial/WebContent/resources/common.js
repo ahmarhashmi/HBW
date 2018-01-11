@@ -57,22 +57,22 @@ function validate() {
 	return true;
 }
 
-function openTicketPopUp()
-{
-	openPopUpWindow('../sample/violationSample.html','TicketPopUp','720','720','no','yes','no','yes');
+function openTicketPopUp() {
+	openPopUpWindow('../sample/violationSample.html', 'TicketPopUp', '720',
+			'720', 'no', 'yes', 'no', 'yes');
 }
 
-function openRedlightTicketPopup()
-{
-	openPopUpWindow('../sample/redLightViolationSample.html','RedLightTicketPopUp','700','840','no','yes','no','no');
+function openRedlightTicketPopup() {
+	openPopUpWindow('../sample/redLightViolationSample.html',
+			'RedLightTicketPopUp', '700', '840', 'no', 'yes', 'no', 'no');
 }
 
-function openBusLaneCameraViolationPopup()
-{
-	openPopUpWindow('../sample/busLaneCameraViolationSample.html','ViolationPopUp','700','640','no','no','no','no');
+function openBusLaneCameraViolationPopup() {
+	openPopUpWindow('../sample/busLaneCameraViolationSample.html',
+			'ViolationPopUp', '700', '640', 'no', 'no', 'no', 'no');
 }
 
-function openSpeedCameraViolationPopup()
-{
-	openPopUpWindow('../sample/speedCameraViolationSample.html','SpeedCameraViolationPopUp','700','840','no','no','no','no');
+function openSpeedCameraViolationPopup() {
+	openPopUpWindow('../sample/speedCameraViolationSample.html',
+			'SpeedCameraViolationPopUp', '700', '840', 'no', 'no', 'no', 'no');
 }

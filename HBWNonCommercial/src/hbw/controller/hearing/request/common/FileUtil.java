@@ -1,7 +1,10 @@
 package hbw.controller.hearing.request.common;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -16,6 +19,9 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 
 /**
  * @author Ahmar Nadeem
+ * 
+ *         A utility class for handling files like to check animated gif or not,
+ *         display/store an image etc.
  * 
  */
 public final class FileUtil {
@@ -84,5 +90,32 @@ public final class FileUtil {
 	}
 
 	return evidencePath;
+    }
+
+    /**
+     * 
+     * @param dirName
+     * @param nameZipFile
+     * @throws IOException
+     */
+    public static void zipDirectory(String dirName, String nameZipFile) throws IOException {
+	if (new File(dirName).listFiles().length <= 1) {
+	    return;
+	}
+
+	File[] filesInFolder = new File(dirName).listFiles();
+	ZipOutputStream zip = null;
+	FileOutputStream fW = null;
+	fW = new FileOutputStream(nameZipFile);
+	zip = new ZipOutputStream(fW);
+
+	for (File file : filesInFolder) {
+	    if (file.getName().contains(".zip")) {
+		continue;
+	    }
+	    zip.putNextEntry(new ZipEntry(file.getName()));
+	}
+	zip.close();
+	fW.close();
     }
 }

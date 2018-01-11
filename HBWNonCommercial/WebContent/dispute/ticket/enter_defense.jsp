@@ -54,171 +54,151 @@
 
 	}
 
-	$(document).submit(function(event) {
-		var isValid = true;
-		// perform validations
-		if (!$('#certify')[0].checked) {
-			$('#notCertified').css("color", "red");
-			isValid = false;
-		} else {
-			$('#notCertified').css("color", "black");
-		}
-		if (!$('#firstName').val()) {
-			$('#firstNameMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#firstNameMsg').css("display", "none");
-		}
-		if (!$('#lastName').val()) {
-			$('#lastNameMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#lastNameMsg').css("display", "none");
-		}
-		if (!$('#address').val()) {
-			$('#addressMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#addressMsg').css("display", "none");
-		}
-		if (!$('#city').val()) {
-			$('#cityMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#cityMsg').css("display", "none");
-		}
-		if ($('#state').val() == 1) {
-			$('#stateMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#stateMsg').css("display", "none");
-		}
-		if (!$('#zip').val()) {
-			$('#zipMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#zipMsg').css("display", "none");
-		}
-		if (!$('#email1').val()) {
-			$('#email1Msg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#email1Msg').css("display", "none");
-		}
-		if (!$('#email2').val()) {
-			$('#email2Msg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#email2Msg').css("display", "none");
-		}
-		if($('#email1').val() != $('#email2').val()){
-			$('#emailMatchMsg').css("display", "block");
-			isValid = false;
-		} else{
-			$('#emailMatchMsg').css("display", "none");
-		}
-		if ($('#affirm').is(":visible") && !$('#affirm')[0].checked) {
-			$('#affirmMsg').css("color", "red");
-			isValid = false;
-		} else {
-			$('#affirmMsg').css("color", "black");
-		}
+	$(document)
+			.submit(
+					function(event) {
+						$("#loadingDiv").show();
+						var isValid = true;
+						// perform validations
+						if (!$('#certify')[0].checked) {
+							$('#notCertified').css("color", "red");
+							isValid = false;
+						} else {
+							$('#notCertified').css("color", "black");
+						}
+						if (!$('#firstName').val()) {
+							$('#firstNameMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#firstNameMsg').css("display", "none");
+						}
+						if (!$('#lastName').val()) {
+							$('#lastNameMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#lastNameMsg').css("display", "none");
+						}
+						if (!$('#address').val()) {
+							$('#addressMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#addressMsg').css("display", "none");
+						}
+						if (!$('#city').val()) {
+							$('#cityMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#cityMsg').css("display", "none");
+						}
+						if ($('#state').val() == 1) {
+							$('#stateMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#stateMsg').css("display", "none");
+						}
+						if (!$('#zip').val()) {
+							$('#zipMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#zipMsg').css("display", "none");
+						}
+						if (!$('#email1').val()) {
+							$('#email1Msg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#email1Msg').css("display", "none");
+						}
+						if (!$('#email2').val()) {
+							$('#email2Msg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#email2Msg').css("display", "none");
+						}
+						if ($('#email1').val() != $('#email2').val()) {
+							$('#emailMatchMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#emailMatchMsg').css("display", "none");
+						}
+						if ($('#affirm').is(":visible")
+								&& !$('#affirm')[0].checked) {
+							$('#affirmMsg').css("color", "red");
+							isValid = false;
+						} else {
+							$('#affirmMsg').css("color", "black");
+						}
 
-		if (!isValid) {
-			return false;
-		}
-		$(window).unbind('beforeunload');
-	});
+						if (!isValid) {
+							return false;
+						}
+						/** Checking virus scan after all the validations are successful so that 
+						 * user has not to wait for virus scan on every submit
+						 */
+						if (!$('#affirm').is(":visible")) {
+							
+							var infectedFiles = isAllUploadedFilesClean();
+							if (infectedFiles.length > 0) {
+								if (confirm("("
+										+ infectedFiles.toString()
+										+ ") Files are infected and deleted from the server. Do you want to update more?")) {
+									//$("#loadingDiv").hide();
+									return false;
+								} else {
+									return true;
+								}
+							}
+						}
+						$(window).unbind('beforeunload');
+					});
 
 	$(window).on('beforeunload', function(event) {
 		return "";
 	});
 </script>
 <script type="text/javascript">
-	function toggleCheckBox(obj) {
+	$(document)
+			.ready(
+					function() {
+						$('#loadingDiv').hide();
+						$('#google_translate_element')
+								.bind(
+										'DOMNodeInserted',
+										function(event) {
+											$('.goog-te-menu-value span:first')
+													.html('Translate');
+											$(
+													'.goog-te-menu-frame.skiptranslate')
+													.load(
+															function() {
+																setTimeout(
+																		function() {
+																			$(
+																					'.goog-te-menu-frame.skiptranslate')
+																					.contents()
+																					.find(
+																							'.goog-te-menu2-item-selected .text')
+																					.html(
+																							'Translate');
+																		}, 100);
+															});
+										});
+					});
+</script>
+<script type="text/javascript"
+	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-		if (obj.id == "broker" && obj.checked == true ) {
-			document.getElementById("notABroker").checked = false;
-			document.getElementById("continueButton").disabled = false;
-		} else if (obj.id == "notABroker" && obj.checked == true ){
-			document.getElementById("broker").checked = false;
-			document.getElementById("continueButton").disabled = false;
-		}
-		
-		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
-			document.getElementById("continueButton").disabled = true;
-		}
-		
-	}
-	
-	  $(document).ready(function(){
-	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
-	      $('.goog-te-menu-value span:first').html('Translate');
-	      $('.goog-te-menu-frame.skiptranslate').load(function(){
-	        setTimeout(function(){
-	          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
-	        }, 100);
-	      });
-	    });
-	  });
-	</script>
-	<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-	<script type="text/javascript">
+<script type="text/javascript">
 	function googleTranslateElementInit() {
-	  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+		new google.translate.TranslateElement({
+			pageLanguage : 'en',
+			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
+		}, 'google_translate_element');
 	}
-	</script>
+</script>
 </head>
 <body onload="setViolationNumber();">
-	<%--
-	<div class="topbar">
-		<div class="container">
-			<div class="pull-left">
-				<ul class="topmenu">
-					<li><a><img
-							src="${pageContext.request.contextPath}/images/top-logo.png" /></a></li>
-					<li><a>Department of Finance</a></li>
-				</ul>
-			</div>
-			<div class="pull-right">
-				<ul class="topmenu">
-					<li><a>311</a></li>
-					<li><a>Search all NYC.giv websites</a></li>
-				</ul>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-	</div>
-	<div class="main-menu">
-		<div class="container">
-			<div class="logo">
-				<img src="${pageContext.request.contextPath}/images/main-logo.png" />
-			</div>
-			<div class="pull-right">
-				<ul class="nav nav-pills">
-					<li><a href="#">Italiano <i class="fa fa-caret-right"></i></a></li>
-					<li class="dropdown"><a href="#" data-toggle="dropdown"
-						class="dropdown-toggle">Translate<strong class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Action</a></li>
-						</ul></li>
-					<li class="dropdown"><a href="#" data-toggle="dropdown"
-						class="dropdown-toggle">Text Size<strong class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Action</a></li>
-						</ul></li>
-				</ul>
-				<div class="clearfix"></div>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-	</div>
-	
-	--%>
-	<jsp:include page="header.jsp"></jsp:include>
+	<jsp:include page="header.jsp" />
 	<div class="content-holder">
-
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3">
@@ -261,8 +241,8 @@
 								<thead>
 									<tr>
 										<th class="bg-primary" colspan="2">Violation Details <small>(as
-												of <s:property value="violationInfo.asOf" />)</small>
-												<!-- Wednesday, Sep 6, 2017 03:15 PM -->
+												of <s:property value="violationInfo.asOf" />)
+										</small> <!-- Wednesday, Sep 6, 2017 03:15 PM -->
 										</th>
 									</tr>
 								</thead>
@@ -356,31 +336,13 @@
 							href="#">in person</a> at a <a href="#">Department of Finance
 							Business Center.</a>
 					</p>
-					<!-- <p>If you have evidence you want the judge to consider, upload
-						it below. Evidence can include, but is not limited to: testimony,
-						photographs, repair bills, police reports, DMV or insurance
-						company records, and towing bills.</p>
-					<p>This is the only opportunity you will have to upload
-						evidence for your hearing. Please make sure that all the evidence
-						you wish to present has been uploaded before you submit your
-						request.</p>
-					<p>Acceptable file formats are: PDF, JPEG/JPG, TIFF, BMP, and
-						non-animated GIFs.</p>
-					<p>
-						The total limit for uploaded evidence is 20MB and the maximum page
-						count is 50 pages. If your evidence exceeds either the file size
-						or the page count, do not ask for a hearing online. Submit your
-						hearing request and evidence by <a href="">mail</a> or in <a
-							href="">person</a> at a Finance Business Center.
-					</p>-->
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
 					<br>
-
-
-					<p id="affirmCheckBoxPrompt">You must check the box below if you are not uploading
-						evidence. By checking this box, you agree to the following:</p>
+					<p id="affirmCheckBoxPrompt">You must check the box below if
+						you are not uploading evidence. By checking this box, you agree to
+						the following:</p>
 					<s:form method="post" action="create_hearing" namespace="/dispute"
 						theme="simple" id="mainForm">
 
@@ -486,8 +448,8 @@
 									label="Confirm Email Address" class="form-control"
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
-									confirm your email.</span>
-								<span id="emailMatchMsg" style="color: red; display: none;">Email does not match.</span>
+									confirm your email.</span> <span id="emailMatchMsg"
+									style="color: red; display: none;">Email does not match.</span>
 							</div>
 
 
@@ -512,7 +474,7 @@
 						<p>Once you submit your request, your hearing will be
 							scheduled.</p>
 						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary " />
+							<s:submit value="Submit Request" class="btn btn-primary" />
 							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>
@@ -523,33 +485,7 @@
 		</div>
 
 	</div>
-	<jsp:include page="footer.jsp"></jsp:include>
-	<%-- <footer>
-		<div class="votensubscripbeholder">
-			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
-				Register to Vote </a> <a class="buttonssubcriptnvote"><i
-				class="fa fa-paper-plane"></i> Subscribe </a>
-		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-3">
-					<a>Drectory of City Agencies</a> <a>Notify NYC</a> <a>NYC
-						Mobile Apps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>Contact NYC Government</a> <a>CityStore</a> <a>Maps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>City Employees</a> <a>Stay Connected</a> <a>Resident Toolkit</a>
-				</div>
-				<div class="col-sm-3">
-					City of New York. 2016 All Rights Reserved,<br />Nyc is a
-					TradeMark and service mark of the City<br />of New York<br /> <a
-						href="#">Privacy pollicy</a>. <a href="#">Terms of Use</a>.
-				</div>
-			</div>
-		</div>
-	</footer> --%>
+	<jsp:include page="footer.jsp" />
 
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 
@@ -561,9 +497,22 @@
 		
 	</script>
 
-	<!--  -->
-	<div id="dialog" title="Basic dialog" style="z-index: 10000">
+	<!-- Dialog box to show the uploaded content to the user -->
+	<div id="dialog" title="Basic dialog"
+		style="z-index: 10000; display: none">
 		<img id="image" src="">
+		<div style="width: 100%; height: 100%">
+			<iframe id="frame" width="100%" height="100%"></iframe>
+		</div>
+	</div>
+	<div>
+		<div id="loadingDiv">
+			<div class="backdrop"></div>
+			<div class="loading_image">
+				<img src="${pageContext.request.contextPath}/images/giphy.gif">
+				<p>Scanning uploaded documents...</p>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
