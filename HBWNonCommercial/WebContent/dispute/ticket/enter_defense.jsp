@@ -54,10 +54,23 @@
 
 	}
 
+	function showHideLoadingDiv(isShow) {
+		var loadingDiv = document.getElementById("loadingDiv");
+		alert(loadingDiv.style.display);
+		if (isShow) {
+			loadingDiv.style.display = "block";
+			//$('#mainForm').submit();
+		} else {
+			loadingDiv.style.display = "none";
+		}
+		alert(loadingDiv.style.display);
+	}
+
 	$(document)
 			.submit(
 					function(event) {
-						$("#loadingDiv").show();
+						alert("submit called");
+						//showHideLoadingDiv(true);
 						var isValid = true;
 						// perform validations
 						if (!$('#certify')[0].checked) {
@@ -129,19 +142,21 @@
 						}
 
 						if (!isValid) {
+							alert("hiding loader from inside submit");
+							showHideLoadingDiv(false);
 							return false;
 						}
 						/** Checking virus scan after all the validations are successful so that 
 						 * user has not to wait for virus scan on every submit
 						 */
 						if (!$('#affirm').is(":visible")) {
-							
-							var infectedFiles = isAllUploadedFilesClean();
+							loadingDiv.style.display = "block";
+							var infectedFiles/*  = isAllUploadedFilesClean() */;
 							if (infectedFiles.length > 0) {
 								if (confirm("("
 										+ infectedFiles.toString()
 										+ ") Files are infected and deleted from the server. Do you want to update more?")) {
-									//$("#loadingDiv").hide();
+									showHideLoadingDiv(false);
 									return false;
 								} else {
 									return true;
@@ -159,7 +174,11 @@
 	$(document)
 			.ready(
 					function() {
-						$('#loadingDiv').hide();
+						
+						$('#mainForm').on('click', function() { 
+							showHideLoadingDiv(true); 
+						});
+						//$('#loadingDiv').hide();
 						$('#google_translate_element')
 								.bind(
 										'DOMNodeInserted',
@@ -474,12 +493,12 @@
 						<p>Once you submit your request, your hearing will be
 							scheduled.</p>
 						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary" />
 							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>
 
 					</s:form>
+							<button class="btn btn-primary" onclick="showHideLoadingDiv(true); $('#mainForm').submit();" >Submit</button>
 				</div>
 			</div>
 		</div>
@@ -505,13 +524,11 @@
 			<iframe id="frame" width="100%" height="100%"></iframe>
 		</div>
 	</div>
-	<div>
-		<div id="loadingDiv">
-			<div class="backdrop"></div>
-			<div class="loading_image">
-				<img src="${pageContext.request.contextPath}/images/giphy.gif">
-				<p>Scanning uploaded documents...</p>
-			</div>
+	<div id="loadingDiv" style="display:none;">
+		<div class="backdrop"></div>
+		<div class="loading_image">
+			<img src="${pageContext.request.contextPath}/images/giphy.gif">
+			<p>Scanning uploaded documents...</p>
 		</div>
 	</div>
 </body>

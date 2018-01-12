@@ -271,9 +271,6 @@ function isAllUploadedFilesClean(){
 	virusFreeFiles = [];
 	
 	//$("#loadingDiv").show();
-	for (var i = 0; i < 10000; i++) {
-		
-	}
 	files.forEach( scanForVirus );
 	console.log("Total files count :"+files.length);
 	console.log("Infected files count :"+infectedFiles.length);
