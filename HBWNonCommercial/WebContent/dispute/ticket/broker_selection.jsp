@@ -10,47 +10,78 @@
 <title>Dispute a Ticket</title>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script type="text/javascript">
 	function toggleCheckBox(obj) {
 
-		if (obj.id == "broker" && obj.checked == true ) {
+		if (obj.id == "broker" && obj.checked == true) {
 			document.getElementById("notABroker").checked = false;
 			document.getElementById("continueButton").disabled = false;
-		} else if (obj.id == "notABroker" && obj.checked == true ){
+		} else if (obj.id == "notABroker" && obj.checked == true) {
 			document.getElementById("broker").checked = false;
 			document.getElementById("continueButton").disabled = false;
 		}
 		disableButton();
 	}
-	
-	function disableButton(){
-		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
+
+	function disableButton() {
+		if (document.getElementById("broker").checked == false
+				&& document.getElementById("notABroker").checked == false) {
 			document.getElementById("continueButton").disabled = true;
 		}
 	}
-	
-	  $(document).ready(function(){
-		  disableButton();
-	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
-	      $('.goog-te-menu-value span:first').html('Translate');
-	      $('.goog-te-menu-frame.skiptranslate').load(function(){
-	        setTimeout(function(){
-	          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
-	        }, 100);
-	      });
-	    });
-	  });
-	</script>
-	<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-	<script type="text/javascript">
+	$(document)
+			.ready(
+					function() {
+						disableButton();
+						$('#google_translate_element')
+								.bind(
+										'DOMNodeInserted',
+										function(event) {
+											$('.goog-te-menu-value span:first')
+													.html('Translate');
+											$(
+													'.goog-te-menu-frame.skiptranslate')
+													.load(
+															function() {
+																setTimeout(
+																		function() {
+																			$(
+																					'.goog-te-menu-frame.skiptranslate')
+																					.contents()
+																					.find(
+																							'.goog-te-menu2-item-selected .text')
+																					.html(
+																							'Translate');
+																		}, 100);
+															});
+										});
+					});
+</script>
+<script type="text/javascript"
+	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+$(document) .ready( function() { disableButton();
+$('#google_translate_element') .bind( 'DOMNodeInserted', function(event)
+{ $('.goog-te-menu-value span:first') .html('Translate'); $(
+'.goog-te-menu-frame.skiptranslate') .load( function() { setTimeout(
+function() { $( '.goog-te-menu-frame.skiptranslate') .contents() .find(
+'.goog-te-menu2-item-selected .text') .html( 'Translate'); }, 100); });
+}); });
+</script>
+<script type="text/javascript"
+	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="text/javascript">
 	function googleTranslateElementInit() {
-	  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+		new google.translate.TranslateElement({
+			pageLanguage : 'en',
+			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
+		}, 'google_translate_element');
 	}
-	</script>
+</script>
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
@@ -70,72 +101,17 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+
 </head>
-<body onload="document.getElementById('continueButton').disabled = true;">
-	<%-- <div class="topbar">
-		<div class="container">
-			<div class="pull-left">
-				<ul class="topmenu">
-					<li><a><img
-							src="${pageContext.request.contextPath}/images/top-logo.png" /></a></li>
-					<li><a>Department of Finance</a></li>
-				</ul>
-			</div>
-			<div class="pull-right">
-				<ul class="topmenu">
-					<li><a>311</a></li>
-					<li><a>Search all NYC.giv websites</a></li>
-				</ul>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-	</div>
-	<div class="main-menu">
-		<div class="container">
-			<div class="logo">
-				<img src="${pageContext.request.contextPath}/images/main-logo.png" />
-			</div>
-			<div class="pull-right">
-				<ul class="nav nav-pills">
-					<li><a href="#">Italiano <i class="fa fa-caret-right"></i></a></li>
-					<li class="dropdown"><a href="#" data-toggle="dropdown"
-						class="dropdown-toggle">Translate<strong class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Action</a></li>
-						</ul></li>
-					<li class="dropdown"><a href="#" data-toggle="dropdown"
-						class="dropdown-toggle">Text Size<strong class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Action</a></li>
-						</ul></li>
-				</ul>
-				<div class="clearfix"></div>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-	</div> --%>
-	<jsp:include page="header.jsp"></jsp:include>
+<body
+	onload="document.getElementById('continueButton').disabled = true;">
+	<jsp:include page="header.jsp" />
 	<div class="content-holder">
 
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3">
 					<h1>Dispute a Ticket</h1>
-					<!-- <h3>Are you a Broker?</h3>
-					<p>You may use this website if you are not a Broker requesting
-						a hearing for a commercially-plated vehicle. Select the "I AM NOT"
-						checkbox below and continue on to request a hearing.</p>
-					<h4>What is a Broker?</h4>
-					<p>A Broker means a person, who is not the owner or operator of
-						the summonsed vehicle, who requests a hearing three or more times
-						in a six month period, on behalf of another person or ﬁrm, and is
-						not an employee of that person or ﬁrm.</p>
-					<h4>Request a hearing for a commercially-plated vehicle</h4>
-					<p>Brokers should use one of the applications speciﬁcally set
-						up to accommodate commercial customers. Select the "I AM" checkbox
-						below and you will be redirected to the commercial use page on the
-						Finance website.</p> -->
 					<h4>Select one:</h4>
 					<s:form method="post" action="broker_decision" namespace="/dispute"
 						theme="simple">
@@ -144,8 +120,6 @@
 									onchange="toggleCheckBox(this);">
 								</s:checkbox> I own or operate the ticketed vehicle or am legally authorized
 								by the vehicle’s owner to dispute the ticket.
-
-
 							</label>
 						</div>
 						<div class="checkbox">
@@ -167,40 +141,8 @@
 		</div>
 
 	</div>
-	
-	<jsp:include page="footer.jsp"></jsp:include>
-	<%-- <footer>
-		<div class="votensubscripbeholder">
-			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
-				Register to Vote </a> <a class="buttonssubcriptnvote"><i
-				class="fa fa-paper-plane"></i> Subscripe </a>
-		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-3">
-					<a>Drectory of City Agencies</a> <a>Notify NYC</a> <a>NYC
-						Mobile Apps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>Contact NYC Government</a> <a>CityStore</a> <a>Maps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>City Employees</a> <a>Stay Connected</a> <a>Resident Toolkit</a>
-				</div>
-				<div class="col-sm-3">
-					<div class="footerlogoholder">
-						<img
-							src="${pageContext.request.contextPath}/images/footer-logo.png" />
-					</div>
-					City of New York. 2016 All Rights Reserved, Nyc is a TradeMark and
-					service mark of the City of New York<br /> <a href="#">Privacy
-						pollicy</a>. <a href="#">Terms of Use</a>.
-				</div>
-			</div>
-		</div>
-	</footer> --%>
 
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<jsp:include page="footer.jsp" />
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script

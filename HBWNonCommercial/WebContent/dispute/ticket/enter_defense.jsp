@@ -48,12 +48,6 @@
     <![endif]-->
 
 <script type="text/javascript">
-	function getFilesCount() {
-		return fileUploadForm.files.length;
-		//return fileUploadForm;
-
-	}
-
 	function showHideLoadingDiv(isShow) {
 		var loadingDiv = document.getElementById("loadingDiv");
 		alert(loadingDiv.style.display);
@@ -166,23 +160,6 @@
 	});
 </script>
 <script type="text/javascript">
-	function toggleCheckBox(obj) {
-
-		if (obj.id == "broker" && obj.checked == true) {
-			document.getElementById("notABroker").checked = false;
-			document.getElementById("continueButton").disabled = false;
-		} else if (obj.id == "notABroker" && obj.checked == true) {
-			document.getElementById("broker").checked = false;
-			document.getElementById("continueButton").disabled = false;
-		}
-
-		if (document.getElementById("broker").checked == false
-				&& document.getElementById("notABroker").checked == false) {
-			document.getElementById("continueButton").disabled = true;
-		}
-
-	}
-
 	$(document)
 			.ready(
 					function() {
@@ -223,52 +200,7 @@
 </script>
 </head>
 <body onload="setViolationNumber();">
-	<%--
-	<div class="topbar">
-		<div class="container">
-			<div class="pull-left">
-				<ul class="topmenu">
-					<li><a><img
-							src="${pageContext.request.contextPath}/images/top-logo.png" /></a></li>
-					<li><a>Department of Finance</a></li>
-				</ul>
-			</div>
-			<div class="pull-right">
-				<ul class="topmenu">
-					<li><a>311</a></li>
-					<li><a>Search all NYC.giv websites</a></li>
-				</ul>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-	</div>
-	<div class="main-menu">
-		<div class="container">
-			<div class="logo">
-				<img src="${pageContext.request.contextPath}/images/main-logo.png" />
-			</div>
-			<div class="pull-right">
-				<ul class="nav nav-pills">
-					<li><a href="#">Italiano <i class="fa fa-caret-right"></i></a></li>
-					<li class="dropdown"><a href="#" data-toggle="dropdown"
-						class="dropdown-toggle">Translate<strong class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Action</a></li>
-						</ul></li>
-					<li class="dropdown"><a href="#" data-toggle="dropdown"
-						class="dropdown-toggle">Text Size<strong class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a href="#">Action</a></li>
-						</ul></li>
-				</ul>
-				<div class="clearfix"></div>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-	</div>
-	
-	--%>
-	<jsp:include page="header.jsp"></jsp:include>
+	<jsp:include page="header.jsp" />
 	<div class="content-holder">
 
 		<div class="container">
@@ -408,23 +340,6 @@
 							href="#">in person</a> at a <a href="#">Department of Finance
 							Business Center.</a>
 					</p>
-					<!-- <p>If you have evidence you want the judge to consider, upload
-						it below. Evidence can include, but is not limited to: testimony,
-						photographs, repair bills, police reports, DMV or insurance
-						company records, and towing bills.</p>
-					<p>This is the only opportunity you will have to upload
-						evidence for your hearing. Please make sure that all the evidence
-						you wish to present has been uploaded before you submit your
-						request.</p>
-					<p>Acceptable file formats are: PDF, JPEG/JPG, TIFF, BMP, and
-						non-animated GIFs.</p>
-					<p>
-						The total limit for uploaded evidence is 20MB and the maximum page
-						count is 50 pages. If your evidence exceeds either the file size
-						or the page count, do not ask for a hearing online. Submit your
-						hearing request and evidence by <a href="">mail</a> or in <a
-							href="">person</a> at a Finance Business Center.
-					</p>-->
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
@@ -576,35 +491,7 @@
 		</div>
 
 	</div>
-	<jsp:include page="footer.jsp"></jsp:include>
-	<%-- <footer>
-		<div class="votensubscripbeholder">
-			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
-				Register to Vote </a> <a class="buttonssubcriptnvote"><i
-				class="fa fa-paper-plane"></i> Subscribe </a>
-		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-3">
-					<a>Drectory of City Agencies</a> <a>Notify NYC</a> <a>NYC
-						Mobile Apps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>Contact NYC Government</a> <a>CityStore</a> <a>Maps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>City Employees</a> <a>Stay Connected</a> <a>Resident Toolkit</a>
-				</div>
-				<div class="col-sm-3">
-					City of New York. 2016 All Rights Reserved,<br />Nyc is a
-					TradeMark and service mark of the City<br />of New York<br /> <a
-						href="#">Privacy pollicy</a>. <a href="#">Terms of Use</a>.
-				</div>
-			</div>
-		</div>
-	</footer> --%>
-
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<jsp:include page="footer.jsp" />
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script
