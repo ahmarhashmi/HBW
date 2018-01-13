@@ -284,6 +284,10 @@ input#continueButton {
 }
 
 
+.hidden-phone {
+    display: none;
+}
+
 .topbar ul li {
     border: 0 none transparent;
     font-size: 0;
@@ -304,35 +308,5 @@ input#continueButton {
 .logo {
     width: 50%;
 }
-}
-
-.backdrop {
- content: "";
- background: #000000d9;
- position: fixed;
- top: 0;
- left: 0;
- right: 0;
- bottom: 0;
- display: block;
- z-index: 1200;
-}
-
-.loading_image {
- position: fixed;
- z-index: 1500;
- background: #fff;
- display: block;
- width: 250px;
- color: #fff;
- height: 250px;
- left: 50%;
- margin-left: -125px;
- top: 50%;
- margin-top: -125px;
- color: #333;
- text-align: center;
- padding: 0 20px;
- border-radius: 10px;
 }
 

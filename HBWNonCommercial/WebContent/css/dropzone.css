@@ -514,6 +514,7 @@ form.dz-started {
     background: none;
     border: 0 none transparent;
     width: 100%;
+    HEIGHT: auto;
 }
 .dropzone .dz-preview.dz-error .dz-error-message {
     opacity: 1;
@@ -689,6 +690,25 @@ input.cancelbutton {
     overflow: hidden;
     display: block;
 }
+
+.expbutton {
+    position: absolute;
+    z-index: 500000000000000;
+    top: 17px;
+    right: 3px;
+    width: 25px;
+    height: 25px;
+    opacity: 0;
+}
+
+.expbutton {
+    display: none;
+}
+
+.dz-error .expbutton {
+    display: block;
+}
+
 /*mobile site updates*/
 @media(max-width:767px){
 .captionfiledel {
@@ -797,5 +817,9 @@ input.deletebutton {
 
 .captionfiledel {
     font-size: 14px;
+}
+.expbutton {
+    top: 7px;
+    right: 10px;
 }
 }
