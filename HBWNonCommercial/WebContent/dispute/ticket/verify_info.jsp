@@ -78,63 +78,7 @@
 
 </head>
 <body>
-	<jsp:include page="header.jsp"></jsp:include>
-	<%--
-	<div class="topbar">
-		<div class="container">
-			<div class="pull-left">
-				<ul class="topmenu">
-					<li><a><img
-							src="${pageContext.request.contextPath}/images/top-logo.png"></a></li>
-					<li><a>Department of Finance</a></li>
-				</ul>
-			</div>
-			<div class="pull-right">
-				<ul class="topmenu">
-					<li><a>311</a></li>
-					<li><a>Search all NYC.giv websites</a></li>
-				</ul>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-	</div>
-	<div class="main-menu">
-		<div class="container">
-			<div class="logo">
-				<img src="${pageContext.request.contextPath}/images/main-logo.png">
-			</div>
-			<div class="pull-right">
-				<ul class="nav nav-pills">
-					<li><a
-						href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#">Italiano
-							<i class="fa fa-caret-right"></i>
-					</a></li>
-					<li class="dropdown"><a
-						href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#"
-						data-toggle="dropdown" class="dropdown-toggle">Translate<strong
-							class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a
-								href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#">Action</a>
-							</li>
-						</ul></li>
-					<li class="dropdown"><a
-						href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#"
-						data-toggle="dropdown" class="dropdown-toggle">Text Size<strong
-							class="caret"></strong></a>
-						<ul class="dropdown-menu">
-							<li><a
-								href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#">Action</a>
-							</li>
-						</ul></li>
-				</ul>
-				<div class="clearfix"></div>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-	</div>
-
-	 --%>
+	<jsp:include page="header.jsp" />
 	<div class="content-holder">
 
 		<div class="container">
@@ -277,10 +221,11 @@
 						<li>View payment history by ticket or license plate numbers.</li>
 					</ul>
 					<div class="clearfix gap"></div>
-					<a href="https://appsto.re/us/FreAhb.i" target="_blank"> <img
+					<a class="hideprint" href="https://appsto.re/us/FreAhb.i"
+						target="_blank"> <img
 						src="${pageContext.request.contextPath}/images/appstore.png" />
-					</a> <a href="https://goo.gl/46fVdW" target="_blank"> <img
-						src="${pageContext.request.contextPath}/images/playstore.png" />
+					</a> <a class="hideprint" href="https://goo.gl/46fVdW" target="_blank">
+						<img src="${pageContext.request.contextPath}/images/playstore.png" />
 					</a>
 
 				</div>
@@ -288,40 +233,7 @@
 		</div>
 
 	</div>
-	<jsp:include page="footer.jsp"></jsp:include>
-	<%--
-	<footer>
-		<div class="votensubscripbeholder">
-			<a class="buttonssubcriptnvote"><i class="fa fa-check-square"></i>
-				Register to Vote </a> <a class="buttonssubcriptnvote"><i
-				class="fa fa-paper-plane"></i> Subscripe </a>
-		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-3">
-					<a>Drectory of City Agencies</a> <a>Notify NYC</a> <a>NYC
-						Mobile Apps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>Contact NYC Government</a> <a>CityStore</a> <a>Maps</a>
-				</div>
-				<div class="col-sm-3">
-					<a>City Employees</a> <a>Stay Connected</a> <a>Resident Toolkit</a>
-				</div>
-				<div class="col-sm-3">
-					City of New York. 2016 All Rights Reserved,<br>Nyc is a
-					TradeMark and service mark of the City<br>of New York<br>
-					<a
-						href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#">Privacy
-						pollicy</a>. <a
-						href="file:///C:/Users/haseeb.rashid/Desktop/HBW/Violation.html#">Terms
-						of Use</a>.
-				</div>
-			</div>
-		</div>
-	</footer>
---%>
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<jsp:include page="footer.jsp" />
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script

@@ -310,3 +310,25 @@ input#continueButton {
 }
 }
 
+@media print{
+    a.hideprint {
+    display: none;
+}
+.final_stage {
+    display: none;
+}
+footer{display:none}
+header a{display:none}
+
+.agency-header {
+    display: none;
+}
+
+div#top a:after {
+    display: none;
+}
+
+div#header-links {
+    display: none;
+}
+}
