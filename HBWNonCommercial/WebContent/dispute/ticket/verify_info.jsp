@@ -13,6 +13,10 @@
 <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 <title>Dispute a Ticket</title>
 
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -27,23 +31,43 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/common.js"></script>
 <script>
-$(document).ready(function(){
-    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
-      $('.goog-te-menu-value span:first').html('Translate');
-      $('.goog-te-menu-frame.skiptranslate').load(function(){
-        setTimeout(function(){
-          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
-        }, 100);
-      });
-    });
-  });
+	$(document)
+			.ready(
+					function() {
+						$('#google_translate_element')
+								.bind(
+										'DOMNodeInserted',
+										function(event) {
+											$('.goog-te-menu-value span:first')
+													.html('Translate');
+											$(
+													'.goog-te-menu-frame.skiptranslate')
+													.load(
+															function() {
+																setTimeout(
+																		function() {
+																			$(
+																					'.goog-te-menu-frame.skiptranslate')
+																					.contents()
+																					.find(
+																							'.goog-te-menu2-item-selected .text')
+																					.html(
+																							'Translate');
+																		}, 100);
+															});
+										});
+					});
 </script>
-<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="text/javascript"
+	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-}
+	function googleTranslateElementInit() {
+		new google.translate.TranslateElement({
+			pageLanguage : 'en',
+			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
+		}, 'google_translate_element');
+	}
 </script>
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,8 +78,8 @@ function googleTranslateElementInit() {
 
 </head>
 <body>
-<jsp:include page="header.jsp"></jsp:include>
-<%--
+	<jsp:include page="header.jsp"></jsp:include>
+	<%--
 	<div class="topbar">
 		<div class="container">
 			<div class="pull-left">
@@ -129,8 +153,9 @@ function googleTranslateElementInit() {
 						email for your records.<br> <br> Your violation number
 						is:<b> <s:property value="violationNumber" /></b><br> <br>
 						If you have any questions or need assistance, you may call or
-						visit your local <a href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Business Center</a> and
-						provide your violation number.
+						visit your local <a
+							href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Business
+							Center</a> and provide your violation number.
 					</p>
 
 					<h3>Hearing Request Summary</h3>
@@ -295,11 +320,7 @@ function googleTranslateElementInit() {
 			</div>
 		</div>
 	</footer>
-
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	 --%>
-	 <script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+--%>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 
 	<!-- Latest compiled and minified JavaScript -->
@@ -307,8 +328,5 @@ function googleTranslateElementInit() {
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 		crossorigin="anonymous"></script>
-
-
-
 </body>
 </html>

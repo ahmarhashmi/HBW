@@ -284,6 +284,10 @@ input#continueButton {
 }
 
 
+.hidden-phone {
+    display: none;
+}
+
 .topbar ul li {
     border: 0 none transparent;
     font-size: 0;
