@@ -54,81 +54,112 @@
 
 	}
 
-	$(document).submit(function(event) {
-		var isValid = true;
-		// perform validations
-		if (!$('#certify')[0].checked) {
-			$('#notCertified').css("color", "red");
-			isValid = false;
+	function showHideLoadingDiv(isShow) {
+		var loadingDiv = document.getElementById("loadingDiv");
+		alert(loadingDiv.style.display);
+		if (isShow) {
+			loadingDiv.style.display = "block";
+			//$('#mainForm').submit();
 		} else {
-			$('#notCertified').css("color", "black");
+			loadingDiv.style.display = "none";
 		}
-		if (!$('#firstName').val()) {
-			$('#firstNameMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#firstNameMsg').css("display", "none");
-		}
-		if (!$('#lastName').val()) {
-			$('#lastNameMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#lastNameMsg').css("display", "none");
-		}
-		if (!$('#address').val()) {
-			$('#addressMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#addressMsg').css("display", "none");
-		}
-		if (!$('#city').val()) {
-			$('#cityMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#cityMsg').css("display", "none");
-		}
-		if ($('#state').val() == 1) {
-			$('#stateMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#stateMsg').css("display", "none");
-		}
-		if (!$('#zip').val()) {
-			$('#zipMsg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#zipMsg').css("display", "none");
-		}
-		if (!$('#email1').val()) {
-			$('#email1Msg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#email1Msg').css("display", "none");
-		}
-		if (!$('#email2').val()) {
-			$('#email2Msg').css("display", "block");
-			isValid = false;
-		} else {
-			$('#email2Msg').css("display", "none");
-		}
-		if($('#email1').val() != $('#email2').val()){
-			$('#emailMatchMsg').css("display", "block");
-			isValid = false;
-		} else{
-			$('#emailMatchMsg').css("display", "none");
-		}
-		if ($('#affirm').is(":visible") && !$('#affirm')[0].checked) {
-			$('#affirmMsg').css("color", "red");
-			isValid = false;
-		} else {
-			$('#affirmMsg').css("color", "black");
-		}
+		alert(loadingDiv.style.display);
+	}
 
-		if (!isValid) {
-			return false;
-		}
-		$(window).unbind('beforeunload');
-	});
+	$(document)
+			.submit(
+					function(event) {
+						var isValid = true;
+						// perform validations
+						if (!$('#certify')[0].checked) {
+							$('#notCertified').css("color", "red");
+							isValid = false;
+						} else {
+							$('#notCertified').css("color", "black");
+						}
+						if (!$('#firstName').val()) {
+							$('#firstNameMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#firstNameMsg').css("display", "none");
+						}
+						if (!$('#lastName').val()) {
+							$('#lastNameMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#lastNameMsg').css("display", "none");
+						}
+						if (!$('#address').val()) {
+							$('#addressMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#addressMsg').css("display", "none");
+						}
+						if (!$('#city').val()) {
+							$('#cityMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#cityMsg').css("display", "none");
+						}
+						if ($('#state').val() == 1) {
+							$('#stateMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#stateMsg').css("display", "none");
+						}
+						if (!$('#zip').val()) {
+							$('#zipMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#zipMsg').css("display", "none");
+						}
+						if (!$('#email1').val()) {
+							$('#email1Msg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#email1Msg').css("display", "none");
+						}
+						if (!$('#email2').val()) {
+							$('#email2Msg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#email2Msg').css("display", "none");
+						}
+						if ($('#email1').val() != $('#email2').val()) {
+							$('#emailMatchMsg').css("display", "block");
+							isValid = false;
+						} else {
+							$('#emailMatchMsg').css("display", "none");
+						}
+						if ($('#affirm').is(":visible")
+								&& !$('#affirm')[0].checked) {
+							$('#affirmMsg').css("color", "red");
+							isValid = false;
+						} else {
+							$('#affirmMsg').css("color", "black");
+						}
+
+						if (!isValid) {
+							return false;
+						}
+
+						/** Checking virus scan after all the validations are successful so that 
+						 * user has not to wait for virus scan on every submit
+						 */
+						if (!$('#affirm').is(":visible")) {
+							//loadingDiv.style.display = "block";
+							var infectedFiles = isAllUploadedFilesClean();
+							if (infectedFiles.length > 0) {
+								if (confirm("("
+										+ infectedFiles.toString()
+										+ ") Files are infected and deleted from the server. Do you want to update more?")) {
+									//showHideLoadingDiv(false);
+									return false;
+								}
+							}
+						}
+						$(window).unbind('beforeunload');
+					});
 
 	$(window).on('beforeunload', function(event) {
 		return "";
@@ -137,38 +168,59 @@
 <script type="text/javascript">
 	function toggleCheckBox(obj) {
 
-		if (obj.id == "broker" && obj.checked == true ) {
+		if (obj.id == "broker" && obj.checked == true) {
 			document.getElementById("notABroker").checked = false;
 			document.getElementById("continueButton").disabled = false;
-		} else if (obj.id == "notABroker" && obj.checked == true ){
+		} else if (obj.id == "notABroker" && obj.checked == true) {
 			document.getElementById("broker").checked = false;
 			document.getElementById("continueButton").disabled = false;
 		}
-		
-		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
+
+		if (document.getElementById("broker").checked == false
+				&& document.getElementById("notABroker").checked == false) {
 			document.getElementById("continueButton").disabled = true;
 		}
-		
-	}
-	
-	  $(document).ready(function(){
-	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
-	      $('.goog-te-menu-value span:first').html('Translate');
-	      $('.goog-te-menu-frame.skiptranslate').load(function(){
-	        setTimeout(function(){
-	          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
-	        }, 100);
-	      });
-	    });
-	  });
-	</script>
-	<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-	<script type="text/javascript">
-	function googleTranslateElementInit() {
-	  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
 	}
-	</script>
+
+	$(document)
+			.ready(
+					function() {
+						$('#google_translate_element')
+								.bind(
+										'DOMNodeInserted',
+										function(event) {
+											$('.goog-te-menu-value span:first')
+													.html('Translate');
+											$(
+													'.goog-te-menu-frame.skiptranslate')
+													.load(
+															function() {
+																setTimeout(
+																		function() {
+																			$(
+																					'.goog-te-menu-frame.skiptranslate')
+																					.contents()
+																					.find(
+																							'.goog-te-menu2-item-selected .text')
+																					.html(
+																							'Translate');
+																		}, 100);
+															});
+										});
+					});
+</script>
+<script type="text/javascript"
+	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="text/javascript">
+	function googleTranslateElementInit() {
+		new google.translate.TranslateElement({
+			pageLanguage : 'en',
+			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
+		}, 'google_translate_element');
+	}
+</script>
 </head>
 <body onload="setViolationNumber();">
 	<%--
@@ -261,8 +313,8 @@
 								<thead>
 									<tr>
 										<th class="bg-primary" colspan="2">Violation Details <small>(as
-												of <s:property value="violationInfo.asOf" />)</small>
-												<!-- Wednesday, Sep 6, 2017 03:15 PM -->
+												of <s:property value="violationInfo.asOf" />)
+										</small> <!-- Wednesday, Sep 6, 2017 03:15 PM -->
 										</th>
 									</tr>
 								</thead>
@@ -379,8 +431,9 @@
 					<br>
 
 
-					<p id="affirmCheckBoxPrompt">You must check the box below if you are not uploading
-						evidence. By checking this box, you agree to the following:</p>
+					<p id="affirmCheckBoxPrompt">You must check the box below if
+						you are not uploading evidence. By checking this box, you agree to
+						the following:</p>
 					<s:form method="post" action="create_hearing" namespace="/dispute"
 						theme="simple" id="mainForm">
 
@@ -486,8 +539,8 @@
 									label="Confirm Email Address" class="form-control"
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
-									confirm your email.</span>
-								<span id="emailMatchMsg" style="color: red; display: none;">Email does not match.</span>
+									confirm your email.</span> <span id="emailMatchMsg"
+									style="color: red; display: none;">Email does not match.</span>
 							</div>
 
 
@@ -562,8 +615,21 @@
 	</script>
 
 	<!--  -->
-	<div id="dialog" title="Basic dialog" style="z-index: 10000">
+	<!-- Dialog box to show the uploaded content to the user -->
+	<div id="dialog" title="Basic dialog"
+		style="z-index: 10000; display: none">
 		<img id="image" src="">
+		<div style="width: 100%; height: 100%">
+			<iframe id="frame" width="100%" height="100%"></iframe>
+		</div>
+	</div>
+
+	<div id="loadingDiv" style="display: none;">
+		<div class="backdrop"></div>
+		<div class="loading_image">
+			<img src="${pageContext.request.contextPath}/images/giphy.gif">
+			<p>Scanning uploaded documents...</p>
+		</div>
 	</div>
 </body>
 </html>

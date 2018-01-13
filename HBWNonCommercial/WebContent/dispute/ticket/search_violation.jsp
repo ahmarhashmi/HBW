@@ -10,6 +10,10 @@
 <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 <title>Dispute a Ticket</title>
 
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -30,46 +34,67 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
-    <script type="text/javascript">
+
+<script type="text/javascript">
 	function toggleCheckBox(obj) {
 
-		if (obj.id == "broker" && obj.checked == true ) {
+		if (obj.id == "broker" && obj.checked == true) {
 			document.getElementById("notABroker").checked = false;
 			document.getElementById("continueButton").disabled = false;
-		} else if (obj.id == "notABroker" && obj.checked == true ){
+		} else if (obj.id == "notABroker" && obj.checked == true) {
 			document.getElementById("broker").checked = false;
 			document.getElementById("continueButton").disabled = false;
 		}
-		
-		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
+
+		if (document.getElementById("broker").checked == false
+				&& document.getElementById("notABroker").checked == false) {
 			document.getElementById("continueButton").disabled = true;
 		}
-		
-	}
-	
-	  $(document).ready(function(){
-	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
-	      $('.goog-te-menu-value span:first').html('Translate');
-	      $('.goog-te-menu-frame.skiptranslate').load(function(){
-	        setTimeout(function(){
-	          $('.goog-te-menu-frame.skiptranslate').contents().find('.goog-te-menu2-item-selected .text').html('Translate');    
-	        }, 100);
-	      });
-	    });
-	  });
-	</script>
-	<script type="text/javascript" src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-	<script type="text/javascript">
-	function googleTranslateElementInit() {
-	  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
 	}
-	</script>
+
+	$(document)
+			.ready(
+					function() {
+						$('#google_translate_element')
+								.bind(
+										'DOMNodeInserted',
+										function(event) {
+											$('.goog-te-menu-value span:first')
+													.html('Translate');
+											$(
+													'.goog-te-menu-frame.skiptranslate')
+													.load(
+															function() {
+																setTimeout(
+																		function() {
+																			$(
+																					'.goog-te-menu-frame.skiptranslate')
+																					.contents()
+																					.find(
+																							'.goog-te-menu2-item-selected .text')
+																					.html(
+																							'Translate');
+																		}, 100);
+															});
+										});
+					});
+</script>
+<script type="text/javascript"
+	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="text/javascript">
+	function googleTranslateElementInit() {
+		new google.translate.TranslateElement({
+			pageLanguage : 'en',
+			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
+		}, 'google_translate_element');
+	}
+</script>
 </head>
 <body
 	onload="enableDisableSearchButton(document.getElementById('violationNumber'))">
-	
+
 	<%--
 	<div class="topbar">
 		<div class="container">
@@ -115,7 +140,7 @@
 	</div>
 	
 	--%>
-	
+
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="content-holder">
 
@@ -205,9 +230,12 @@
 					<p>View an example:</p>
 					<ul>
 						<li><a href="javascript:openTicketPopUp()">Parking Ticket</a></li>
-						<li><a href="javascript:openRedlightTicketPopup()">Red Light Violation (NOL)</a></li>
-						<li><a href="javascript:openBusLaneCameraViolationPopup()">Bus Lane Camera Violation (NOL)</a></li>
-						<li><a href="javascript:openSpeedCameraViolationPopup()">Speed Camera Violation (NOL)</a></li>
+						<li><a href="javascript:openRedlightTicketPopup()">Red
+								Light Violation (NOL)</a></li>
+						<li><a href="javascript:openBusLaneCameraViolationPopup()">Bus
+								Lane Camera Violation (NOL)</a></li>
+						<li><a href="javascript:openSpeedCameraViolationPopup()">Speed
+								Camera Violation (NOL)</a></li>
 					</ul>
 					<hr>
 					<%-- <h3>Download the NYC Parking Ticket Pay or Dispute App</h3>
@@ -266,14 +294,11 @@
 				</div>
 			</div>
 		</div>
-	
+	</div>
+
 	<jsp:include page="footer.jsp"></jsp:include>
 
-	--%>
 
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 
 	<!-- Latest compiled and minified JavaScript -->

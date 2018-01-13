@@ -9,6 +9,10 @@
 <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 <title>Dispute a Ticket</title>
 
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 <script type="text/javascript">
 	function toggleCheckBox(obj) {
 
@@ -19,14 +23,17 @@
 			document.getElementById("broker").checked = false;
 			document.getElementById("continueButton").disabled = false;
 		}
-		
+		disableButton();
+	}
+	
+	function disableButton(){
 		if (document.getElementById("broker").checked == false && document.getElementById("notABroker").checked == false ){
 			document.getElementById("continueButton").disabled = true;
 		}
-		
 	}
 	
 	  $(document).ready(function(){
+		  disableButton();
 	    $('#google_translate_element').bind('DOMNodeInserted', function(event) {
 	      $('.goog-te-menu-value span:first').html('Translate');
 	      $('.goog-te-menu-frame.skiptranslate').load(function(){
@@ -193,9 +200,6 @@
 		</div>
 	</footer> --%>
 
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 
 	<!-- Latest compiled and minified JavaScript -->
