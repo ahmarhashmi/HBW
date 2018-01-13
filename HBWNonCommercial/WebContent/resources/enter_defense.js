@@ -251,7 +251,7 @@ async function containsVirus(dataId, index, file){
 		    	console.log("Scan result: "+scanResult);
 		    	if( scanPercentage == 100 && scanResult == "No threat detected"){
 		    		virusFreeFiles.push(index);
-		    		infectedFiles.push(file.name);
+		    		//infectedFiles.push(file.name);
 		    		console.log("'"+file.name+"' is clean and doesn not contain virus.");
 					return;		    		
 				} else if (scanPercentage == 100 && scanResult != "No threat detected"){
