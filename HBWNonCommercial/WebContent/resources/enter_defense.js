@@ -198,7 +198,7 @@ function startAfresh(){
  */
 async function scanForVirus(file, index){
 	
-	console.log("Calling virus scan for the file: "+file.name);	
+	//console.log("Calling virus scan for the file: "+file.name);	
 	var data = new FormData();
 	data = file;
 	jQuery.ajax({
@@ -215,7 +215,7 @@ async function scanForVirus(file, index){
 		},
 	    success: function(data){
 	    	var dataId = data.data_id;
-	    	console.log("DataID returned is:" +dataId);
+	    	//console.log("DataID returned is:" +dataId);
 	    	containsVirus(data.data_id, index, file);
 	    }
 	});
@@ -233,7 +233,7 @@ async function containsVirus(dataId, index, file){
 	
 	var scanPercentage = 0;
 	while(scanPercentage < 100){
-		console.log("Checking status of the image having dataId: "+dataId)
+		//console.log("Checking status of the image having dataId: "+dataId)
 		jQuery.ajax({
 		    url: 'https://api.metadefender.com/v2/file/'+dataId,
 		    cache: false,
@@ -247,17 +247,17 @@ async function containsVirus(dataId, index, file){
 		    	console.log(data);
 		    	scanPercentage = data.scan_results.progress_percentage;
 		    	var scanResult = data.scan_results.scan_all_result_a;
-		    	console.log("Progress percentage: "+scanPercentage);
-		    	console.log("Scan result: "+scanResult);
+		    	//console.log("Progress percentage: "+scanPercentage);
+		    	//console.log("Scan result: "+scanResult);
 		    	if( scanPercentage == 100 && scanResult == "No threat detected"){
 		    		virusFreeFiles.push(index);
 		    		//infectedFiles.push(file.name);
-		    		console.log("'"+file.name+"' is clean and doesn not contain virus.");
+		    		//console.log("'"+file.name+"' is clean and does not contain virus.");
 					return;		    		
 				} else if (scanPercentage == 100 && scanResult != "No threat detected"){
 					$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
 					infectedFiles.push(file.name);
-		    		console.log("'"+file.name+"' contains virus.");
+		    		//console.log("'"+file.name+"' contains virus.");
 		    		return;
 		    	} 
 		    }

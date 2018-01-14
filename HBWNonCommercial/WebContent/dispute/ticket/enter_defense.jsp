@@ -60,10 +60,19 @@
 		alert(loadingDiv.style.display);
 	}
 
+	function callSubmit(event) {
+		//$("#submitBtn").css("display", "none");
+		$("#submitBtnDisabled").css("display", "block");
+		event.preventDefault();
+		$('#mainForm').submit();
+	}
+
 	$(document)
 			.submit(
 					function(event) {
 						var isValid = true;
+
+						//$(':input[type="submit"]').prop('disabled', true);
 						// perform validations
 						if (!$('#certify')[0].checked) {
 							$('#notCertified').css("color", "red");
@@ -134,6 +143,10 @@
 						}
 
 						if (!isValid) {
+							//$("#submitBtn").removeAttr('disabled');
+							//$(':input[type="submit"]').prop('disabled', false);
+							$("#submitBtn").css("display", "block");
+							$("#submitBtnDisabled").css("display", "none");
 							return false;
 						}
 
@@ -148,6 +161,12 @@
 										+ infectedFiles.toString()
 										+ ") Files are infected and deleted from the server. Do you want to update more?")) {
 									//showHideLoadingDiv(false);
+									//$("#submitBtn").removeAttr('disabled');
+									/* $("#submitBtn").css("display", "block");
+									$("#submitBtnDisabled").css("display",
+											"none");
+									$(':input[type="submit"]').prop('disabled',
+											false); */
 									return false;
 								}
 							}
@@ -480,12 +499,16 @@
 						<p>Once you submit your request, your hearing will be
 							scheduled.</p>
 						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary " />
+							<s:submit value="Submit Request" class="btn btn-primary "
+								id="submitBtn" />
+							<%-- <s:submit value="Submit Request" class="btn btn-primary "
+								id="submitBtnDisabled" disabled="true" style="display:none;" /> --%>
 							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>
 
 					</s:form>
+					<!-- <a href="#" onclick="callSubmit(event);" >click me</a> -->
 				</div>
 			</div>
 		</div>
