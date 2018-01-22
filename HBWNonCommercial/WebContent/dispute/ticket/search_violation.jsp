@@ -97,9 +97,9 @@
 								<s:textfield type="tel" id="violationNumber" autocorrect="off"
 									name="violationNumber" label="violationNumber" required="true"
 									maxlength="11" minlength="10" class="form-control"
-									placeholder="XXXXXXXXXX"
 									onchange="enableDisableSearchButton(this);"
 									onkeyup="enableDisableSearchButton(this);" />
+<!-- 									placeholder="XXXXXXXXXX" -->
 							</div>
 
 							<div>

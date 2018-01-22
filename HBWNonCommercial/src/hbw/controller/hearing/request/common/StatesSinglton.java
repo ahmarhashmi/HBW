@@ -12,11 +12,11 @@ import java.util.List;
  */
 public class StatesSinglton {
 
-    private static List<String> states = new ArrayList<String>();
+    private static List<String> states = populateStates();
 
-    static {
-	states.addAll(populateStates());
-    }
+//    static {
+//	states.addAll(populateStates());
+//    }
 
     private StatesSinglton() {
 

@@ -1,12 +1,14 @@
 package hbw.controller.hearing.request.action;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.List;
 
+import javax.activation.MimetypesFileTypeMap;
+import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -83,8 +85,6 @@ public class FileUploadServlet extends HttpServlet {
 	File evidencePath = FileUtil.validateAndGetEvidenceUploadPath(request);
 
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
-	PrintWriter writer = response.getWriter();
-
 	try {
 	    List<FileItem> items = uploadHandler.parseRequest(request);
 
@@ -93,28 +93,55 @@ public class FileUploadServlet extends HttpServlet {
 		    if (evidencePath.listFiles().length == Integer.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
 			    || FileUtils.sizeOf(evidencePath) >= Long
 				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-			throw new RuntimeException("Upload limit reached. File(s) cannot be uploaded. If\r\n"
-				+ "you want to submit more evidence, please do not\r\n"
-				+ "request a hearing online. Submit your hearing request\r\n"
-				+ "and evidence by mail or in person.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				"Upload limit reached. File(s) cannot be uploaded. If\r\n"
+					+ "you want to submit more evidence, please do not\r\n"
+					+ "request a hearing online. Submit your hearing request\r\n"
+					+ "and evidence by mail or in person.");
+			return;
 		    }
 		    File file = new File(evidencePath, item.getName());
 		    if (file.length() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-			writer.write("File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
-			response.setStatus(500);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
 			return;
 		    }
 		    if (file.exists()) {
-			writer.write("File with the same name already exists/uploaded.");
-			response.setStatus(500);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				"File with the same name already exists/uploaded.");
 			return;
 		    }
-		    
+
+		    /**
+		     * Validate if the file type is a valid image or pdf type.
+		     */
+		    String mimeType = new MimetypesFileTypeMap().getContentType(file);
+		    String type = mimeType.split("/")[0];
+		    if (type.equals("image")) {
+			BufferedImage bi = ImageIO.read(item.getInputStream());
+			if (bi == null) {
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				    "The uploaded file is not a valid image file.");
+			    return;
+			}
+		    } else if (type.equals("application")) {
+			/*if (!FileUtil.isPDF(item.get())) {
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				    "The uploaded file is not a valid pdf file.");
+			    return;
+			}*/
+		    } else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				"File not supported.");
+			return;
+		    }
+
 		    item.write(file);
-		    if (getServletContext().getMimeType(file.getName()).contains("gif") && FileUtil.isAnimatedGIF(file)) {
+		    if (getServletContext().getMimeType(file.getName()).contains("gif")
+			    && FileUtil.isAnimatedGIF(file)) {
 			file.delete();
-			writer.write("Animated giffs are not allowed to upload");
-			response.setStatus(500);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				"Animated giffs are not allowed. Only PDF, JPEG/JPG, BMP, or non-animated GIF's may be uploaded.");
 			return;
 		    }
 
@@ -124,9 +151,7 @@ public class FileUploadServlet extends HttpServlet {
 	} catch (Exception e) {
 	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
 	    e.printStackTrace();
-	    writer.write(e.getLocalizedMessage());
-	} finally {
-	    writer.close();
+	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
 	}
     }
 

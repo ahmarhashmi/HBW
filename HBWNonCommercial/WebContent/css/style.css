@@ -361,10 +361,3 @@ div#header-links {
  padding: 0 20px;
  border-radius: 10px;
 }
-
-.hide_div{
-	display: none;
-}
-.show_div{
-	display: block;
-}

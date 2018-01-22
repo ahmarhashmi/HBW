@@ -45,9 +45,9 @@
 				src="${pageContext.request.contextPath}/images/upper-header-divider.gif" alt=""><span
 				class="upper-header-black-title">Department of Finance</span></span><span
 				class="upper-header-padding"></span><span class="upper-header-right"><span
-				class="upper-header-three-one-one"><a href="/311/index.page">311</a></span><img
+				class="upper-header-three-one-one"><a href="http://www1.nyc.gov/311/index.page">311</a></span><img
 				src="${pageContext.request.contextPath}/images/upper-header-divider.gif" alt=""><span
-				class="upper-header-search"><a href="/home/search/index.page">Search
+				class="upper-header-search"><a href="http://www1.nyc.gov/home/search/index.page">Search
 						all NYC.gov websites</a></span></span>
 		</div>
 	</div>
@@ -60,7 +60,7 @@
 					id="nav-open-btn">Menu</a><span
 					class="welcome-text hidden-phone agency-header"></span>
 				<div class="agency-logo-wrapper">
-					<a href="/site/finance/index.page"><img class="agency-logo"
+					<a href="http://www1.nyc.gov/site/finance/index.page"><img class="agency-logo"
 						src="${pageContext.request.contextPath}/images/nyc_finance_logo.png" alt="Department of Finance"></a>
 				</div>
 				<div class="hidden-phone" id="header-links">

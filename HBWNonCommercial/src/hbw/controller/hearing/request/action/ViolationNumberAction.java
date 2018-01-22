@@ -43,6 +43,10 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     Logger LOGGER = Log4j2LoggerFactory.getLogger(ViolationNumberAction.class);
 
     private ViolationInfo violationInfo = new ViolationInfo();
+    
+    public String getState() {
+	return "New York";
+    }
 
     private String violationNumber;
 

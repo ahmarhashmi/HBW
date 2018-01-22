@@ -9,6 +9,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Ahmar
  *
@@ -20,6 +22,11 @@ public class ViolationInfo {
     private String vehicleState;
     private String vehicleMake;
 
+    public Boolean getIsVehicleInfoInSystem() {
+	return StringUtils.isNotBlank(vehiclePlate) || StringUtils.isNotBlank(vehicleMake) || 
+		StringUtils.isNotBlank(vehicleState) || StringUtils.isNotBlank(vehicleType);
+    }
+
     private String violationNumber;
     private Date issuedOn;
     private String issueTime;
@@ -27,12 +34,27 @@ public class ViolationInfo {
     private String code;
     private String location;
 
+    public Boolean getIsViolationDetailInSystem() {
+	return StringUtils.isNotBlank(violationNumber) || issuedOn != null ||
+		StringUtils.isNotBlank(issueTime) || StringUtils.isNotBlank(description) ||
+		StringUtils.isNotBlank(code) || StringUtils.isNotBlank(location);
+    }
+
     private BigDecimal fine;
     private BigDecimal penalty;
     private BigDecimal interest;
     private BigDecimal reduction;
     private BigDecimal paid;
     private BigDecimal balanceDue;
+
+    public Boolean getIsFeesTableInSystem() {
+	return (fine != null && fine.compareTo(BigDecimal.ZERO) != 0)
+		|| (penalty != null && penalty.compareTo(BigDecimal.ZERO) != 0)
+		|| (interest != null && interest.compareTo(BigDecimal.ZERO) != 0)
+		|| (reduction != null && reduction.compareTo(BigDecimal.ZERO) != 0)
+		|| (paid != null && paid.compareTo(BigDecimal.ZERO) != 0)
+		|| (balanceDue != null && balanceDue.compareTo(BigDecimal.ZERO) != 0);
+    }
 
     public String getAsOf() {
 	// Wednesday, Sep 6, 2017 03:15 PM

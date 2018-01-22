@@ -60,13 +60,6 @@
 		alert(loadingDiv.style.display);
 	}
 
-	function callSubmit(event) {
-		//$("#submitBtn").css("display", "none");
-		$("#submitBtnDisabled").css("display", "block");
-		event.preventDefault();
-		$('#mainForm').submit();
-	}
-
 	$(document)
 			.submit(
 					function(event) {
@@ -182,6 +175,28 @@
 	$(document)
 			.ready(
 					function() {
+						$("#submitBtn").attr("disabled", true);
+						$("#email2").on("change", function(){
+							if( $(this).val() != '' ){
+								if ($('#email1').val() != $(this).val()) {
+									$('#emailMatchMsg').css("display", "block");
+									isValid = false;
+								} else {
+									$('#emailMatchMsg').css("display", "none");
+								}
+							}
+						});
+						$("#affirm").bind('change', enableDisableSubmitButton);
+						$("#firstName").bind('blur', enableDisableSubmitButton);
+						$("#lastName").bind('blur', enableDisableSubmitButton);
+						$("#address").bind('blur', enableDisableSubmitButton);
+						$("#city").bind('blur', enableDisableSubmitButton);
+						$("#state").bind('blur', enableDisableSubmitButton);
+						$("#zip").bind('blur', enableDisableSubmitButton);
+						$("#email1").bind('blur', enableDisableSubmitButton);
+						$("#email2").bind('blur', enableDisableSubmitButton);
+						$("#certify").bind('change', enableDisableSubmitButton);
+						
 						$('#google_translate_element')
 								.bind(
 										'DOMNodeInserted',
@@ -234,100 +249,106 @@
 					<hr>
 					<h4>Violation</h4>
 					<div class="row">
-						<div class="col-sm-4">
-							<table class="table-responsive table table-striped">
-								<thead>
+						<s:if test="violationInfo.isVehicleInfoInSystem">
+							<div class="col-sm-4">
+								<table class="table-responsive table table-striped">
+									<thead>
+										<tr>
+											<th class="bg-primary" colspan="2">Vehicle</th>
+										</tr>
+									</thead>
 									<tr>
-										<th class="bg-primary" colspan="2">Vehicle</th>
+										<td>Plate:</td>
+										<td><s:property value="violationInfo.vehiclePlate" /></td>
 									</tr>
-								</thead>
-								<tr>
-									<td>Plate:</td>
-									<td><s:property value="violationInfo.vehiclePlate" /></td>
-								</tr>
-								<tr>
-									<td>Type:</td>
-									<td><s:property value="violationInfo.vehicleType" /></td>
-								</tr>
-								<tr>
-									<td>State:</td>
-									<td><s:property value="violationInfo.vehicleState" /></td>
-								</tr>
-								<tr>
-									<td>Make:</td>
-									<td><s:property value="violationInfo.vehicleMake" /></td>
-								</tr>
-							</table>
-						</div>
-						<div class="col-sm-8">
-							<table class="table-responsive table table-striped">
-								<thead>
 									<tr>
-										<th class="bg-primary" colspan="2">Violation Details <small>(as
-												of <s:property value="violationInfo.asOf" />)
-										</small> <!-- Wednesday, Sep 6, 2017 03:15 PM -->
-										</th>
+										<td>Type:</td>
+										<td><s:property value="violationInfo.vehicleType" /></td>
 									</tr>
-								</thead>
-								<tr>
-									<td>Violation:</td>
-									<td><span id="violationNumber"><s:property
-												value="violationNumber" /></span></td>
-								</tr>
-								<tr>
-									<td>Issued on:</td>
-									<td><s:property value="violationInfo.issuedOn" /></td>
-								</tr>
-								<tr>
-									<td>Description:</td>
-									<td><s:property value="violationInfo.description" /></td>
-								</tr>
-								<tr>
-									<td>Code:</td>
-									<td><s:property value="violationInfo.code" /></td>
-								</tr>
-								<tr>
-									<td>Location:</td>
-									<td><s:property value="violationInfo.location" /></td>
-								</tr>
-							</table>
-						</div>
+									<tr>
+										<td>State:</td>
+										<td><s:property value="violationInfo.vehicleState" /></td>
+									</tr>
+									<tr>
+										<td>Make:</td>
+										<td><s:property value="violationInfo.vehicleMake" /></td>
+									</tr>
+								</table>
+							</div>
+						</s:if>
+						<s:if test="violationInfo.isViolationDetailInSystem">
+							<div class="col-sm-8">
+								<table class="table-responsive table table-striped">
+									<thead>
+										<tr>
+											<th class="bg-primary" colspan="2">Violation Details <small>(as
+													of <s:property value="violationInfo.asOf" />)
+											</small> <!-- Wednesday, Sep 6, 2017 03:15 PM -->
+											</th>
+										</tr>
+									</thead>
+									<tr>
+										<td>Violation:</td>
+										<td><span id="violationNumber"><s:property
+													value="violationNumber" /></span></td>
+									</tr>
+									<tr>
+										<td>Issued on:</td>
+										<td><s:property value="violationInfo.issuedOn" /></td>
+									</tr>
+									<tr>
+										<td>Description:</td>
+										<td><s:property value="violationInfo.description" /></td>
+									</tr>
+									<tr>
+										<td>Code:</td>
+										<td><s:property value="violationInfo.code" /></td>
+									</tr>
+									<tr>
+										<td>Location:</td>
+										<td><s:property value="violationInfo.location" /></td>
+									</tr>
+								</table>
+							</div>
+						</s:if>
 					</div>
 					<div class="clearfix gap"></div>
 					<div class="row">
-						<div class="col-sm-4">
-							<table class="table-responsive table table-striped">
-								<thead>
+						<s:if test="violationInfo.isFeesTableInSystem">
+							<div class="col-sm-4">
+								<table class="table-responsive table table-striped">
+									<thead>
+										<tr>
+											<th class="bg-primary" colspan="2">Fees</th>
+										</tr>
+									</thead>
 									<tr>
-										<th class="bg-primary" colspan="2">Fees</th>
+										<td>Fine:</td>
+										<td>$<s:property value="violationInfo.fine" /></td>
 									</tr>
-								</thead>
-								<tr>
-									<td>Fine:</td>
-									<td>$<s:property value="violationInfo.fine" /></td>
-								</tr>
-								<tr>
-									<td>Penalty:</td>
-									<td><s:property value="violationInfo.penalty" /></td>
-								</tr>
-								<tr>
-									<td>Interest:</td>
-									<td><s:property value="violationInfo.interest" /></td>
-								</tr>
-								<tr>
-									<td>Reduction:</td>
-									<td><s:property value="violationInfo.reduction" /></td>
-								</tr>
-								<tr>
-									<td>Paid:</td>
-									<td><s:property value="violationInfo.paid" /></td>
-								</tr>
-								<tr class="total">
-									<td>Balance Due:</td>
-									<td>$<s:property value="violationInfo.balanceDue" /></td>
-								</tr>
-							</table>
-						</div>
+									<tr>
+										<td>Penalty:</td>
+										<td><s:property value="violationInfo.penalty" /></td>
+									</tr>
+									<tr>
+										<td>Interest:</td>
+										<td><s:property value="violationInfo.interest" /></td>
+									</tr>
+									<tr>
+										<td>Reduction:</td>
+										<td><s:property value="violationInfo.reduction" /></td>
+									</tr>
+									<tr>
+										<td>Paid:</td>
+										<td><s:property value="violationInfo.paid" /></td>
+									</tr>
+									<tr class="total">
+										<td>Balance Due:</td>
+										<td>$<s:property value="violationInfo.balanceDue" /></td>
+									</tr>
+								</table>
+							</div>
+						</s:if>
 					</div>
 
 					<div class="gap"></div>
@@ -439,10 +460,6 @@
 							</div>
 							<div class="form-group">
 								<label>State/Province</label>
-								<%-- <s:select label="State/Province" value="state" name="state"
-									class="form-control" labelposition="top"
-									headerValue="--- Please Select ---" headerKey="1"
-									list="#{'newYork':'New York','california':'California'}" /> --%>
 								<s:select label="State/Province" value="state" name="state"
 									id="state" name="state" class="form-control"
 									style="max-width:250px;" labelposition="top"
@@ -452,7 +469,7 @@
 							</div>
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
-								<s:textfield name="zip" id="zip" label="ZIP/Postal Code"
+								<s:textfield name="zip" id="zip" type="tel" label="ZIP/Postal Code"
 									class="form-control" style="max-width:250px;"
 									labelposition="top" maxlength="10" requiredLabel="true"
 									requiredPosition="top" />
@@ -474,7 +491,7 @@
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
 									confirm your email.</span> <span id="emailMatchMsg"
-									style="color: red; display: none;">Email does not match.</span>
+									style="color: red; display: none;">Does not match email address above.</span>
 							</div>
 
 
@@ -501,18 +518,13 @@
 						<div class="form-group">
 							<s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" />
-							<%-- <s:submit value="Submit Request" class="btn btn-primary "
-								id="submitBtnDisabled" disabled="true" style="display:none;" /> --%>
 							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>
-
 					</s:form>
-					<!-- <a href="#" onclick="callSubmit(event);" >click me</a> -->
 				</div>
 			</div>
 		</div>
-
 	</div>
 	<jsp:include page="footer.jsp" />
 

@@ -26,16 +26,18 @@ Dropzone.options.fileUploadForm = {
 	},
 	error : function(file, response) {
 		file.previewElement.classList.add("dz-error");
-		$(file.previewElement).find('.dz-error-message span').text(response);
+		$(file.previewElement).find('.dz-error-message span').text(response.replace('Error 500: ',''));
 	},
 	
 	init : function() {
 		this.on('maxfilesexceeded', function(file) {
 			this.removeFile(file);
+			enableDisableSubmitButton();
 		});
 		
 		this.on('success', function(file) {
 			files.push(file);
+			enableDisableSubmitButton();
 		});
 		
 		/** This function is triggered when user attempts to delete a file */
@@ -49,6 +51,7 @@ Dropzone.options.fileUploadForm = {
 				$('#affirmCheckBox').css("display", "block");
 				$('#affirmCheckBoxPrompt').css("display", "block");
 			}
+			enableDisableSubmitButton();
 		});
 
 		var wrapperThis = this;
@@ -105,7 +108,7 @@ Dropzone.options.fileUploadForm = {
 			}
 			
 			file.previewElement.addEventListener('click', function() {
-				if(!NOACTION){					
+				if(file.status == 'success' && !NOACTION){					
 				$("#dialog").innerHTML = file.previewElement;
 				$("#dialog").dialog({
 					width: 800,
@@ -277,4 +280,56 @@ function isAllUploadedFilesClean(){
 	console.log("Clean files count :"+virusFreeFiles.length);
 	//$("#loadingDiv").hide();
 	return infectedFiles;
+}
+
+function enableDisableSubmitButton(){
+	
+	var dz = Dropzone.forElement("#file-upload-form"); 
+	//alert(dz.getAcceptedFiles());
+	//dz.processFiles(dz.files);
+	var isValid = true;
+
+	if (!$('#certify')[0].checked) {
+		isValid = false;
+	} 
+	if (!$('#firstName').val()) {
+		isValid = false;
+	}
+	if (!$('#lastName').val()) {
+		isValid = false;
+	}
+	if (!$('#address').val()) {
+		isValid = false;
+	}
+	if (!$('#city').val()) {
+		isValid = false;
+	}
+	if ($('#state').val() == 1) {
+		isValid = false;
+	}
+	if (!$('#zip').val()) {
+		isValid = false;
+	}
+	if (!$('#email1').val()) {
+		isValid = false;
+	}
+	if (!$('#email2').val()) {
+		isValid = false;
+	}
+	if ($('#email1').val() != $('#email2').val()) {
+		isValid = false;
+	}
+	if ($('#affirm').is(":visible")
+			&& !$('#affirm')[0].checked) {
+		$('#affirmMsg').css("color", "red");
+		isValid = false;
+	} else {
+		$('#affirmMsg').css("color", "black");
+	}
+
+	if (isValid) {
+		$("#submitBtn").removeAttr('disabled');
+	} else{
+		$("#submitBtn").attr("disabled", true);
+	}
 }

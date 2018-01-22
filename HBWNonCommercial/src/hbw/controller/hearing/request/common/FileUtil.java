@@ -3,6 +3,7 @@ package hbw.controller.hearing.request.common;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -16,6 +17,10 @@ import org.apache.commons.io.FileUtils;
 
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
+
+import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.MimeDetector;
+import eu.medsea.mimeutil.detector.OpendesktopMimeDetector;
 
 /**
  * @author Ahmar Nadeem
@@ -117,5 +122,55 @@ public final class FileUtil {
 	}
 	zip.close();
 	fW.close();
+    }
+    
+    public static boolean isPDF(File file) {
+	return false;
+    }
+
+    /**
+     * Utility to check if the file is valid pdf file or not.
+     * @param data
+     * @return
+     */
+    public static boolean isPDF(byte[] data) {
+	
+	Collection mimeTypes= MimeUtil.getMimeTypes(data);
+	MimeDetector md = new OpendesktopMimeDetector();
+	
+	
+	
+	
+	if (data != null && data.length > 4 &&
+	            data[0] == 0x25 && // %
+	            data[1] == 0x50 && // P
+	            data[2] == 0x44 && // D
+	            data[3] == 0x46 && // F
+	            data[4] == 0x2D) { // -
+
+	        // version 1.3 file terminator
+	        if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x33 &&
+	                data[data.length - 7] == 0x25 && // %
+	                data[data.length - 6] == 0x25 && // %
+	                data[data.length - 5] == 0x45 && // E
+	                data[data.length - 4] == 0x4F && // O
+	                data[data.length - 3] == 0x46 && // F
+	                data[data.length - 2] == 0x20 && // SPACE
+	                data[data.length - 1] == 0x0A) { // EOL
+	            return true;
+	        }
+
+	        // version 1.3 file terminator
+	        if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x34 &&
+	                data[data.length - 6] == 0x25 && // %
+	                data[data.length - 5] == 0x25 && // %
+	                data[data.length - 4] == 0x45 && // E
+	                data[data.length - 3] == 0x4F && // O
+	                data[data.length - 2] == 0x46 && // F
+	                data[data.length - 1] == 0x0A) { // EOL
+	            return true;
+	        }
+	    }
+	    return false;
     }
 }
