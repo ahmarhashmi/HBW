@@ -541,15 +541,46 @@ form.dropzone.dz-started:after {
     border-radius: 5px;
     border: 2px dashed #c4c4c4;
 }
-.dz-preview.dz-processing.dz-success .dz-success-mark {
-    opacity: 1;
-    animation: unset !important;
+
+.dz-preview .dz-success .dz-success-mark {
+    -webkit-animation-name: example;  /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 1s;  /* Safari 4.0 - 8.0 */    
+    -webkit-animation-fill-mode: forwards; /* Safari 4.0 - 8.0 */
+    animation-name: example;
+    animation-duration: 1s;    
+    animation-delay:3s;
+    animation-fill-mode: forwards;
 }
-.dz-preview.dz-processing.dz-success:hover .dz-success-mark {
-    opacity: 0;
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes example {
+    from {opacity: 1;}
+    to {opacity: 0;}
 }
-.dz-preview.dz-processing.dz-success:hover .dz-error-mark {
-    opacity: 1;
+
+@keyframes example {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes example2 {
+    from {opacity:0;}
+    to {opacity: 1;}
+}
+
+@keyframes example2 {
+    from {opacity:0;}
+    to {opacity: 1;}
+}
+.dz-preview.dz-success .dz-error-mark{
+    -webkit-animation-name: example2;  /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 1s;  /* Safari 4.0 - 8.0 */    
+    -webkit-animation-fill-mode: forwards; /* Safari 4.0 - 8.0 */
+    animation-name: example2;
+    animation-duration: 1s;    
+    animation-delay:3s;
+    animation-fill-mode: forwards;
 }
 a.dz-remove {
     position: absolute;
@@ -704,7 +735,17 @@ input.cancelbutton {
 .expbutton {
     display: none;
 }
+.dz-preview.dz-file-preview.dz-processing:not(.dz-complete) .dz-error-mark {
+    opacity: 1;
+}
 
+.dz-preview.dz-file-preview.dz-processing:not(.dz-complete) .dz-details  {
+    background: #e4edf4;
+}
+
+.dropzone .dz-preview.dz-file-preview.dz-processing:not(.dz-complete) .dz-filename {
+    background: transparent;
+}
 .dz-error .expbutton {
     display: block;
 }

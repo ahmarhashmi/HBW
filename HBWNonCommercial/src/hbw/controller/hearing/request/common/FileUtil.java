@@ -1,8 +1,11 @@
 package hbw.controller.hearing.request.common;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -13,6 +16,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
 import com.opensymphony.xwork2.util.logging.Logger;
@@ -98,6 +102,32 @@ public final class FileUtil {
     }
 
     /**
+     * A utility function to return file extension if the provided file name is
+     * valid. Returns the same string if it doesn't contain a dot or is null.
+     * 
+     * @param fileName
+     * @return
+     */
+    public static String getFileExtension(String fileName) {
+	if (fileName != null && fileName.contains(".")) {
+	    return fileName.substring(fileName.lastIndexOf(".") + 1);
+	}
+	return fileName;
+    }
+
+    /**
+     * Utility function to encode file to a base64 byte array converted to a string.
+     * 
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static String encodeFileToBase64Binary(File file) throws IOException {
+	byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(file));
+	return new String(encoded);
+    }
+
+    /**
      * 
      * @param dirName
      * @param nameZipFile
@@ -123,54 +153,77 @@ public final class FileUtil {
 	zip.close();
 	fW.close();
     }
-    
+
     public static boolean isPDF(File file) {
 	return false;
     }
 
     /**
      * Utility to check if the file is valid pdf file or not.
+     * 
      * @param data
      * @return
      */
     public static boolean isPDF(byte[] data) {
-	
-	Collection mimeTypes= MimeUtil.getMimeTypes(data);
+
+	// FIXME: need to find a perfect solution to validate pdf content.
+	Collection mimeTypes = MimeUtil.getMimeTypes(data);
 	MimeDetector md = new OpendesktopMimeDetector();
-	
-	
-	
-	
-	if (data != null && data.length > 4 &&
-	            data[0] == 0x25 && // %
-	            data[1] == 0x50 && // P
-	            data[2] == 0x44 && // D
-	            data[3] == 0x46 && // F
-	            data[4] == 0x2D) { // -
 
-	        // version 1.3 file terminator
-	        if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x33 &&
-	                data[data.length - 7] == 0x25 && // %
-	                data[data.length - 6] == 0x25 && // %
-	                data[data.length - 5] == 0x45 && // E
-	                data[data.length - 4] == 0x4F && // O
-	                data[data.length - 3] == 0x46 && // F
-	                data[data.length - 2] == 0x20 && // SPACE
-	                data[data.length - 1] == 0x0A) { // EOL
-	            return true;
-	        }
+	if (data != null && data.length > 4 && data[0] == 0x25 && // %
+		data[1] == 0x50 && // P
+		data[2] == 0x44 && // D
+		data[3] == 0x46 && // F
+		data[4] == 0x2D) { // -
 
-	        // version 1.3 file terminator
-	        if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x34 &&
-	                data[data.length - 6] == 0x25 && // %
-	                data[data.length - 5] == 0x25 && // %
-	                data[data.length - 4] == 0x45 && // E
-	                data[data.length - 3] == 0x4F && // O
-	                data[data.length - 2] == 0x46 && // F
-	                data[data.length - 1] == 0x0A) { // EOL
-	            return true;
-	        }
+	    // version 1.3 file terminator
+	    if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x33 && data[data.length - 7] == 0x25 && // %
+		    data[data.length - 6] == 0x25 && // %
+		    data[data.length - 5] == 0x45 && // E
+		    data[data.length - 4] == 0x4F && // O
+		    data[data.length - 3] == 0x46 && // F
+		    data[data.length - 2] == 0x20 && // SPACE
+		    data[data.length - 1] == 0x0A) { // EOL
+		return true;
 	    }
-	    return false;
+
+	    // version 1.3 file terminator
+	    if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x34 && data[data.length - 6] == 0x25 && // %
+		    data[data.length - 5] == 0x25 && // %
+		    data[data.length - 4] == 0x45 && // E
+		    data[data.length - 3] == 0x4F && // O
+		    data[data.length - 2] == 0x46 && // F
+		    data[data.length - 1] == 0x0A) { // EOL
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public static Object createTiff(File dir) {
+	BufferedImage bufferedImage;
+	try {
+	    bufferedImage = ImageIO.read(new File("C:\\Users\\Jay Tanna\\Desktop\\image1.jpg"));
+
+	    BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
+		    BufferedImage.TYPE_INT_RGB);
+
+	    newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+
+	    OutputStream out = new FileOutputStream("C:\\Users\\Jay Tanna\\Desktop\\myNew_File.tiff");
+	    // TiffEncoder tiffEncoder = new TiffEncoder();
+	    // tiffEncoder.setCompressed(true);
+	    // tiffEncoder.write(newBufferedImage, out);
+
+	    System.out.println("Done");
+	    out.close();
+
+	} catch (IOException e) {
+
+	    e.printStackTrace();
+
+	}
+
+	return null;
     }
 }

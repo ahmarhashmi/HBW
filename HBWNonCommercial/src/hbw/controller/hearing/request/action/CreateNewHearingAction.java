@@ -35,8 +35,11 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.Evidence;
 import hbw.controller.hearing.request.common.FileUtil;
+import hbw.controller.hearing.request.common.FileValidationRequestDTO;
 import hbw.controller.hearing.request.common.HBWClient;
 import hbw.controller.hearing.request.common.Resource;
 import hbw.controller.hearing.request.common.StatesSinglton;
@@ -95,6 +98,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
 	files = new ArrayList<UploadedFiles>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
+	List<Evidence> evidences = new ArrayList<Evidence>();
 	if (uploadedFiles.exists()) {
 	    UploadedFiles uploadedFile;
 	    for (File file : uploadedFiles.listFiles()) {
@@ -116,6 +120,18 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		    }
 		}
 		files.add(uploadedFile);
+
+		try {
+		    Evidence evidence = new Evidence();
+		    evidence.setName(file.getName());
+		    evidence.setExtension(FileUtil.getFileExtension(file.getName()));
+		    evidence.setContent(FileUtil.encodeFileToBase64Binary(file));
+		    evidences.add(evidence);
+		} catch (IOException e) {
+		    addActionError(e.getLocalizedMessage());
+		    return INPUT;
+		}
+
 	    }
 	}
 
@@ -128,6 +144,16 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	if (!email1.equals(email2)) {
 	    addActionError("Emails do not match.");
 	    return INPUT;
+	}
+
+	if (evidences.size() > 0) {
+	    FileValidationRequestDTO dto = new FileValidationRequestDTO();
+	    dto.setFiles(evidences);
+	    dto.setSubmittedDate(new Date());
+	    dto.setSummonsNumber(violationNumber);
+	    dto.setToken(CommonUtil.createJWT(violationNumber));
+
+	    CommonUtil.validateAndConvertFilesToTiff(dto);
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
 	try {

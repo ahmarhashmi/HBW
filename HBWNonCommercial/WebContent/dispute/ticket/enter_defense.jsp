@@ -352,8 +352,23 @@
 					</div>
 
 					<div class="gap"></div>
+					<div class="form-group viewticketbuttons">
+							<a class="btn btn-primary btn-lg">View Ticket</a>
+							<a class="btn btn-link btn-lg" href="#" >Adobe Acrobat Reader</a> <span>(required to view the ticket)</span>
+						</div>
+						<div class="gap clearfix"></div>
 					<hr>
 					<h4>Enter Defense</h4>
+					<p>Explain why you not previously responded to this request.</p>
+					<div class="form-group">
+						<textarea class="form-control" rows="10" cols="30"
+							maxlength="32700" onkeyup="setDefenseValue(this);"></textarea>
+						<span id="maxLengthReached" style="color: red; display: none;">Maximum
+							length reached. If you want to write more, please do not request
+							a hearing online. Submit your hearing request and evidence by
+							mail or in person.</span>
+					</div>
+					<div class="clearfix gap"></div>
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
