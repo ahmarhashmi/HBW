@@ -146,13 +146,13 @@
 						/** Checking virus scan after all the validations are successful so that 
 						 * user has not to wait for virus scan on every submit
 						 */
-						if (!$('#affirm').is(":visible")) {
+						//if (!$('#affirm').is(":visible")) {
 							//loadingDiv.style.display = "block";
-							var infectedFiles = isAllUploadedFilesClean();
-							if (infectedFiles.length > 0) {
-								if (confirm("("
-										+ infectedFiles.toString()
-										+ ") Files are infected and deleted from the server. Do you want to update more?")) {
+							//var infectedFiles = isAllUploadedFilesClean();
+							//if (infectedFiles.length > 0) {
+								//if (confirm("("
+										//+ infectedFiles.toString()
+										//+ ") Files are infected and deleted from the server. Do you want to update more?")) {
 									//showHideLoadingDiv(false);
 									//$("#submitBtn").removeAttr('disabled');
 									/* $("#submitBtn").css("display", "block");
@@ -160,10 +160,10 @@
 											"none");
 									$(':input[type="submit"]').prop('disabled',
 											false); */
-									return false;
-								}
-							}
-						}
+									//return false;
+								//}
+							//}
+						//}
 						$(window).unbind('beforeunload');
 					});
 

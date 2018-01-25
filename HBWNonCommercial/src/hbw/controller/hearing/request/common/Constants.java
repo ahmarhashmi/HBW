@@ -29,4 +29,8 @@ public final class Constants {
 
     public static final String JWT_SECRET_KEY = "TheNewYorkCityDepartmentOfFinance";
 
+    public static final String RETURN_CODE_ERROR = "2";
+
+    public static final String RETURN_CODE = "ReturnCode";
+
 }

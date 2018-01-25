@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -21,10 +20,6 @@ import org.apache.commons.io.FileUtils;
 
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
-
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.MimeDetector;
-import eu.medsea.mimeutil.detector.OpendesktopMimeDetector;
 
 /**
  * @author Ahmar Nadeem
@@ -167,8 +162,8 @@ public final class FileUtil {
     public static boolean isPDF(byte[] data) {
 
 	// FIXME: need to find a perfect solution to validate pdf content.
-	Collection mimeTypes = MimeUtil.getMimeTypes(data);
-	MimeDetector md = new OpendesktopMimeDetector();
+	// Collection mimeTypes = MimeUtil.getMimeTypes(data);
+	// MimeDetector md = new OpendesktopMimeDetector();
 
 	if (data != null && data.length > 4 && data[0] == 0x25 && // %
 		data[1] == 0x50 && // P

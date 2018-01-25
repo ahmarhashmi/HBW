@@ -10,30 +10,27 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 
 /**
  * @author Ahmar
  *
  */
 public final class CommonUtil {
+
+    private static Logger LOGGER = Log4j2LoggerFactory.getLogger(CommonUtil.class);
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     /**
      * 
@@ -49,7 +46,7 @@ public final class CommonUtil {
 	}
     }
 
-    public static void validateAndConvertFilesToTiff(FileValidationRequestDTO dto) {
+    public static String validateAndConvertFilesToTiff(FileValidationRequestDTO dto) {
 	// String jsonResponse = "";
 	try {
 	    URL url = new URL("https://hbwmobileuat.vgdinbox.net/process.php");
@@ -64,31 +61,18 @@ public final class CommonUtil {
 	    String payload = createJsonString(dto);
 	    writer.write(payload);
 	    writer.close();
+	    LOGGER.trace("Request json for files validation is {}", payload);
+
 	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    StringBuffer jsonString = new StringBuffer();
 	    String line;
 	    while ((line = br.readLine()) != null) {
 		jsonString.append(line);
 	    }
+	    LOGGER.trace("Response from the server is {}", jsonString.toString());
 	    br.close();
 	    conn.disconnect();
-
-	    // if (conn.getResponseCode() != 200) {
-	    // throw new RuntimeException("Failed : HTTP error code : " +
-	    // conn.getResponseCode());
-	    // }
-	    //
-	    // BufferedReader br = new BufferedReader(new
-	    // InputStreamReader((conn.getInputStream())));
-	    //
-	    // String output;
-	    // System.out.println("Output from Server .... \n");
-	    // while ((output = br.readLine()) != null) {
-	    // jsonResponse += output;
-	    // }
-	    //
-	    // conn.disconnect();
-
+	    return jsonString.toString();
 	} catch (MalformedURLException e) {
 	    throw new RuntimeException(e);
 	} catch (IOException e) {
@@ -96,45 +80,21 @@ public final class CommonUtil {
 	}
     }
 
+    /**
+     * @param dto
+     * @return
+     * @throws JsonProcessingException
+     */
     private static String createJsonString(FileValidationRequestDTO dto) throws JsonProcessingException {
-	ObjectMapper mapper = new ObjectMapper();
 	return mapper.writeValueAsString(dto);
     }
 
     /**
-     * Utility function to create a JWT using violation/summon number
-     * 
-     * @param violationNumber
+     * @param json
      * @return
+     * @throws IOException
      */
-    public static String createJWT(String violationNumber) {
-
-	// The JWT signature algorithm we will be using to sign the token
-	SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
-	// We will sign our JWT with our ApiKey secret
-	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(Constants.JWT_SECRET_KEY);
-	Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-
-	Map<String, Object> claim = new HashMap<String, Object>();
-	claim.put(Constants.SUMMON, violationNumber);
-	// Let's set the JWT Claims
-	JwtBuilder builder = Jwts.builder().addClaims(claim).signWith(signatureAlgorithm, signingKey);
-
-	// Builds the JWT and serializes it to a compact, URL-safe string
-	return builder.compact();
-    }
-
-    // Sample method to validate and read the JWT
-    public static void parseJWT(String jwt) {
-
-	// This line will throw an exception if it is not a signed JWS (as expected)
-	Claims claims = Jwts.parser()
-		.setSigningKey(DatatypeConverter.parseBase64Binary("TheNewYorkCityDepartmentOfFinance"))
-		.parseClaimsJws(jwt).getBody();
-	System.out.println("ID: " + claims.getId());
-	System.out.println("Subject: " + claims.getSubject());
-	System.out.println("Issuer: " + claims.getIssuer());
-	System.out.println("Expiration: " + claims.getExpiration());
+    public static JsonNode parseJsonStringToObject(String json) throws IOException {
+	return mapper.readValue(json, JsonNode.class);
     }
 }

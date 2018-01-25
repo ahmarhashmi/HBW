@@ -4,6 +4,7 @@
 package hbw.controller.hearing.request.common;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -18,19 +19,19 @@ public class FileValidationRequestDTO implements Serializable {
     private static final long serialVersionUID = 2534164016525275007L;
 
     /** The violation number that's alternatively called as summon number */
-    @JsonProperty("summonsNumber")
+    @JsonProperty("SummonsNumber")
     private String summonsNumber;
 
     /** The JWT created using */
-    @JsonProperty("token")
+    @JsonProperty("Token")
     private String token;
 
     /** The list of files to be scanned and converted to tiff */
-    @JsonProperty("files")
+    @JsonProperty("Files")
     private List<Evidence> files;
 
     /** Date and time of the request */
-    @JsonProperty("submittedDate")
+    @JsonProperty("SubmittedDate")
     private Date submittedDate;
 
     /*
@@ -88,12 +89,17 @@ public class FileValidationRequestDTO implements Serializable {
     public void setFiles(List<Evidence> files) {
 	this.files = files;
     }
-
+    
     /**
      * @return the submittedDate
      */
-    public Date getSubmittedDate() {
-	return submittedDate;
+    public String getSubmittedDate() {
+	if(submittedDate != null) {
+	    //2016-10-18T04:08:43Z
+	    SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd\'T\'HH:MM:ssZ");
+	    return sdf.format(submittedDate);
+	}
+	return null;
     }
 
     /**

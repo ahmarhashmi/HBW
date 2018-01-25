@@ -26,6 +26,7 @@ import org.example.nycservmobileapp.CreateNewHearingResult;
 import org.example.nycservmobileapp.NYCServMobileApp;
 import org.example.nycservmobileapp.Name;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfReader;
 import com.opensymphony.xwork2.ActionSupport;
@@ -41,6 +42,7 @@ import hbw.controller.hearing.request.common.Evidence;
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.FileValidationRequestDTO;
 import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.JWTUtil;
 import hbw.controller.hearing.request.common.Resource;
 import hbw.controller.hearing.request.common.StatesSinglton;
 import hbw.controller.hearing.request.common.UploadedFiles;
@@ -131,7 +133,6 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		    addActionError(e.getLocalizedMessage());
 		    return INPUT;
 		}
-
 	    }
 	}
 
@@ -151,9 +152,27 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    dto.setFiles(evidences);
 	    dto.setSubmittedDate(new Date());
 	    dto.setSummonsNumber(violationNumber);
-	    dto.setToken(CommonUtil.createJWT(violationNumber));
+	    dto.setToken(JWTUtil.createJWT(violationNumber));
 
-	    CommonUtil.validateAndConvertFilesToTiff(dto);
+	    String response = CommonUtil.validateAndConvertFilesToTiff(dto);
+	    try {
+		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
+		if(resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+		    JsonNode payload = resNode.get("Payload");
+		    boolean isError = false;
+		    for (JsonNode payloadItem : payload) {
+			if( payloadItem.get("ErrorCode").asText().equals("107") ) {
+			    addActionError("File name "+payloadItem.get("FileName")+" is infected.");
+			    isError = true;
+			}
+		    }
+		    if( isError ) {
+			return INPUT;
+		    }
+		}
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
 	try {
@@ -162,14 +181,16 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    addActionError(e.getLocalizedMessage());
 	    return INPUT;
 	}
-	return processHearingRequest();
+//	return processHearingRequest();
+	return SUCCESS;
     }
 
     /**
      * 
      * @return
      */
-    private String processHearingRequest() {
+    @Deprecated
+    protected String processHearingRequest() {
 	HttpServletRequest request = ServletActionContext.getRequest();
 	File evidenceLocation = FileUtil.validateAndGetEvidenceUploadPath(request);
 	if (evidenceLocation.list().length == 0 && !affirm) {
