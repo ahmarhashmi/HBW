@@ -282,7 +282,7 @@ function isAllUploadedFilesClean(){
 	return infectedFiles;
 }
 
-function enableDisableSubmitButton(){
+function enableDisableSubmitButton(onPageload){
 	
 	var dz = Dropzone.forElement("#file-upload-form"); 
 	//alert(dz.getAcceptedFiles());
@@ -321,7 +321,9 @@ function enableDisableSubmitButton(){
 	}
 	if ($('#affirm').is(":visible")
 			&& !$('#affirm')[0].checked) {
-		$('#affirmMsg').css("color", "red");
+		if(!onPageload){
+			$('#affirmMsg').css("color", "red");
+		}
 		isValid = false;
 	} else {
 		$('#affirmMsg').css("color", "black");

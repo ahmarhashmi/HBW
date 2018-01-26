@@ -175,7 +175,9 @@
 	$(document)
 			.ready(
 					function() {
-						$("#submitBtn").attr("disabled", true);
+						
+						enableDisableSubmitButton(true);
+						
 						$("#email2").on("change", function(){
 							if( $(this).val() != '' ){
 								if ($('#email1').val() != $(this).val()) {
