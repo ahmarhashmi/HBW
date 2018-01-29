@@ -10,8 +10,10 @@
 <title>Dispute a Ticket</title>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<%-- <script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> --%>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/jquery-1.12.4.min.js"></script>
 
 <script type="text/javascript">
 	function toggleCheckBox(obj) {
@@ -41,8 +43,7 @@
 								.bind(
 										'DOMNodeInserted',
 										function(event) {
-											$('.goog-te-menu-value span:first')
-													.html('Translate');
+											//$('.goog-te-menu-value span:first').html('Translate');
 											$(
 													'.goog-te-menu-frame.skiptranslate')
 													.load(

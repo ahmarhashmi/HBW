@@ -29,8 +29,8 @@
 	href="${pageContext.request.contextPath}/css/dropzone.css" />
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/jquery-1.12.4.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <link rel="stylesheet"
@@ -203,8 +203,7 @@
 								.bind(
 										'DOMNodeInserted',
 										function(event) {
-											$('.goog-te-menu-value span:first')
-													.html('Translate');
+											//$('.goog-te-menu-value span:first').html('Translate');
 											$(
 													'.goog-te-menu-frame.skiptranslate')
 													.load(
@@ -356,7 +355,7 @@
 					<div class="gap"></div>
 					<div class="form-group viewticketbuttons">
 							<a class="btn btn-primary btn-lg">View Ticket</a>
-							<a class="btn btn-link btn-lg" href="#" >Adobe Acrobat Reader</a> <span>(required to view the ticket)</span>
+							<a class="btn btn-link btn-lg" href="https://get.adobe.com/reader/" target="_blank" >Adobe Acrobat Reader</a> <span>(required to view the ticket)</span>
 						</div>
 						<div class="gap clearfix"></div>
 					<hr>
