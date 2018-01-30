@@ -19,9 +19,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
-
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.Resource;
@@ -29,12 +28,12 @@ import hbw.controller.hearing.request.common.Resource;
 /**
  * @author Ahmar Nadeem
  * 
- *         Servlet implementation class FileUploadServlet for handling the drag
- *         and drop file upload.
+ *         The servlet to handle evidence upload related actions like upload
+ *         file, view file, delete file from server etc.
  */
 public class FileUploadServlet extends HttpServlet {
 
-    Logger LOGGER = Log4j2LoggerFactory.getLogger(FileUploadServlet.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(FileUploadServlet.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -125,14 +124,13 @@ public class FileUploadServlet extends HttpServlet {
 			    return;
 			}
 		    } else if (type.equals("application")) {
-			/*if (!FileUtil.isPDF(item.get())) {
-			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				    "The uploaded file is not a valid pdf file.");
-			    return;
-			}*/
+			/*
+			 * if (!FileUtil.isPDF(item.get())) {
+			 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+			 * "The uploaded file is not a valid pdf file."); return; }
+			 */
 		    } else {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"File not supported.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "File not supported.");
 			return;
 		    }
 
@@ -145,7 +143,7 @@ public class FileUploadServlet extends HttpServlet {
 			return;
 		    }
 
-		    LOGGER.info(file.getPath() + "{} File uploaded SUCCESSFULLY", file.getPath());
+		    LOGGER.info(file.getPath() + " {} File uploaded SUCCESSFULLY", file.getPath());
 		}
 	    }
 	} catch (Exception e) {

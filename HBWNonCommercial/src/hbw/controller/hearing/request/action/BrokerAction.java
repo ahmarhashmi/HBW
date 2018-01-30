@@ -10,10 +10,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 
 /**
  * @author Ahmar Nadeem
@@ -23,7 +23,7 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 @ResultPath(value = "/")
 public class BrokerAction extends ActionSupport {
 
-    Logger LOGGER = Log4j2LoggerFactory.getLogger(BrokerAction.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(BrokerAction.class);
     
     private static final long serialVersionUID = -9077943167249674484L;
 

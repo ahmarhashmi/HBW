@@ -142,6 +142,7 @@
 							$("#submitBtnDisabled").css("display", "none");
 							return false;
 						}
+						loadingDiv.style.display = "block";
 
 						/** Checking virus scan after all the validations are successful so that 
 						 * user has not to wait for virus scan on every submit
@@ -177,6 +178,32 @@
 					function() {
 						
 						enableDisableSubmitButton(true);
+						
+						$('#submitBtn').click(function(event) {
+							loadingDiv.style.display = "block";
+							event.preventDefault();
+							var processData = $('#mainForm').serialize();
+							$.ajax({
+								type : "POST", 
+								url : "<s:url action='create_hearing' />",
+								data: processData,
+								cache: false,
+								async: false,
+								success : function(result) {
+									console.log(result);
+									loadingDiv.style.display = "none";
+									//window.location = "dispute/ticket/verify_info.jsp";
+									
+									//Window Settings
+							        var w = window.open();
+							        //Append Search unordered list
+							        $(w.document.body).html(result);
+								},
+								error: function(){
+									loadingDiv.style.display = "none";
+								}
+							});
+						});
 						
 						$("#email2").on("change", function(){
 							if( $(this).val() != '' ){
@@ -396,6 +423,11 @@
 							href="#">in person</a> at a <a href="#">Department of Finance
 							Business Center.</a>
 					</p>
+					<s:if test="hasActionErrors()">
+							<div class="errors" style="color: red;">
+								<s:actionerror />
+							</div>
+						</s:if>
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
@@ -423,11 +455,6 @@
 							decision should be mailed. A hearing request confirmation will be
 							sent to your email address.</p>
 
-						<s:if test="hasActionErrors()">
-							<div class="errors" style="color: red;">
-								<s:actionerror />
-							</div>
-						</s:if>
 						<div class="form-group">
 							<div style="display: none;">
 								<s:textarea id="defenseHidden" name="defense" maxlength="32700"
@@ -532,8 +559,9 @@
 						<p>Once you submit your request, your hearing will be
 							scheduled.</p>
 						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary "
-								id="submitBtn" />
+							<%-- <s:submit value="Submit Request" class="btn btn-primary "
+								id="submitBtn" /> --%>
+							<input id="submitBtn" type="button" class="btn btn-primary" value="Submit Request" />
 							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>

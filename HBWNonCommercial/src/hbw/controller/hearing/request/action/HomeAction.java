@@ -14,10 +14,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 
 /**
  * @author Ahmar
@@ -28,7 +28,7 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 public class HomeAction extends ActionSupport {
 
     private static final long serialVersionUID = 5535224131489929020L;
-    Logger LOGGER = Log4j2LoggerFactory.getLogger(HomeAction.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HomeAction.class);
 
     /**
      * The main action listener of this class.
@@ -37,7 +37,7 @@ public class HomeAction extends ActionSupport {
     public String execute() {
 	LOGGER.info("Redirecting to the home screen.");
 	ServletActionContext.getRequest().getSession().invalidate();
-	
+
 	ServletContext context = ServletActionContext.getServletContext();
 	RequestDispatcher dispatcher = context.getRequestDispatcher("/index.jsp");
 	try {
@@ -47,7 +47,7 @@ public class HomeAction extends ActionSupport {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-	
+
 	return SUCCESS;
     }
 }
