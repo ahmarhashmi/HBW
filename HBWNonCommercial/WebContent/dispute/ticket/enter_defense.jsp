@@ -63,6 +63,7 @@
 						*/
 						$('#submitBtn').click(function(event) {
 							loadingDiv.style.display = "block";
+							$("#displayError").empty();
 							event.preventDefault();
 							var processData = $('#mainForm').serialize();
 							$.ajax({
