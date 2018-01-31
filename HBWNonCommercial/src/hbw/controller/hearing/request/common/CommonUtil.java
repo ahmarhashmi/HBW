@@ -16,11 +16,12 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 
 /**
  * @author Ahmar
@@ -28,7 +29,7 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
  */
 public final class CommonUtil {
 
-    private static Logger LOGGER = Log4j2LoggerFactory.getLogger(CommonUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(CommonUtil.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -46,7 +47,7 @@ public final class CommonUtil {
 	}
     }
 
-    public static String validateAndConvertFilesToTiff(FileValidationRequestDTO dto) {
+    public static String scanAndConvertFilesToTiff(FileValidationRequestDTO dto) {
 	// String jsonResponse = "";
 	try {
 	    URL url = new URL("https://hbwmobileuat.vgdinbox.net/process.php");
@@ -61,7 +62,7 @@ public final class CommonUtil {
 	    String payload = createJsonString(dto);
 	    writer.write(payload);
 	    writer.close();
-	    LOGGER.trace("Request json for files validation is {}", payload);
+	    LOGGER.info("Request json for files validation is :{}", payload);
 
 	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    StringBuffer jsonString = new StringBuffer();
@@ -69,7 +70,7 @@ public final class CommonUtil {
 	    while ((line = br.readLine()) != null) {
 		jsonString.append(line);
 	    }
-	    LOGGER.trace("Response from the server is {}", jsonString.toString());
+	    LOGGER.info("Response from the server is :{}", jsonString.toString());
 	    br.close();
 	    conn.disconnect();
 	    return jsonString.toString();

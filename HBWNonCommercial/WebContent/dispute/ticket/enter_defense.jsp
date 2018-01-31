@@ -48,125 +48,6 @@
     <![endif]-->
 
 <script type="text/javascript">
-	function showHideLoadingDiv(isShow) {
-		var loadingDiv = document.getElementById("loadingDiv");
-		alert(loadingDiv.style.display);
-		if (isShow) {
-			loadingDiv.style.display = "block";
-			//$('#mainForm').submit();
-		} else {
-			loadingDiv.style.display = "none";
-		}
-		alert(loadingDiv.style.display);
-	}
-
-	$(document)
-			.submit(
-					function(event) {
-						var isValid = true;
-
-						//$(':input[type="submit"]').prop('disabled', true);
-						// perform validations
-						if (!$('#certify')[0].checked) {
-							$('#notCertified').css("color", "red");
-							isValid = false;
-						} else {
-							$('#notCertified').css("color", "black");
-						}
-						if (!$('#firstName').val()) {
-							$('#firstNameMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#firstNameMsg').css("display", "none");
-						}
-						if (!$('#lastName').val()) {
-							$('#lastNameMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#lastNameMsg').css("display", "none");
-						}
-						if (!$('#address').val()) {
-							$('#addressMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#addressMsg').css("display", "none");
-						}
-						if (!$('#city').val()) {
-							$('#cityMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#cityMsg').css("display", "none");
-						}
-						if ($('#state').val() == 1) {
-							$('#stateMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#stateMsg').css("display", "none");
-						}
-						if (!$('#zip').val()) {
-							$('#zipMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#zipMsg').css("display", "none");
-						}
-						if (!$('#email1').val()) {
-							$('#email1Msg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#email1Msg').css("display", "none");
-						}
-						if (!$('#email2').val()) {
-							$('#email2Msg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#email2Msg').css("display", "none");
-						}
-						if ($('#email1').val() != $('#email2').val()) {
-							$('#emailMatchMsg').css("display", "block");
-							isValid = false;
-						} else {
-							$('#emailMatchMsg').css("display", "none");
-						}
-						if ($('#affirm').is(":visible")
-								&& !$('#affirm')[0].checked) {
-							$('#affirmMsg').css("color", "red");
-							isValid = false;
-						} else {
-							$('#affirmMsg').css("color", "black");
-						}
-
-						if (!isValid) {
-							//$("#submitBtn").removeAttr('disabled');
-							//$(':input[type="submit"]').prop('disabled', false);
-							$("#submitBtn").css("display", "block");
-							$("#submitBtnDisabled").css("display", "none");
-							return false;
-						}
-
-						/** Checking virus scan after all the validations are successful so that 
-						 * user has not to wait for virus scan on every submit
-						 */
-						//if (!$('#affirm').is(":visible")) {
-							//loadingDiv.style.display = "block";
-							//var infectedFiles = isAllUploadedFilesClean();
-							//if (infectedFiles.length > 0) {
-								//if (confirm("("
-										//+ infectedFiles.toString()
-										//+ ") Files are infected and deleted from the server. Do you want to update more?")) {
-									//showHideLoadingDiv(false);
-									//$("#submitBtn").removeAttr('disabled');
-									/* $("#submitBtn").css("display", "block");
-									$("#submitBtnDisabled").css("display",
-											"none");
-									$(':input[type="submit"]').prop('disabled',
-											false); */
-									//return false;
-								//}
-							//}
-						//}
-						$(window).unbind('beforeunload');
-					});
-
 	$(window).on('beforeunload', function(event) {
 		return "";
 	});
@@ -175,9 +56,44 @@
 	$(document)
 			.ready(
 					function() {
-						
 						enableDisableSubmitButton(true);
 						
+						/**
+						* Ajax submission of the page.
+						*/
+						$('#submitBtn').click(function(event) {
+							loadingDiv.style.display = "block";
+							$("#displayError").empty();
+							event.preventDefault();
+							var processData = $('#mainForm').serialize();
+							$.ajax({
+								type : "POST", 
+								url : "<s:url action='create_hearing' />",
+								data: processData,
+								cache: false,
+								//async: false,
+								success : function(result) {
+							        var errors = $(result).find(".errors");
+									loadingDiv.style.display = "none";
+									if( $(result).find(".errors").length == 0 ){
+										 var myWindow = window.open("", "_self");
+									     myWindow.document.write(result);
+									} else{ 
+										$("#displayError").append(errors);
+										$('html, body').animate({
+									        scrollTop: $("#displayError").offset().top
+									    }, 1000);
+									}									
+								},
+								error: function(){
+									loadingDiv.style.display = "none";
+								}
+							});
+						});
+						
+						/**
+						* Listener for the email change to see if both emails match
+						*/
 						$("#email2").on("change", function(){
 							if( $(this).val() != '' ){
 								if ($('#email1').val() != $(this).val()) {
@@ -396,6 +312,12 @@
 							href="#">in person</a> at a <a href="#">Department of Finance
 							Business Center.</a>
 					</p>
+					<div id="displayError"></div>
+					<s:if test="hasActionErrors()">
+							<div class="errors" style="color: red;">
+								<s:actionerror />
+							</div>
+						</s:if>
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
@@ -423,11 +345,6 @@
 							decision should be mailed. A hearing request confirmation will be
 							sent to your email address.</p>
 
-						<s:if test="hasActionErrors()">
-							<div class="errors" style="color: red;">
-								<s:actionerror />
-							</div>
-						</s:if>
 						<div class="form-group">
 							<div style="display: none;">
 								<s:textarea id="defenseHidden" name="defense" maxlength="32700"
@@ -532,8 +449,9 @@
 						<p>Once you submit your request, your hearing will be
 							scheduled.</p>
 						<div class="form-group">
-							<s:submit value="Submit Request" class="btn btn-primary "
-								id="submitBtn" />
+							<%-- <s:submit value="Submit Request" class="btn btn-primary "
+								id="submitBtn" /> --%>
+							<input id="submitBtn" type="button" class="btn btn-primary" value="Submit Request" />
 							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
 								Request</a>
 						</div>

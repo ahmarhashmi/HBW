@@ -17,9 +17,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Ahmar Nadeem
@@ -30,7 +29,7 @@ import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
  */
 public final class FileUtil {
 
-    private static Logger LOGGER = Log4j2LoggerFactory.getLogger(FileUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      * 

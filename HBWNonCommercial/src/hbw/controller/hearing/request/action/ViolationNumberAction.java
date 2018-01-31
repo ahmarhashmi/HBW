@@ -13,11 +13,11 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -40,10 +40,10 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 2137861793381499464L;
 
-    Logger LOGGER = Log4j2LoggerFactory.getLogger(ViolationNumberAction.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ViolationNumberAction.class);
 
     private ViolationInfo violationInfo = new ViolationInfo();
-    
+
     public String getState() {
 	return "New York";
     }
@@ -79,6 +79,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	    return INPUT;
 	}
 
+	LOGGER.info("Violation number {} accepted for hearing request.", this.violationNumber);
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);

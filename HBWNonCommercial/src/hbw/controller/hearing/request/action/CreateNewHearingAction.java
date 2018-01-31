@@ -25,14 +25,14 @@ import org.example.nycservmobileapp.CreateNewHearingRequest;
 import org.example.nycservmobileapp.CreateNewHearingResult;
 import org.example.nycservmobileapp.NYCServMobileApp;
 import org.example.nycservmobileapp.Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfReader;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -58,11 +58,11 @@ import hbw.controller.hearing.request.common.ZipUtil;
 @Results({ @Result(name = "success", location = "dispute/ticket/verify_info.jsp"),
 	@Result(name = "input", location = "dispute/ticket/enter_defense.jsp"), })
 @InterceptorRefs({ @InterceptorRef("defaultStack"),
-	@InterceptorRef("prepare")/* , @InterceptorRef("ajaxValidation") */ })
+	@InterceptorRef("prepare")/*, @InterceptorRef("ajaxValidation")*/ })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
-    private static Logger LOGGER = Log4j2LoggerFactory.getLogger(CreateNewHearingAction.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(CreateNewHearingAction.class);
 
     private static final long serialVersionUID = -5864237156298942117L;
 
@@ -89,12 +89,13 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     @Override
     public void prepare() throws Exception {
     }
-
+    
     /**
      * The main action listener of this class.
      */
     @Action(value = "/create_hearing")
     public String execute() {
+	
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
@@ -154,14 +155,16 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    dto.setSummonsNumber(violationNumber);
 	    dto.setToken(JWTUtil.createJWT(violationNumber));
 
-	    String response = CommonUtil.validateAndConvertFilesToTiff(dto);
+	    String response = CommonUtil.scanAndConvertFilesToTiff(dto);
 	    try {
 		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
-		if(resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+		if(resNode.get(Constants.RETURN_CODE) != null && 
+			resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
-			if( payloadItem.get("ErrorCode").asText().equals("107") ) {
+			if( payloadItem.get("ErrorCode") != null && 
+				payloadItem.get("ErrorCode").asText().equals("107") ) {
 			    addActionError("File name "+payloadItem.get("FileName")+" is infected.");
 			    isError = true;
 			}
@@ -244,8 +247,9 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	request.setEmail(email1);
 	request.setViolationNumber(violationNumber);
 	request.setEvidenceToBeUploaded(!affirm);
+//	request.setMtvjDefense(arg0);
 	CreateNewHearingResult response = port.createNewHearing(request);
-	LOGGER.debug("createNewHearing.result=" + response);
+	LOGGER.debug("createNewHearing.result = {}", response);
     }
 
     /**
