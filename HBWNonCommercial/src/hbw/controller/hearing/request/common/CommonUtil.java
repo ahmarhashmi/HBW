@@ -50,7 +50,7 @@ public final class CommonUtil {
     public static String scanAndConvertFilesToTiff(FileValidationRequestDTO dto) {
 	// String jsonResponse = "";
 	try {
-	    URL url = new URL("https://hbwmobileuat.vgdinbox.net/process.php");
+	    URL url = new URL(Resource.VANGAURD_VIRUS_SCAN_URL.getValue());
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	    conn.setRequestMethod("POST");
 	    conn.setDoInput(true);

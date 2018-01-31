@@ -21,7 +21,8 @@ public enum Resource {
     USER_ID,
     PASSWORD, 
     WS_CHANNEL,
-    
+    VANGAURD_VIRUS_SCAN_URL,
+    DOF_BROKER_URL,
 
     ;
 

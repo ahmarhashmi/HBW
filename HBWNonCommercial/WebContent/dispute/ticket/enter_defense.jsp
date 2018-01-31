@@ -71,7 +71,6 @@
 								url : "<s:url action='create_hearing' />",
 								data: processData,
 								cache: false,
-								//async: false,
 								success : function(result) {
 							        var errors = $(result).find(".errors");
 									loadingDiv.style.display = "none";

@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import com.opensymphony.xwork2.ActionSupport;
 
+import hbw.controller.hearing.request.common.Resource;
+
 /**
  * @author Ahmar Nadeem
  * 
@@ -44,7 +46,7 @@ public class BrokerAction extends ActionSupport {
 	     * URL.
 	     */
 	    HttpServletResponse response = ServletActionContext.getResponse();
-	    response.sendRedirect("http://www1.nyc.gov/site/finance/vehicles/");
+	    response.sendRedirect(Resource.DOF_BROKER_URL.getValue());
 	    return super.execute();
 	}
 	return NONE;
