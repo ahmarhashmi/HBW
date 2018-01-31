@@ -55,10 +55,10 @@ import hbw.controller.hearing.request.common.ZipUtil;
  */
 @Namespace("/dispute")
 @ResultPath(value = "/")
-@Results({ @Result(name = "success", type="redirect", location = "dispute/ticket/verify_info.jsp"),
+@Results({ @Result(name = "success", location = "dispute/ticket/verify_info.jsp"),
 	@Result(name = "input", location = "dispute/ticket/enter_defense.jsp"), })
 @InterceptorRefs({ @InterceptorRef("defaultStack"),
-	@InterceptorRef("prepare")/* , @InterceptorRef("ajaxValidation") */ })
+	@InterceptorRef("prepare")/*, @InterceptorRef("ajaxValidation")*/ })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
