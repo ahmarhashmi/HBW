@@ -24,7 +24,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.HBWClient;
 import hbw.controller.hearing.request.common.StatesSinglton;
-import hbw.controller.hearing.request.common.ViolationInfo;
+import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
@@ -85,48 +85,6 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
 	session.setAttribute(Constants.VIOLATION_INFO, violationInfo);
 	return SUCCESS;
-    }
-
-    /**
-     * Calculates the check digit for a nine digit violation number. If the
-     * violation number is invalid, returns "X" Creation date: (8/28/00 3:47:32 PM)
-     * 
-     * @return java.lang.String - valid check digit "0" - "9" or "X" if invalid
-     * @param argViolationNumber
-     *            java.lang.String first nine digits of violation number
-     */
-    @Deprecated
-    public static String calculateViolationNumberCheckDigit(String argViolationNumber) {
-	int checkDigit = 0;
-	// remove lead and trail blanks
-	if (argViolationNumber.length() != 9 || !isStringNumeric(argViolationNumber)) {
-	    return "X";
-	}
-
-	// Now that result is all numeric do the check digit alorithm
-	for (int digit = 0; digit < argViolationNumber.length(); digit++) {
-	    checkDigit += ((10 - digit) * (new Integer(argViolationNumber.substring(digit, digit + 1)).intValue()));
-	}
-	checkDigit = checkDigit % 11; // mod eleven
-	if (checkDigit == 10) {
-	    checkDigit = 0; // a check digit (mod 11) of 10 counts as zero
-	}
-	return "" + checkDigit;
-    }
-
-    /**
-     * Makes sure if the provided string contains only numeric
-     * 
-     * @param argViolationNumber
-     * @return
-     */
-    private static boolean isStringNumeric(String argViolationNumber) {
-	try {
-	    Long.parseLong(argViolationNumber);
-	    return true;
-	} catch (NumberFormatException e) {
-	    return false;
-	}
     }
 
     /**

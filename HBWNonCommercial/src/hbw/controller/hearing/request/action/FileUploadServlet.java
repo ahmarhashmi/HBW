@@ -199,7 +199,6 @@ public class FileUploadServlet extends HttpServlet {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-
     }
 
     /**

@@ -1,13 +1,13 @@
 /**
  * 
  */
-package hbw.controller.hearing.request.common;
+package hbw.controller.hearing.request.model;
 
 /**
- * @author Ahmar
+ * @author Ahmar Hashmi
  *
  */
-public class UploadedFiles {
+public class UploadedFile {
 
     private String fileName;
     private int pageCount;

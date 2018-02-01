@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hbw.controller.hearing.request.common;
+package hbw.controller.hearing.request.model;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -89,14 +89,13 @@ public class FileValidationRequestDTO implements Serializable {
     public void setFiles(List<Evidence> files) {
 	this.files = files;
     }
-    
+
     /**
      * @return the submittedDate
      */
     public String getSubmittedDate() {
-	if(submittedDate != null) {
-	    //2016-10-18T04:08:43Z
-	    SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd\'T\'HH:MM:ssZ");
+	if (submittedDate != null) {
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd\'T\'HH:MM:ssZ");
 	    return sdf.format(submittedDate);
 	}
 	return null;

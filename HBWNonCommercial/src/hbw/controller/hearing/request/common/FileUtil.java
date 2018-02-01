@@ -1,13 +1,7 @@
 package hbw.controller.hearing.request.common;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -122,37 +116,6 @@ public final class FileUtil {
     }
 
     /**
-     * 
-     * @param dirName
-     * @param nameZipFile
-     * @throws IOException
-     */
-    public static void zipDirectory(String dirName, String nameZipFile) throws IOException {
-	if (new File(dirName).listFiles().length <= 1) {
-	    return;
-	}
-
-	File[] filesInFolder = new File(dirName).listFiles();
-	ZipOutputStream zip = null;
-	FileOutputStream fW = null;
-	fW = new FileOutputStream(nameZipFile);
-	zip = new ZipOutputStream(fW);
-
-	for (File file : filesInFolder) {
-	    if (file.getName().contains(".zip")) {
-		continue;
-	    }
-	    zip.putNextEntry(new ZipEntry(file.getName()));
-	}
-	zip.close();
-	fW.close();
-    }
-
-    public static boolean isPDF(File file) {
-	return false;
-    }
-
-    /**
      * Utility to check if the file is valid pdf file or not.
      * 
      * @param data
@@ -194,30 +157,4 @@ public final class FileUtil {
 	return false;
     }
 
-    public static Object createTiff(File dir) {
-	BufferedImage bufferedImage;
-	try {
-	    bufferedImage = ImageIO.read(new File("C:\\Users\\Jay Tanna\\Desktop\\image1.jpg"));
-
-	    BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
-		    BufferedImage.TYPE_INT_RGB);
-
-	    newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
-
-	    OutputStream out = new FileOutputStream("C:\\Users\\Jay Tanna\\Desktop\\myNew_File.tiff");
-	    // TiffEncoder tiffEncoder = new TiffEncoder();
-	    // tiffEncoder.setCompressed(true);
-	    // tiffEncoder.write(newBufferedImage, out);
-
-	    System.out.println("Done");
-	    out.close();
-
-	} catch (IOException e) {
-
-	    e.printStackTrace();
-
-	}
-
-	return null;
-    }
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hbw.controller.hearing.request.common;
+package hbw.controller.hearing.request.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +12,7 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Ahmar
+ * @author Ahmar Hashmi
  *
  */
 public class ViolationInfo {
@@ -23,8 +23,8 @@ public class ViolationInfo {
     private String vehicleMake;
 
     public Boolean getIsVehicleInfoInSystem() {
-	return StringUtils.isNotBlank(vehiclePlate) || StringUtils.isNotBlank(vehicleMake) || 
-		StringUtils.isNotBlank(vehicleState) || StringUtils.isNotBlank(vehicleType);
+	return StringUtils.isNotBlank(vehiclePlate) || StringUtils.isNotBlank(vehicleMake)
+		|| StringUtils.isNotBlank(vehicleState) || StringUtils.isNotBlank(vehicleType);
     }
 
     private String violationNumber;
@@ -35,9 +35,9 @@ public class ViolationInfo {
     private String location;
 
     public Boolean getIsViolationDetailInSystem() {
-	return StringUtils.isNotBlank(violationNumber) || issuedOn != null ||
-		StringUtils.isNotBlank(issueTime) || StringUtils.isNotBlank(description) ||
-		StringUtils.isNotBlank(code) || StringUtils.isNotBlank(location);
+	return StringUtils.isNotBlank(violationNumber) || issuedOn != null || StringUtils.isNotBlank(issueTime)
+		|| StringUtils.isNotBlank(description) || StringUtils.isNotBlank(code)
+		|| StringUtils.isNotBlank(location);
     }
 
     private BigDecimal fine;

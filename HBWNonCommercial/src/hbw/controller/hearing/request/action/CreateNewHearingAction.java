@@ -38,16 +38,15 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
-import hbw.controller.hearing.request.common.Evidence;
 import hbw.controller.hearing.request.common.FileUtil;
-import hbw.controller.hearing.request.common.FileValidationRequestDTO;
 import hbw.controller.hearing.request.common.HBWClient;
 import hbw.controller.hearing.request.common.JWTUtil;
 import hbw.controller.hearing.request.common.Resource;
 import hbw.controller.hearing.request.common.StatesSinglton;
-import hbw.controller.hearing.request.common.UploadedFiles;
-import hbw.controller.hearing.request.common.ViolationInfo;
-import hbw.controller.hearing.request.common.ZipUtil;
+import hbw.controller.hearing.request.model.Evidence;
+import hbw.controller.hearing.request.model.FileValidationRequestDTO;
+import hbw.controller.hearing.request.model.UploadedFile;
+import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
@@ -57,8 +56,7 @@ import hbw.controller.hearing.request.common.ZipUtil;
 @ResultPath(value = "/")
 @Results({ @Result(name = "success", location = "dispute/ticket/verify_info.jsp"),
 	@Result(name = "input", location = "dispute/ticket/enter_defense.jsp"), })
-@InterceptorRefs({ @InterceptorRef("defaultStack"),
-	@InterceptorRef("prepare")/*, @InterceptorRef("ajaxValidation")*/ })
+@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
@@ -84,28 +82,28 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
     private String violationNumber;
 
-    private List<UploadedFiles> files;
+    private List<UploadedFile> files;
 
     @Override
     public void prepare() throws Exception {
     }
-    
+
     /**
      * The main action listener of this class.
      */
     @Action(value = "/create_hearing")
     public String execute() {
-	
+
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
-	files = new ArrayList<UploadedFiles>();
+	files = new ArrayList<UploadedFile>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
 	List<Evidence> evidences = new ArrayList<Evidence>();
 	if (uploadedFiles.exists()) {
-	    UploadedFiles uploadedFile;
+	    UploadedFile uploadedFile;
 	    for (File file : uploadedFiles.listFiles()) {
-		uploadedFile = new UploadedFiles();
+		uploadedFile = new UploadedFile();
 		uploadedFile.setFileName(file.getName());
 		uploadedFile.setFileSize(file.length() / 1024);
 		uploadedFile.setPageCount(1);
@@ -158,18 +156,18 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    String response = CommonUtil.scanAndConvertFilesToTiff(dto);
 	    try {
 		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
-		if(resNode.get(Constants.RETURN_CODE) != null && 
-			resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+		if (resNode.get(Constants.RETURN_CODE) != null
+			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
-			if( payloadItem.get("ErrorCode") != null && 
-				payloadItem.get("ErrorCode").asText().equals("107") ) {
-			    addActionError("File name "+payloadItem.get("FileName")+" is infected.");
+			if (payloadItem.get("ErrorCode") != null
+				&& payloadItem.get("ErrorCode").asText().equals("107")) {
+			    addActionError("File name " + payloadItem.get("FileName") + " is infected.");
 			    isError = true;
 			}
 		    }
-		    if( isError ) {
+		    if (isError) {
 			return INPUT;
 		    }
 		}
@@ -184,35 +182,6 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    addActionError(e.getLocalizedMessage());
 	    return INPUT;
 	}
-//	return processHearingRequest();
-	return SUCCESS;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    @Deprecated
-    protected String processHearingRequest() {
-	HttpServletRequest request = ServletActionContext.getRequest();
-	File evidenceLocation = FileUtil.validateAndGetEvidenceUploadPath(request);
-	if (evidenceLocation.list().length == 0 && !affirm) {
-	    addActionError(
-		    "No evidence attached. You must affirm that you are not uploading evidence for the judge to consider.");
-	    return INPUT;
-	}
-	File zip = new File(evidenceLocation.getPath() + File.separator + evidenceLocation.getName() + ".zip");
-	try {
-	    ZipUtil.zipDirectory(evidenceLocation.getPath(), zip.getPath());
-	} catch (IOException e) {
-	    addActionError(e.getMessage());
-	    return INPUT;
-	}
-
-	if (zip.exists()) {
-	    // TODO: Do the stuff to call the service for creating hearing
-	}
-
 	return SUCCESS;
     }
 
@@ -247,7 +216,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	request.setEmail(email1);
 	request.setViolationNumber(violationNumber);
 	request.setEvidenceToBeUploaded(!affirm);
-//	request.setMtvjDefense(arg0);
+	// request.setMtvjDefense(arg0);
 	CreateNewHearingResult response = port.createNewHearing(request);
 	LOGGER.debug("createNewHearing.result = {}", response);
     }
@@ -507,7 +476,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the files
      */
-    public List<UploadedFiles> getFiles() {
+    public List<UploadedFile> getFiles() {
 	return files;
     }
 
@@ -515,7 +484,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      * @param files
      *            the files to set
      */
-    public void setFiles(List<UploadedFiles> files) {
+    public void setFiles(List<UploadedFile> files) {
 	this.files = files;
     }
 

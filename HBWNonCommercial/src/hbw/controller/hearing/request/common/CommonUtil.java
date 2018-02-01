@@ -23,8 +23,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hbw.controller.hearing.request.model.FileValidationRequestDTO;
+
 /**
- * @author Ahmar
+ * @author Ahmar Hashmi
  *
  */
 public final class CommonUtil {
@@ -47,8 +49,13 @@ public final class CommonUtil {
 	}
     }
 
+    /**
+     * It scans the files and convert to tiff
+     * 
+     * @param dto
+     * @return
+     */
     public static String scanAndConvertFilesToTiff(FileValidationRequestDTO dto) {
-	// String jsonResponse = "";
 	try {
 	    URL url = new URL(Resource.VANGAURD_VIRUS_SCAN_URL.getValue());
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();

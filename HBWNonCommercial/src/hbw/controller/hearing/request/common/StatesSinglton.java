@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Ahmar
+ * @author Ahmar Hashmi
  *
  */
 public class StatesSinglton {
 
     private static List<String> states = populateStates();
-
-//    static {
-//	states.addAll(populateStates());
-//    }
 
     private StatesSinglton() {
 

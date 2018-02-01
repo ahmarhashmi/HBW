@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hbw.controller.hearing.request.common;
+package hbw.controller.hearing.request.model;
 
 import java.io.Serializable;
 

@@ -26,7 +26,7 @@ public enum Resource {
 
     ;
 
-    private static final String PATH = "config.properties";
+    private static final String PROPERTIES_FILE_NAME = "config.properties";
 
     private static final Logger logger = Log4j2LoggerFactory.getLogger(Resource.class);
 
@@ -38,9 +38,9 @@ public enum Resource {
 	if (properties == null) {
 	    properties = new Properties();
 	    try {
-		properties.load(Resource.class.getClassLoader().getResourceAsStream(PATH));
+		properties.load(Resource.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME));
 	    } catch (Exception e) {
-		logger.error("Unable to load " + PATH + " file from classpath.", e);
+		logger.error("Unable to load " + PROPERTIES_FILE_NAME + " file from classpath.", e);
 		System.exit(1);
 	    }
 	}
