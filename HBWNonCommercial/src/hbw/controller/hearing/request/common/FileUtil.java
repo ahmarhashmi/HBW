@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
+//import com.ibm.ws.util.Base64;
 import org.apache.commons.io.FileUtils;
+
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
@@ -113,6 +115,7 @@ public final class FileUtil {
     public static String encodeFileToBase64Binary(File file) throws IOException {
 	byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(file));
 	return new String(encoded);
+	//return Base64.encode(FileUtils.readFileToByteArray(file));
     }
 
     /**
