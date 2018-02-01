@@ -22,7 +22,7 @@ import org.example.nycservmobileapp.ParkingViolation;
 import org.example.nycservmobileapp.Vehicle;
 
 import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.log4j2.Log4j2LoggerFactory;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import hbw.controller.hearing.request.model.ViolationInfo;
 
@@ -33,7 +33,7 @@ import hbw.controller.hearing.request.model.ViolationInfo;
  */
 public final class HBWClient {
 
-    private static Logger LOGGER = Log4j2LoggerFactory.getLogger(HBWClient.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HBWClient.class);
 
     private static final QName SERVICE_NAME = new QName("http://www.example.org/NYCServMobileApp/", "NYCServMobileApp");
 

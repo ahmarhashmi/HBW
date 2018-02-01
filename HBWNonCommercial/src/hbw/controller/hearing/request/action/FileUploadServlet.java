@@ -19,8 +19,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.Resource;
@@ -74,7 +75,7 @@ public class FileUploadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
 
-	LOGGER.info("Handling request from: {}", request.getRemoteAddr());
+	LOGGER.info("Handling request from: "+ request.getRemoteAddr());
 
 	if (!ServletFileUpload.isMultipartContent(request)) {
 	    throw new IllegalArgumentException(
@@ -143,11 +144,11 @@ public class FileUploadServlet extends HttpServlet {
 			return;
 		    }
 
-		    LOGGER.info(file.getPath() + " {} File uploaded SUCCESSFULLY", file.getPath());
+		    LOGGER.info(file.getPath() +"  File uploaded SUCCESSFULLY");
 		}
 	    }
 	} catch (Exception e) {
-	    LOGGER.error("File Upload failed due to an error: {}", e.getMessage());
+	    LOGGER.error("File Upload failed due to an error: "+ e.getMessage());
 	    e.printStackTrace();
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
 	}
@@ -175,7 +176,7 @@ public class FileUploadServlet extends HttpServlet {
 	    return;
 	}
 
-	LOGGER.info("File {} mime type is:{}", fileName, mimeType);
+	LOGGER.info("File "+fileName+" mime type is:"+ mimeType);
 
 	// Set content type
 	response.setContentType(mimeType);
@@ -211,9 +212,9 @@ public class FileUploadServlet extends HttpServlet {
     private void doDeleteFile(HttpServletRequest request, HttpServletResponse response, String deleteFile) {
 	File folder = FileUtil.validateAndGetEvidenceUploadPath(request);
 	File fileName = new File(folder.getPath() + File.separator + deleteFile);
-	LOGGER.info("DELETE file:{}", fileName.getPath());
+	LOGGER.info("DELETE file:"+ fileName.getPath());
 	fileName.delete();
-	LOGGER.info("file:{} >>> Deleted successfully.", fileName.getPath());
+	LOGGER.info("file:"+fileName.getPath()+" >>> Deleted successfully." );
     }
 
 }

@@ -13,8 +13,8 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -79,7 +79,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	    return INPUT;
 	}
 
-	LOGGER.info("Violation number {} accepted for hearing request.", this.violationNumber);
+	LOGGER.info("Violation number "+this.violationNumber+" accepted for hearing request.");
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);

@@ -16,8 +16,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,7 +69,7 @@ public final class CommonUtil {
 	    String payload = createJsonString(dto);
 	    writer.write(payload);
 	    writer.close();
-	    LOGGER.info("Request json for files validation is :{}", payload);
+	    LOGGER.info("Request json for files validation is :"+ payload);
 
 	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    StringBuffer jsonString = new StringBuffer();
@@ -77,7 +77,7 @@ public final class CommonUtil {
 	    while ((line = br.readLine()) != null) {
 		jsonString.append(line);
 	    }
-	    LOGGER.info("Response from the server is :{}", jsonString.toString());
+	    LOGGER.info("Response from the server is :"+ jsonString.toString());
 	    br.close();
 	    conn.disconnect();
 	    return jsonString.toString();

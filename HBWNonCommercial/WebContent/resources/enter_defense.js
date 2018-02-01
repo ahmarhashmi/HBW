@@ -51,6 +51,7 @@ Dropzone.options.fileUploadForm = {
 				$('#affirmCheckBox').css("display", "block");
 				$('#affirmCheckBoxPrompt').css("display", "block");
 			}
+			$("#displayError").empty();
 			enableDisableSubmitButton();
 		});
 
@@ -157,13 +158,17 @@ Dropzone.options.fileUploadForm = {
 	}
 };
 
-function setDefenseValue(obj) {
-	document.getElementById("defenseHidden").value = obj.value;
+function setDefenseValue(obj, errorMessageSpanId) {
+	if(errorMessageSpanId == "enterDefenseMessage"){
+		document.getElementById("defenseHidden").value = obj.value;
+	}else{
+		document.getElementById("explainWhyHidden").value = obj.value;
+	}
 
 	if (obj.value.length >= 32700) {
-		document.getElementById("maxLengthReached").style.display = "block";
+		document.getElementById(errorMessageSpanId).style.display = "block";
 	} else if (obj.value.length < 32700) {
-		document.getElementById("maxLengthReached").style.display = "none";
+		document.getElementById(errorMessageSpanId).style.display = "none";
 	}
 }
 

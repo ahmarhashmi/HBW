@@ -25,14 +25,14 @@ import org.example.nycservmobileapp.CreateNewHearingRequest;
 import org.example.nycservmobileapp.CreateNewHearingResult;
 import org.example.nycservmobileapp.NYCServMobileApp;
 import org.example.nycservmobileapp.Name;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfReader;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
@@ -67,6 +67,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     private ViolationInfo violationInfo;
 
     private String defense;
+    private String explainWhy;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -153,8 +154,8 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    dto.setSummonsNumber(violationNumber);
 	    dto.setToken(JWTUtil.createJWT(violationNumber));
 
-	    String response = CommonUtil.scanAndConvertFilesToTiff(dto);
 	    try {
+		String response = CommonUtil.scanAndConvertFilesToTiff(dto);
 		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
 		if (resNode.get(Constants.RETURN_CODE) != null
 			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
@@ -167,12 +168,17 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 			    isError = true;
 			}
 		    }
-		    if (isError) {
-			return INPUT;
+		    if (!isError) {
+			addActionError(resNode.get("ErrorCode")+": Unexpected response from the server. Please try again later.");
 		    }
+		    return INPUT;
 		}
-	    } catch (IOException e) {
+	    } catch (Exception e) {
 		e.printStackTrace();
+		if (e.getMessage().contains("Connection timed out:")) {
+		    addActionError("Server not responding. Please try again later.");
+		    return INPUT;
+		}
 	    }
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
@@ -216,9 +222,9 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	request.setEmail(email1);
 	request.setViolationNumber(violationNumber);
 	request.setEvidenceToBeUploaded(!affirm);
-	// request.setMtvjDefense(arg0);
+	request.setMtvjDefense(explainWhy);
 	CreateNewHearingResult response = port.createNewHearing(request);
-	LOGGER.debug("createNewHearing.result = {}", response);
+	LOGGER.debug("createNewHearing.result = "+ response);
     }
 
     /**
@@ -486,6 +492,21 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     public void setFiles(List<UploadedFile> files) {
 	this.files = files;
+    }
+
+    /**
+     * @return the explainWhy
+     */
+    public String getExplainWhy() {
+	return explainWhy;
+    }
+
+    /**
+     * @param explainWhy
+     *            the explainWhy to set
+     */
+    public void setExplainWhy(String explainWhy) {
+	this.explainWhy = explainWhy;
     }
 
 }

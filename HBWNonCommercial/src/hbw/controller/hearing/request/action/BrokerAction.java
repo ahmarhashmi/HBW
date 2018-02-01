@@ -10,10 +10,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import hbw.controller.hearing.request.common.Resource;
 
@@ -26,13 +26,14 @@ import hbw.controller.hearing.request.common.Resource;
 public class BrokerAction extends ActionSupport {
 
     private static Logger LOGGER = LoggerFactory.getLogger(BrokerAction.class);
-    
+
     private static final long serialVersionUID = -9077943167249674484L;
 
     private boolean broker;
     private boolean notABroker;
 
-    @Action(value = "broker_decision", results = { @Result(name = "success", location = "ticket/search_violation.jsp") })
+    @Action(value = "broker_decision", results = {
+	    @Result(name = "success", location = "ticket/search_violation.jsp") })
     public String execute() throws Exception {
 
 	if (notABroker) {

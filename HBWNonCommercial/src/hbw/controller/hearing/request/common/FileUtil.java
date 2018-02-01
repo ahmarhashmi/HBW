@@ -11,8 +11,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 /**
  * @author Ahmar Nadeem
@@ -72,7 +72,7 @@ public final class FileUtil {
 		try {
 		    FileUtils.forceDelete(child);
 		} catch (IOException e) {
-		    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: {}", e);
+		    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: "+ e);
 		}
 	    }
 	}
