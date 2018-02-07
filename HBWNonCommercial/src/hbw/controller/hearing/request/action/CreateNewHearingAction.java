@@ -169,7 +169,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 			}
 		    }
 		    if (!isError) {
-			addActionError(resNode.get("ErrorCode")+": Unexpected response from the server. Please try again later.");
+			addActionError(resNode.get("ErrorCode").asText()+": Unexpected response from the server. Please try again later.");
 		    }
 		    return INPUT;
 		}
