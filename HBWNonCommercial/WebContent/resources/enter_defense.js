@@ -2,7 +2,7 @@
 
 var NOACTION = false;
 
-var files = [];
+//var files = [];
 var virusFreeFiles = [];
 var infectedFiles = [];
 
@@ -13,7 +13,7 @@ Dropzone.options.fileUploadForm = {
 	dictRemoveFileConfirmation: true,
 	autoProcessQueue : true,
 	uploadMultiple : true,
-	parallelUploads : 100,
+	parallelUploads : 1,
 	dictInvalidFileType : "File type not supported.",
 	maxFiles : 100,
 
@@ -36,17 +36,17 @@ Dropzone.options.fileUploadForm = {
 		});
 		
 		this.on('success', function(file) {
-			files.push(file);
+//			files.push(file);
 			enableDisableSubmitButton();
 		});
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
 			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
-			var index = files.indexOf(file);
+			/*var index = files.indexOf(file);
 			if (index > -1) {
 			    files.splice(index, 1);
-			}
+			}*/
 			if(this.getAcceptedFiles().length == 0){
 				$('#affirmCheckBox').css("display", "block");
 				$('#affirmCheckBoxPrompt').css("display", "block");
@@ -155,7 +155,13 @@ Dropzone.options.fileUploadForm = {
 		this.on('sendingmultiple', function(data, xhr, formData) {
 			formData.append("Username", $("#Username").val());
 		});
-	}
+	}/*,
+	accept: function (file, done) {
+		 alert('hi'+ file.name);
+		 if (file.name == "justinbieber.jpg") {
+			 done("Naha, you don't.");
+		 }
+	}*/
 };
 
 function setDefenseValue(obj, errorMessageSpanId) {
@@ -206,7 +212,7 @@ function startAfresh(){
  */
 async function scanForVirus(file, index){
 	
-	//console.log("Calling virus scan for the file: "+file.name);	
+	// console.log("Calling virus scan for the file: "+file.name);
 	var data = new FormData();
 	data = file;
 	jQuery.ajax({
@@ -223,7 +229,7 @@ async function scanForVirus(file, index){
 		},
 	    success: function(data){
 	    	var dataId = data.data_id;
-	    	//console.log("DataID returned is:" +dataId);
+	    	// console.log("DataID returned is:" +dataId);
 	    	containsVirus(data.data_id, index, file);
 	    }
 	});
@@ -241,7 +247,7 @@ async function containsVirus(dataId, index, file){
 	
 	var scanPercentage = 0;
 	while(scanPercentage < 100){
-		//console.log("Checking status of the image having dataId: "+dataId)
+		// console.log("Checking status of the image having dataId: "+dataId)
 		jQuery.ajax({
 		    url: 'https://api.metadefender.com/v2/file/'+dataId,
 		    cache: false,
@@ -255,17 +261,18 @@ async function containsVirus(dataId, index, file){
 		    	console.log(data);
 		    	scanPercentage = data.scan_results.progress_percentage;
 		    	var scanResult = data.scan_results.scan_all_result_a;
-		    	//console.log("Progress percentage: "+scanPercentage);
-		    	//console.log("Scan result: "+scanResult);
+		    	// console.log("Progress percentage: "+scanPercentage);
+		    	// console.log("Scan result: "+scanResult);
 		    	if( scanPercentage == 100 && scanResult == "No threat detected"){
 		    		virusFreeFiles.push(index);
-		    		//infectedFiles.push(file.name);
-		    		//console.log("'"+file.name+"' is clean and does not contain virus.");
+		    		// infectedFiles.push(file.name);
+		    		// console.log("'"+file.name+"' is clean and does not
+					// contain virus.");
 					return;		    		
 				} else if (scanPercentage == 100 && scanResult != "No threat detected"){
 					$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
 					infectedFiles.push(file.name);
-		    		//console.log("'"+file.name+"' contains virus.");
+		    		// console.log("'"+file.name+"' contains virus.");
 		    		return;
 		    	} 
 		    }
@@ -278,20 +285,20 @@ function isAllUploadedFilesClean(){
 	infectedFiles = [];
 	virusFreeFiles = [];
 	
-	//$("#loadingDiv").show();
+	// $("#loadingDiv").show();
 	files.forEach( scanForVirus );
 	console.log("Total files count :"+files.length);
 	console.log("Infected files count :"+infectedFiles.length);
 	console.log("Clean files count :"+virusFreeFiles.length);
-	//$("#loadingDiv").hide();
+	// $("#loadingDiv").hide();
 	return infectedFiles;
 }
 
 function enableDisableSubmitButton(onPageload){
 	
 	var dz = Dropzone.forElement("#file-upload-form"); 
-	//alert(dz.getAcceptedFiles());
-	//dz.processFiles(dz.files);
+	// alert(dz.getAcceptedFiles());
+	// dz.processFiles(dz.files);
 	var isValid = true;
 
 	if (!$('#certify')[0].checked) {
@@ -339,4 +346,133 @@ function enableDisableSubmitButton(onPageload){
 	} else{
 		$("#submitBtn").attr("disabled", true);
 	}
+}
+
+
+
+function format_Image_Page(ticket_num, popupType, targetURL) {
+	var agt = navigator.userAgent.toLowerCase();
+	var serviceName = " ";
+	if (popupType == "pdf") {
+		serviceName = "GET_VIO_IMAGE_PDF";
+	} else {
+		serviceName = "GET_IMAGE_FILEPATH";
+	}
+
+	var csshref = '';
+	if ((agt.indexOf("win") != -1) || (agt.indexOf("16bit") != -1)) {
+		if (agt.indexOf('msie') != -1) {
+			csshref = '<LINK href="nycserv_pc_ie.css" rel="stylesheet" type="text/css">';
+		} else {
+			csshref = '<LINK href="nycserv_pc_net.css" rel="stylesheet" type="text/css">';
+		}
+	} else {
+		if (agt.indexOf('msie') != -1) {
+			csshref = "<LINK href='nycserv_mac_ie.css' rel='stylesheet' type='text/css'>";
+		} else {
+			csshref = '<LINK href="nycserv_mac_net.css" rel="stylesheet" type="text/css">';
+		}
+	}
+
+	var page_text = "<html>\n"
+			+ "<head>\n"
+			+ "<title>Ticket Image </title>\n"
+			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"
+			+ "\n";
+
+	var page_text2 = "\n"
+			+ "<!-----Script  --->\n"
+			+ "<script src=\"scripts/navigation.js\" language=\"Javascript\"></script>\n"
+			+ "<script src=\"scripts/protocol.js\" language=\"Javascript\"></script>\n"
+			+ "<!-----End of Script  --->\n"
+			+ "</head>\n"
+			+ "\n"
+			+ "<body bgcolor=\"#FFFFFF\" alink=\"#0000FF\" vlink=\"#800080\" onload=\"submitProtocolForm()\">\n"
+			+ "<center><br><br><br><br><br><br><br><br><br>Retrieving Image - Please Wait .......... </center>\n"
+			+ "\n";
+
+	page_text2 += "    \n"
+			+ "<form NAME='NycservProtocolForm' METHOD=POST action='"
+			+ targetURL + "'> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=ChannelType VALUE=ct/Browser> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=RequestType VALUE=rt/Business> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=SubSystemType VALUE=st/Payments> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=AgencyType VALUE=at/ALL> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=ServiceName VALUE=" + serviceName
+			+ "> \n" + "<INPUT TYPE=HIDDEN NAME=MethodName VALUE=NONE> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=PageID VALUE=Violations_Image> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=ParamCount VALUE=0> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=NycservRequest VALUE=EMPTY> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=VIOLATION_NUMBER VALUE=" + ticket_num
+			+ "> \n" + "</form> <!-- end of form--> \n" + "\n";
+
+	page_text2 += "    \n" + "</body>\n" + "</html>\n" + "\n";
+
+	var page_text3 = page_text + csshref + page_text2;
+	return page_text3;
+
+}
+
+function format_Image_Page(ticket_num, popupType, targetURL, issue_date) {
+	var agt = navigator.userAgent.toLowerCase();
+	var serviceName = " ";
+	if (popupType == "pdf") {
+		serviceName = "GET_VIO_IMAGE_PDF";
+	} else {
+		serviceName = "GET_IMAGE_FILEPATH";
+	}
+
+	var csshref = '';
+	if ((agt.indexOf("win") != -1) || (agt.indexOf("16bit") != -1)) {
+		if (agt.indexOf('msie') != -1) {
+			csshref = '<LINK href="nycserv_pc_ie.css" rel="stylesheet" type="text/css">';
+		} else {
+			csshref = '<LINK href="nycserv_pc_net.css" rel="stylesheet" type="text/css">';
+		}
+	} else {
+		if (agt.indexOf('msie') != -1) {
+			csshref = "<LINK href='nycserv_mac_ie.css' rel='stylesheet' type='text/css'>";
+		} else {
+			csshref = '<LINK href="nycserv_mac_net.css" rel="stylesheet" type="text/css">';
+		}
+	}
+
+	var page_text = "<html>\n"
+			+ "<head>\n"
+			+ "<title>Ticket Image </title>\n"
+			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"
+			+ "\n";
+
+	var page_text2 = "\n"
+			+ "<!-----Script  --->\n"
+			+ "<script src=\"scripts/navigation.js\" language=\"Javascript\"></script>\n"
+			+ "<script src=\"scripts/protocol.js\" language=\"Javascript\"></script>\n"
+			+ "<!-----End of Script  --->\n"
+			+ "</head>\n"
+			+ "\n"
+			+ "<body bgcolor=\"#FFFFFF\" alink=\"#0000FF\" vlink=\"#800080\" onload=\"submitProtocolForm()\">\n"
+			+ "<center><br><br><br><br><br><br><br><br><br>Retrieving Image - Please Wait .......... </center>\n"
+			+ "\n";
+
+	page_text2 += "    \n"
+			+ "<form NAME='NycservProtocolForm' METHOD=POST action='"
+			+ targetURL + "'> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=ChannelType VALUE=ct/Browser> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=RequestType VALUE=rt/Business> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=SubSystemType VALUE=st/Payments> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=AgencyType VALUE=at/ALL> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=ServiceName VALUE=" + serviceName
+			+ "> \n" + "<INPUT TYPE=HIDDEN NAME=MethodName VALUE=NONE> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=PageID VALUE=Violations_Image> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=ParamCount VALUE=0> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=NycservRequest VALUE=EMPTY> \n"
+			+ "<INPUT TYPE=HIDDEN NAME=VIOLATION_NUMBER VALUE=" + ticket_num
+			+ "> \n" + "<INPUT TYPE=HIDDEN NAME=VIOLATION_ISSUE_DATE VALUE="
+			+ issue_date + "> \n" + "</form> <!-- end of form--> \n" + "\n";
+
+	page_text2 += "    \n" + "</body>\n" + "</html>\n" + "\n";
+
+	var page_text3 = page_text + csshref + page_text2;
+	return page_text3;
+
 }

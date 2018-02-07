@@ -53,6 +53,38 @@
 	});
 </script>
 <script type="text/javascript">
+
+function imagePopUpPdf(ticket_num, targetURL, issue_date) {
+	alert("imagePopUpPdf function called.");
+	var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
+			+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
+	var Image_window = window.open("blank.html", "Ticket_Image_Screen",
+			windowprops);
+	var page_text = format_Image_Page(ticket_num, "pdf", targetURL, issue_date);
+
+	with (Image_window.document) {
+		open();
+		write(page_text);
+		close();
+	}
+	Image_window.focus();
+}
+
+
+
+function imagePopUpBrowser(ticket_num, targetURL) {
+	var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
+			+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
+	var Image_window = window.open("blank.html", "Ticket_Image_Screen",
+			windowprops);
+	var page_text = format_Image_Page(ticket_num, "browser", targetURL);
+	with (Image_window.document) {
+		open();
+		write(page_text);
+		close();
+	}
+	Image_window.focus();
+}
 	$(document)
 			.ready(
 					function() {
@@ -269,7 +301,7 @@
 
 					<div class="gap"></div>
 					<div class="form-group viewticketbuttons">
-							<a class="btn btn-primary btn-lg">View Ticket</a>
+							<a class="btn btn-primary btn-lg" href="#" onclick="imagePopUpPdf('<s:property value="violationNumber"/>','test');">View Ticket</a>
 							<a class="btn btn-link btn-lg" href="https://get.adobe.com/reader/" target="_blank" >Adobe Acrobat Reader</a> <span>(required to view the ticket)</span>
 						</div>
 						<div class="gap clearfix"></div>
