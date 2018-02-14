@@ -33,6 +33,10 @@ public class FileValidationRequestDTO implements Serializable {
     /** Date and time of the request */
     @JsonProperty("SubmittedDate")
     private Date submittedDate;
+    
+    /** An optional parameter */
+    @JsonProperty("SourceLocation")
+    private String sourceLocation = "WebApp";
 
     /*
      * (non-Javadoc)
@@ -107,6 +111,20 @@ public class FileValidationRequestDTO implements Serializable {
      */
     public void setSubmittedDate(Date submittedDate) {
 	this.submittedDate = submittedDate;
+    }
+
+    /**
+     * @return the sourceLocation
+     */
+    public String getSourceLocation() {
+        return sourceLocation;
+    }
+
+    /**
+     * @param sourceLocation the sourceLocation to set
+     */
+    public void setSourceLocation(String sourceLocation) {
+        this.sourceLocation = sourceLocation;
     }
 
 }

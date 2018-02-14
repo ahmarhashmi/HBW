@@ -153,6 +153,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    dto.setSubmittedDate(new Date());
 	    dto.setSummonsNumber(violationNumber);
 	    dto.setToken(JWTUtil.createJWT(violationNumber));
+//	    dto.setSourceLocation("DisputeATicket");
 
 	    try {
 		String response = CommonUtil.scanAndConvertFilesToTiff(dto);

@@ -1,0 +1,378 @@
+.depname {  
+     font-family: "Arial Narrow", Arial, Times;
+	 font-size: 21px; 
+	 font-weight: bold; 
+	 color: #336633;
+}
+
+.deploc {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 21px;
+	font-weight: bold;
+	color: #000080;
+}
+
+.instructions {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	background-color: #CCFFCC;
+}
+
+.taxInstructions {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	background-color: #CCFFCC;
+}
+
+.shortInstructions{  
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 12px;
+}
+
+.basketInstructions {
+	font-family: Arial, Helvetica, sans-serif; 
+    	font-size: 12px;
+}
+
+.formText{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.grandTotal {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:14px;
+	color: #000000;
+}
+
+.bulletList{
+	font-family: Arial, Helvetica, sans-serif; 
+        font-size: 13px;
+}
+
+.searchLabel{ 
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 16px;
+	font-weight: bold; 
+}
+
+.headerBlue {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #00008b
+}
+
+.tableHeader {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	background-color: #336633;
+	color: #FFFFFF;
+}
+.tableFooter {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #336633;
+}
+
+.cellLightBlue {  
+    font-family: Arial, Helvetica, sans-serif; 
+	font-size: 12px;
+	background-color: #e6e6e6; clip:  rect(   ); 
+	font-weight: 100;
+}
+
+.cellWhite {  
+    font-family: Arial, Helvetica, sans-serif; 
+	font-size: 12px; 
+	background-color: #FFFFFF; 
+	font-weight:100px; clip:  rect(   );
+}
+
+.bottomLink { 
+    font-family: Arial, Helvetica; 
+	font-size: 12px; 
+	font-weight: normal;
+}
+
+.field 	{
+    font-family: Tahoma, Helvetica, sans-serif; 
+	font-size:12px; 
+	font-weight:bold;
+}     
+
+.anchors	{
+    font-family: Arial, Helvetica, sans-serif; 
+	font-size:12px;
+}
+
+.headerSearch {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	background-color: #336633;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+
+.footer { 
+    font-family: Arial, Helvetica; 
+    font-size: 10px;
+}
+
+.detailHeader{ 	
+    font-family: Arial, Helvetica, sans-serif;	
+	font-size:12px;	
+	color: #333398;	
+	font-weight: bold;
+}
+
+.detailStatus{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color: #000000;
+}
+
+.welcomeText1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #CCFFCC;
+	margin : 12px;
+	line-height : 17px;
+}
+
+.infoText {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #CCFFCC;
+	margin : 12px;
+	line-height : 13px;
+}
+
+.totalText { 
+	font-family:   Tahoma, Arial, Helvetica;
+	font-size: 13px;
+}
+
+.towText { 
+	font-family: Arial, Helvetica, sans-serif;
+ }
+ 
+ .bannerText {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}
+ 
+ .pnlAll
+{
+    WIDTH: 614px;
+	POSITION: absolute;
+    VISIBILITY: hidden;
+}	
+
+.dofPanel
+{
+    DISPLAY: none;
+	LEFT: 10px;
+    POSITION: absolute;
+    TOP: 0px;
+    Z-INDEX: 10
+}
+
+.dofPnlLeft
+{
+    BACKGROUND-COLOR: #ccffcc;
+    HEIGHT: 510px;
+    LEFT: 10px;
+    POSITION: relative;
+    TOP: 45px;
+    WIDTH: 427px;
+}
+
+.dofHeaderInstructions
+{
+    BACKGROUND-COLOR: gold;
+    FONT-FAMILY: Verdana;
+    FONT-SIZE: 12px;
+    FONT-WEIGHT: normal;
+    LINE-HEIGHT: 18px;
+    PADDING-BOTTOM: 6px;
+    PADDING-LEFT: 6px;
+    PADDING-RIGHT: 6px;
+    PADDING-TOP: 6px;
+    WIDTH: 588px
+}
+
+.dofMainMenuButton
+{
+   
+    BORDER-BOTTOM: #000000 1px solid;
+    BORDER-LEFT: #000000 1px solid;
+    BORDER-RIGHT: #000000 1px solid;
+    BORDER-TOP: #000000 1px solid;
+    COLOR: #2f4f4f;
+    CURSOR: default;
+    MARGIN-TOP: 1px;
+ }
+
+
+.dofIconS
+{
+    HEIGHT: 18px;
+    WIDTH: 18px
+}
+
+.dofBasketButton
+{
+    BACKGROUND-COLOR: #00309c;
+    BORDER-BOTTOM: #000000 1px solid;
+    BORDER-LEFT: #000000 1px solid;
+    BORDER-RIGHT: #000000 1px solid;
+    BORDER-TOP: #000000 1px solid;
+    COLOR: white;
+    CURSOR: default;
+    FONT-FAMILY: Arial;
+    FONT-SIZE: 12px;
+    FONT-WEIGHT: bold;
+    HEIGHT: 19px;
+    LEFT: 0px;
+    LETTER-SPACING: 0px;
+    MARGIN-TOP: 1px;
+    PADDING-BOTTOM: 4px;
+    PADDING-LEFT: 4px;
+    PADDING-RIGHT: 4px;
+    PADDING-TOP: 4px;
+    POSITION: relative;
+    TEXT-ALIGN: center;
+    TOP: 20px;
+    WIDTH: 132px
+}
+
+.dofBasketButton .total
+{
+    BACKGROUND-COLOR: #00309c;
+    BACKGROUND-IMAGE: none;
+    BACKGROUND-REPEAT: repeat;
+    BORDER-BOTTOM: gray 2px inset;
+    BORDER-LEFT: gray 2px inset;
+    BORDER-RIGHT: gray 2px inset;
+    BORDER-TOP: gray 2px inset;
+    COLOR: white;
+    FONT-SIZE: 12px;
+    FONT-WEIGHT: bold;
+    HEIGHT: 22px;
+    LEFT: 16px;
+    POSITION: absolute;
+    TEXT-ALIGN: center;
+    TOP: 24px;
+    WIDTH: 100px
+}
+
+.dofBasketTotal
+{
+    COLOR: black;
+    FONT-FAMILY: Arial;
+    FONT-SIZE: 12px;
+    FONT-WEIGHT: bold;
+    HEIGHT: 19px;
+    LEFT: 0px;
+    POSITION: relative;
+    TEXT-ALIGN: center;
+    TOP: 30px;
+    WIDTH: 132px
+}
+
+.dofConnector
+{
+    BACKGROUND-COLOR: #ffffc0;
+    BORDER-BOTTOM: black 1px solid;
+    BORDER-LEFT: black;
+    BORDER-RIGHT: black;
+    BORDER-TOP: black 1px solid;
+    FONT-FAMILY: Arial Narrow;
+    FONT-SIZE: 12px;
+    FONT-WEIGHT: bold;
+    HEIGHT: 24px;
+    LEFT: 0px;
+    MARGIN-TOP: 1px;
+    PADDING-BOTTOM: 2px;
+    PADDING-LEFT: 2px;
+    PADDING-RIGHT: 2px;
+    PADDING-TOP: 2px;
+    POSITION: relative;
+    TOP: 0px;
+    VISIBILITY: hidden;
+    WIDTH: 9px;
+   
+}
+
+.dofMainMenu
+{
+    BACKGROUND-COLOR: #ffffc0;
+    BORDER-BOTTOM: black 1px solid;
+    BORDER-LEFT: black 1px solid;
+    BORDER-RIGHT: black 1px solid;
+    BORDER-TOP: black 1px solid;
+    HEIGHT: 60px;
+    LEFT: 6px;
+    MARGIN-TOP: 2px;
+    PADDING-BOTTOM: 2px;
+    PADDING-LEFT: 2px;
+    PADDING-RIGHT: 2px;
+    PADDING-TOP: 2px;
+    POSITION: relative;
+    TOP: -1px;
+    WIDTH: 258px
+}
+
+
+
+.dofMainMenu .dofItem
+{
+    COLOR: blue;
+    CURSOR: default;
+    FONT-FAMILY: Arial;
+    FONT-SIZE: 12px;
+    MARGIN-TOP: 0px;
+    PADDING-BOTTOM: 1px;
+    PADDING-LEFT: 2px;
+    PADDING-RIGHT: 2px;
+    PADDING-TOP: 2px;
+    TEXT-DECORATION: underline;
+    TEXT-INDENT: 5px
+}
+.dofMainMenu .dofItem .blip
+{
+    FONT-FAMILY: symbol;
+    FONT-SIZE: 10px;
+    TEXT-DECORATION: none
+}
+
+.bottomlinksHome
+{
+    MARGIN-BOTTOM: 10px;
+    MARGIN-TOP: 36px;
+	DISPLAY: none
+ }
+
+.bottomlinksHome .small
+{
+    FONT-SIZE: 10px
+}
+
+.alignRight
+{
+    text-align: right;
+}
+
+.smallredcentered {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	font-weight: bold;
+	color: red;
+	text-align: center;
+}

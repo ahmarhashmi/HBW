@@ -2,7 +2,7 @@
 
 var NOACTION = false;
 
-//var files = [];
+// var files = [];
 var virusFreeFiles = [];
 var infectedFiles = [];
 
@@ -36,17 +36,17 @@ Dropzone.options.fileUploadForm = {
 		});
 		
 		this.on('success', function(file) {
-//			files.push(file);
+// files.push(file);
 			enableDisableSubmitButton();
 		});
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', async function(file){
 			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
-			/*var index = files.indexOf(file);
-			if (index > -1) {
-			    files.splice(index, 1);
-			}*/
+			/*
+			 * var index = files.indexOf(file); if (index > -1) {
+			 * files.splice(index, 1); }
+			 */
 			if(this.getAcceptedFiles().length == 0){
 				$('#affirmCheckBox').css("display", "block");
 				$('#affirmCheckBoxPrompt').css("display", "block");
@@ -155,13 +155,10 @@ Dropzone.options.fileUploadForm = {
 		this.on('sendingmultiple', function(data, xhr, formData) {
 			formData.append("Username", $("#Username").val());
 		});
-	}/*,
-	accept: function (file, done) {
-		 alert('hi'+ file.name);
-		 if (file.name == "justinbieber.jpg") {
-			 done("Naha, you don't.");
-		 }
-	}*/
+	}/*
+		 * , accept: function (file, done) { alert('hi'+ file.name); if
+		 * (file.name == "justinbieber.jpg") { done("Naha, you don't."); } }
+		 */
 };
 
 function setDefenseValue(obj, errorMessageSpanId) {
@@ -425,15 +422,15 @@ function format_Image_Page(ticket_num, popupType, targetURL, issue_date) {
 	var csshref = '';
 	if ((agt.indexOf("win") != -1) || (agt.indexOf("16bit") != -1)) {
 		if (agt.indexOf('msie') != -1) {
-			csshref = '<LINK href="nycserv_pc_ie.css" rel="stylesheet" type="text/css">';
+			csshref = '<LINK href="${pageContext.request.contextPath}/css/nycserv_pc_ie.css" rel="stylesheet" type="text/css">';
 		} else {
-			csshref = '<LINK href="nycserv_pc_net.css" rel="stylesheet" type="text/css">';
+			csshref = '<LINK href="${pageContext.request.contextPath}/css/nycserv_pc_net.css" rel="stylesheet" type="text/css">';
 		}
 	} else {
 		if (agt.indexOf('msie') != -1) {
-			csshref = "<LINK href='nycserv_mac_ie.css' rel='stylesheet' type='text/css'>";
+			csshref = "<LINK href='${pageContext.request.contextPath}/css/nycserv_mac_ie.css' rel='stylesheet' type='text/css'>";
 		} else {
-			csshref = '<LINK href="nycserv_mac_net.css" rel="stylesheet" type="text/css">';
+			csshref = '<LINK href="${pageContext.request.contextPath}/css/nycserv_mac_net.css" rel="stylesheet" type="text/css">';
 		}
 	}
 
@@ -444,10 +441,30 @@ function format_Image_Page(ticket_num, popupType, targetURL, issue_date) {
 			+ "\n";
 
 	var page_text2 = "\n"
-			+ "<!-----Script  --->\n"
-			+ "<script src=\"scripts/navigation.js\" language=\"Javascript\"></script>\n"
-			+ "<script src=\"scripts/protocol.js\" language=\"Javascript\"></script>\n"
-			+ "<!-----End of Script  --->\n"
+			
+			  //+ "<!-----Script --->\n" 
+			  //+ "<script src=\"scripts/navigation.js\" language=\"Javascript\"></script>\n" 
+			  //+ "<script src=\"scripts/protocol.js\" language=\"Javascript\"></script>\n" 
+			  //+ "<!-----End of Script --->\n"
+			 
+		+"<script type='text/javascript'>"
+		+ "function submitProtocolForm (){\n"
+		+"var theForm = getProtocolForm();\n"
+		+"theForm.submit();\n"
+		+"return true;\n"
+		+"}\n"
+		
+		+"function getProtocolForm (){\n"
+		+"if (navigator.appName == 'Netscape'){\n"
+		+"if (document.forms[0] == undefined)\n"
+		+"return document.outer.document.forms['NycservProtocolForm'];\n"
+		+"else\n"
+		+"return document.forms['NycservProtocolForm'];\n"
+		+"} else {\n"
+		+"return document.forms['NycservProtocolForm'];\n"
+		+"}\n"
+		+"}\n"
+		+"</script>"
 			+ "</head>\n"
 			+ "\n"
 			+ "<body bgcolor=\"#FFFFFF\" alink=\"#0000FF\" vlink=\"#800080\" onload=\"submitProtocolForm()\">\n"
@@ -455,20 +472,23 @@ function format_Image_Page(ticket_num, popupType, targetURL, issue_date) {
 			+ "\n";
 
 	page_text2 += "    \n"
-			+ "<form NAME='NycservProtocolForm' METHOD=POST action='"
-			+ targetURL + "'> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=ChannelType VALUE=ct/Browser> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=RequestType VALUE=rt/Business> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=SubSystemType VALUE=st/Payments> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=AgencyType VALUE=at/ALL> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=ServiceName VALUE=" + serviceName
-			+ "> \n" + "<INPUT TYPE=HIDDEN NAME=MethodName VALUE=NONE> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=PageID VALUE=Violations_Image> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=ParamCount VALUE=0> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=NycservRequest VALUE=EMPTY> \n"
-			+ "<INPUT TYPE=HIDDEN NAME=VIOLATION_NUMBER VALUE=" + ticket_num
-			+ "> \n" + "<INPUT TYPE=HIDDEN NAME=VIOLATION_ISSUE_DATE VALUE="
-			+ issue_date + "> \n" + "</form> <!-- end of form--> \n" + "\n";
+		+ "<form NAME='NycservProtocolForm' METHOD=POST action='"
+		+ targetURL + "'> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=ChannelType VALUE=ct/Browser> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=RequestType VALUE=rt/Business> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=SubSystemType VALUE=st/Payments> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=AgencyType VALUE=at/ALL> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=ServiceName VALUE=" + serviceName
+		+ "> \n" + "<INPUT TYPE=HIDDEN NAME=MethodName VALUE=NONE> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=PageID VALUE=Violations_Image> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=ParamCount VALUE=0> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=NycservRequest VALUE=EMPTY> \n"
+		+ "<INPUT TYPE=HIDDEN NAME=VIOLATION_NUMBER VALUE=" + ticket_num
+		+ "> \n" + "<INPUT TYPE=HIDDEN NAME=VIOLATION_ISSUE_DATE VALUE="
+		+ issue_date + "> \n" + "</form> <!-- end of form--> \n" + "\n";
+	 
+	/*page_text2 +="\n"
+		+"<img src='../images/ticket_sample.jpg'/>"*/
 
 	page_text2 += "    \n" + "</body>\n" + "</html>\n" + "\n";
 

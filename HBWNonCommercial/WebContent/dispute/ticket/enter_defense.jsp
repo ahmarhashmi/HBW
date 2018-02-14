@@ -12,11 +12,11 @@
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	crossorigin="anonymous">
+	href="${pageContext.request.contextPath}/css/bootstrap.min.css">
+	
 <link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	href="${pageContext.request.contextPath}/css/font-awesome.min.css">
+	
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
 <script type="text/javascript"
@@ -31,14 +31,12 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/jquery-1.12.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="${pageContext.request.contextPath}/resources/jquery-ui.js"></script>
 
 <link rel="stylesheet"
-	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	href="${pageContext.request.contextPath}/css/jquery-ui.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/header.css">
-<%-- <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
-<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css"> --%>
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -55,13 +53,13 @@
 <script type="text/javascript">
 
 function imagePopUpPdf(ticket_num, targetURL, issue_date) {
-	alert("imagePopUpPdf function called.");
 	var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
 			+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
 	var Image_window = window.open("blank.html", "Ticket_Image_Screen",
 			windowprops);
-	var page_text = format_Image_Page(ticket_num, "pdf", targetURL, issue_date);
-
+	//var page_text = format_Image_Page(ticket_num, "pdf", targetURL, issue_date);
+	var page_text = format_Image_Page(ticket_num, "pdf", "<%=request.getContextPath()%>/ViewTicketServlet", issue_date);
+	
 	with (Image_window.document) {
 		open();
 		write(page_text);
@@ -498,15 +496,6 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 	</div>
 	<jsp:include page="footer.jsp" />
 
-	<!-- Latest compiled and minified JavaScript -->
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-		crossorigin="anonymous">
-		
-	</script>
-
-	<!--  -->
 	<!-- Dialog box to show the uploaded content to the user -->
 	<div id="dialog" title="Basic dialog"
 		style="z-index: 10000; display: none">
