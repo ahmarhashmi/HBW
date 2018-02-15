@@ -74,7 +74,7 @@ public final class FileUtil {
 		try {
 		    FileUtils.forceDelete(child);
 		} catch (IOException e) {
-		    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: "+ e);
+		    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: " + e);
 		}
 	    }
 	}
@@ -115,7 +115,7 @@ public final class FileUtil {
     public static String encodeFileToBase64Binary(File file) throws IOException {
 	byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(file));
 	return new String(encoded);
-	//return Base64.encode(FileUtils.readFileToByteArray(file));
+	// return Base64.encode(FileUtils.readFileToByteArray(file));
     }
 
     /**
@@ -158,6 +158,19 @@ public final class FileUtil {
 	    }
 	}
 	return false;
+    }
+
+    /**
+     * Delete all the files in the folder and then delete the folder as well
+     * 
+     * @param request
+     * @throws IOException 
+     */
+    public static void deleteTempFolder(HttpServletRequest request) throws IOException {
+	File folder = validateAndGetEvidenceUploadPath(request);
+	if (folder.exists()) {
+	    FileUtils.cleanDirectory(folder.getParentFile().getParentFile());
+	}
     }
 
 }

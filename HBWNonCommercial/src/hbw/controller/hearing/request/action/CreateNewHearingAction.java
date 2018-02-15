@@ -184,10 +184,13 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");
 	try {
+	    FileUtil.deleteTempFolder(request);
 	    createNewHearing();
 	} catch (MalformedURLException e) {
 	    addActionError(e.getLocalizedMessage());
 	    return INPUT;
+	} catch(IOException e) {
+	    LOGGER.error("An error occurred in deleting the temp directory: "+ e.getStackTrace());
 	}
 	return SUCCESS;
     }
