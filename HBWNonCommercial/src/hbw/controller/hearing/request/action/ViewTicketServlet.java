@@ -16,39 +16,40 @@ import hbw.controller.hearing.request.common.ViolationImageUtil;
  * Servlet implementation class ViewTicketServlet
  */
 public class ViewTicketServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
+    private static final long serialVersionUID = 1L;
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ViewTicketServlet() {
-        super();
+	super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	    throws ServletException, IOException {
+	response.getWriter().append("Served at: ").append(request.getContextPath());
+    }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-		
-		String vioNum = (String) request.getParameter("VIOLATION_NUMBER");
-		String title = "";
-		String locationName = "";
-		
-		response.reset();
-		OutputStream outStream = response.getOutputStream();		
-		try {
-		    ViolationImageUtil.writeVioImagePdfToStream(vioNum, title, locationName, outStream);
-		} catch (DocumentException e) {
-		    e.printStackTrace();
-		}
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	    throws ServletException, IOException {
+	String vioNum = (String) request.getParameter("VIOLATION_NUMBER");
+	String title = "";
+	String locationName = "";
+
+	OutputStream outStream = response.getOutputStream();
+	try {
+	    ViolationImageUtil.writeVioImagePdfToStream(vioNum, title, locationName, outStream);
+	} catch (DocumentException e) {
+	    e.printStackTrace();
 	}
+    }
 
 }
