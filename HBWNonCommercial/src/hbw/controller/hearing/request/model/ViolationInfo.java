@@ -22,6 +22,8 @@ public class ViolationInfo {
     private String vehicleState;
     private String vehicleMake;
 
+    private boolean violationStatusInJudgment;
+
     public Boolean getIsVehicleInfoInSystem() {
 	return StringUtils.isNotBlank(vehiclePlate) || StringUtils.isNotBlank(vehicleMake)
 		|| StringUtils.isNotBlank(vehicleState) || StringUtils.isNotBlank(vehicleType);
@@ -322,6 +324,21 @@ public class ViolationInfo {
      */
     public void setIssueTime(String issueTime) {
 	this.issueTime = issueTime;
+    }
+
+    /**
+     * @return the violationStatusInJudgment
+     */
+    public boolean isViolationStatusInJudgment() {
+	return violationStatusInJudgment;
+    }
+
+    /**
+     * @param violationStatusInJudgment
+     *            the violationStatusInJudgment to set
+     */
+    public void setViolationStatusInJudgment(boolean violationStatusInJudgment) {
+	this.violationStatusInJudgment = violationStatusInJudgment;
     }
 
 }

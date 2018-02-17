@@ -297,6 +297,11 @@ function enableDisableSubmitButton(onPageload){
 	// alert(dz.getAcceptedFiles());
 	// dz.processFiles(dz.files);
 	var isValid = true;
+	
+	var isInJudgment = $('#explainWhyID');
+	if( isInJudgment.is(':visible') && !isInJudgment.val() ){
+		isValid = false;
+	}
 
 	if (!$('#certify')[0].checked) {
 		isValid = false;

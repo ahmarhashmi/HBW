@@ -22,6 +22,8 @@ public final class Constants {
     public static final String VIOLATION_NUMBER = "violationNumber";
 
     public static final String VIOLATION_INFO = "VIOLATION_INFO";
+    
+    public static final String VIOLATION_IN_SYSTEM = "VIOLATION_IN_SYSTEM";
 
     public static final String PDF = "application/pdf";
 

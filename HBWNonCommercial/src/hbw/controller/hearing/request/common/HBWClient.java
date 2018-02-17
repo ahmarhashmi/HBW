@@ -137,6 +137,7 @@ public final class HBWClient {
     private static ViolationInfo parseToViolationInfo(ParkingViolation violation) {
 	ViolationInfo info = new ViolationInfo();
 	info.setViolationNumber(violation.getViolationNumber());
+	info.setViolationStatusInJudgment(violation.isViolationStatusInJudgment());
 
 	Vehicle veh = violation.getIssuedToVehicle();
 	if (veh != null) {

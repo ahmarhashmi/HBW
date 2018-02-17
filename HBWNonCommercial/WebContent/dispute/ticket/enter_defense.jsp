@@ -13,10 +13,10 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/bootstrap.min.css">
-	
+
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/font-awesome.min.css">
-	
+
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
 <script type="text/javascript"
@@ -58,81 +58,107 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 	var Image_window = window.open("blank.html", "Ticket_Image_Screen",
 			windowprops);
 	//var page_text = format_Image_Page(ticket_num, "pdf", targetURL, issue_date);
-	var page_text = format_Image_Page(ticket_num, "pdf", "<%=request.getContextPath()%>/ViewTicketServlet", issue_date);
-	
-	with (Image_window.document) {
-		open();
-		write(page_text);
-		close();
+	var page_text = format_Image_Page(ticket_num, "pdf", 
+			"<%=request.getContextPath()%>/ViewTicketServlet", issue_date);
+
+		with (Image_window.document) {
+			open();
+			write(page_text);
+			close();
+		}
+		Image_window.focus();
 	}
-	Image_window.focus();
-}
 
-
-
-function imagePopUpBrowser(ticket_num, targetURL) {
-	var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
-			+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
-	var Image_window = window.open("blank.html", "Ticket_Image_Screen",
-			windowprops);
-	var page_text = format_Image_Page(ticket_num, "browser", targetURL);
-	with (Image_window.document) {
-		open();
-		write(page_text);
-		close();
+	function imagePopUpBrowser(ticket_num, targetURL) {
+		var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
+				+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
+		var Image_window = window.open("blank.html", "Ticket_Image_Screen",
+				windowprops);
+		var page_text = format_Image_Page(ticket_num, "browser", targetURL);
+		with (Image_window.document) {
+			open();
+			write(page_text);
+			close();
+		}
+		Image_window.focus();
 	}
-	Image_window.focus();
-}
 	$(document)
 			.ready(
 					function() {
 						enableDisableSubmitButton(true);
-						
+
 						/**
-						* Ajax submission of the page.
-						*/
-						$('#submitBtn').click(function(event) {
-							loadingDiv.style.display = "block";
-							$("#displayError").empty();
-							event.preventDefault();
-							var processData = $('#mainForm').serialize();
-							$.ajax({
-								type : "POST", 
-								url : "<s:url action='create_hearing' />",
-								data: processData,
-								cache: false,
-								success : function(result) {
-							        var errors = $(result).find(".errors");
-									loadingDiv.style.display = "none";
-									if( $(result).find(".errors").length == 0 ){
-										 var myWindow = window.open("", "_self");
-									     myWindow.document.write(result);
-									} else{ 
-										$("#displayError").append(errors);
-										$('html, body').animate({
-									        scrollTop: $("#displayError").offset().top
-									    }, 1000);
-									}									
-								},
-								error: function(){
-									loadingDiv.style.display = "none";
-								}
-							});
-						});
-						
+						 * Ajax submission of the page.
+						 */
+						$('#submitBtn')
+								.click(
+										function(event) {
+											loadingDiv.style.display = "block";
+											$("#displayError").empty();
+											event.preventDefault();
+											var processData = $('#mainForm')
+													.serialize();
+											$
+													.ajax({
+														type : "POST",
+														url : "<s:url action='create_hearing' />",
+														data : processData,
+														cache : false,
+														success : function(
+																result) {
+															var errors = $(
+																	result)
+																	.find(
+																			".errors");
+															loadingDiv.style.display = "none";
+															if ($(result).find(
+																	".errors").length == 0) {
+																var myWindow = window
+																		.open(
+																				"",
+																				"_self");
+																myWindow.document
+																		.write(result);
+															} else {
+																$(
+																		"#displayError")
+																		.append(
+																				errors);
+																$('html, body')
+																		.animate(
+																				{
+																					scrollTop : $(
+																							"#displayError")
+																							.offset().top
+																				},
+																				1000);
+															}
+														},
+														error : function() {
+															loadingDiv.style.display = "none";
+														}
+													});
+										});
+
 						/**
-						* Listener for the email change to see if both emails match
-						*/
-						$("#email2").on("change", function(){
-							if( $(this).val() != '' ){
-								if ($('#email1').val() != $(this).val()) {
-									$('#emailMatchMsg').css("display", "block");
-									isValid = false;
-								} else {
-									$('#emailMatchMsg').css("display", "none");
-								}
-							}
-						});
+						 * Listener for the email change to see if both emails match
+						 */
+						$("#email2")
+								.on(
+										"change",
+										function() {
+											if ($(this).val() != '') {
+												if ($('#email1').val() != $(
+														this).val()) {
+													$('#emailMatchMsg').css(
+															"display", "block");
+													isValid = false;
+												} else {
+													$('#emailMatchMsg').css(
+															"display", "none");
+												}
+											}
+										});
 						$("#affirm").bind('change', enableDisableSubmitButton);
 						$("#firstName").bind('blur', enableDisableSubmitButton);
 						$("#lastName").bind('blur', enableDisableSubmitButton);
@@ -143,7 +169,9 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 						$("#email1").bind('blur', enableDisableSubmitButton);
 						$("#email2").bind('blur', enableDisableSubmitButton);
 						$("#certify").bind('change', enableDisableSubmitButton);
+						$("#explainWhyID").bind('keyup', enableDisableSubmitButton);
 						
+
 						$('#google_translate_element')
 								.bind(
 										'DOMNodeInserted',
@@ -194,8 +222,10 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 						emailed in about 75 days.</p>
 					<hr>
 					<h4>Violation</h4>
-					<div class="row">
-						<s:if test="violationInfo.isVehicleInfoInSystem">
+					<s:set name="webViolationInSystem" value="violationInSystem" />
+					<s:set name="webViolationInJudgment" value="violationInfo.violationStatusInJudgment" />
+					<s:if test="%{#webViolationInSystem}">
+						<div class="row">
 							<div class="col-sm-4">
 								<table class="table-responsive table table-striped">
 									<thead>
@@ -221,8 +251,6 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 									</tr>
 								</table>
 							</div>
-						</s:if>
-						<s:if test="violationInfo.isViolationDetailInSystem">
 							<div class="col-sm-8">
 								<table class="table-responsive table table-striped">
 									<thead>
@@ -256,11 +284,9 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 									</tr>
 								</table>
 							</div>
-						</s:if>
-					</div>
-					<div class="clearfix gap"></div>
-					<div class="row">
-						<s:if test="violationInfo.isFeesTableInSystem">
+						</div>
+						<div class="clearfix gap"></div>
+						<div class="row">
 							<div class="col-sm-4">
 								<table class="table-responsive table table-striped">
 									<thead>
@@ -294,31 +320,47 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 									</tr>
 								</table>
 							</div>
-						</s:if>
-					</div>
+						</div>
 
-					<div class="gap"></div>
-					<div class="form-group viewticketbuttons">
-							<a class="btn btn-primary btn-lg" href="#" onclick="imagePopUpPdf('<s:property value="violationNumber"/>','test');">View Ticket</a>
-							<a class="btn btn-link btn-lg" href="https://get.adobe.com/reader/" target="_blank" >Adobe Acrobat Reader</a> <span>(required to view the ticket)</span>
+						<div class="gap"></div>
+						<div class="form-group viewticketbuttons">
+							<a class="btn btn-primary btn-lg" href="#"
+								onclick="imagePopUpPdf('<s:property value="violationNumber"/>','test');">View
+								Ticket</a> <a class="btn btn-link btn-lg"
+								href="https://get.adobe.com/reader/" target="_blank">Adobe
+								Acrobat Reader</a> <span>(required to view the ticket)</span>
 						</div>
 						<div class="gap clearfix"></div>
+					</s:if>
+					<s:else>
+						<p>The violation number you entered is not yet in our system,
+							but you may still request a hearing at this time.
+						<p>Please verify that your violation number is correct before
+							completing the form below.
+						<p>
+							<b>Violation:</b>
+							<s:property value="violationNumber" />
+					</s:else>
 					<hr>
 					<h4>Enter Defense</h4>
+					<s:if test="%{#webViolationInSystem and #webViolationInJudgment}">
 					<p>Explain why you not previously responded to this request.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
-							maxlength="32700" onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
+							maxlength="32700" id="explainWhyID"
+							onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
 						<span id="explainWhyMessage" style="color: red; display: none;">Maximum
 							length reached. If you want to write more, please do not request
 							a hearing online. Submit your hearing request and evidence by
 							mail or in person.</span>
 					</div>
+					</s:if>
 					<div class="clearfix gap"></div>
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
-							maxlength="32700" onkeyup="setDefenseValue(this, 'enterDefenseMessage');"></textarea>
+							maxlength="32700"
+							onkeyup="setDefenseValue(this, 'enterDefenseMessage');"></textarea>
 						<span id="enterDefenseMessage" style="color: red; display: none;">Maximum
 							length reached. If you want to write more, please do not request
 							a hearing online. Submit your hearing request and evidence by
@@ -343,10 +385,10 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 					</p>
 					<div id="displayError"></div>
 					<s:if test="hasActionErrors()">
-							<div class="errors" style="color: red;">
-								<s:actionerror />
-							</div>
-						</s:if>
+						<div class="errors" style="color: red;">
+							<s:actionerror />
+						</div>
+					</s:if>
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
@@ -381,8 +423,8 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 									style="width: 500px; height:150px" labelposition="top" />
 							</div>
 							<div style="display: none;">
-								<s:textarea id="explainWhyHidden" name="explainWhy" maxlength="32700"
-									class="form-control" rows="10" cols="30"
+								<s:textarea id="explainWhyHidden" name="explainWhy"
+									maxlength="32700" class="form-control" rows="10" cols="30"
 									style="width: 500px; height:150px" labelposition="top" />
 							</div>
 							<div class="form-group">
@@ -436,10 +478,10 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 							</div>
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
-								<s:textfield name="zip" id="zip" type="tel" label="ZIP/Postal Code"
-									class="form-control" style="max-width:250px;"
-									labelposition="top" maxlength="10" requiredLabel="true"
-									requiredPosition="top" />
+								<s:textfield name="zip" id="zip" type="tel"
+									label="ZIP/Postal Code" class="form-control"
+									style="max-width:250px;" labelposition="top" maxlength="10"
+									requiredLabel="true" requiredPosition="top" />
 								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
 									Code is required.</span>
 							</div>
@@ -458,7 +500,8 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
 									confirm your email.</span> <span id="emailMatchMsg"
-									style="color: red; display: none;">Does not match email address above.</span>
+									style="color: red; display: none;">Does not match email
+									address above.</span>
 							</div>
 
 
@@ -485,9 +528,9 @@ function imagePopUpBrowser(ticket_num, targetURL) {
 						<div class="form-group">
 							<%-- <s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" /> --%>
-							<input id="submitBtn" type="button" class="btn btn-primary" value="Submit Request" />
-							<a class="btn btn-link " href="#" onclick="cancelRequest();">Cancel
-								Request</a>
+							<input id="submitBtn" type="button" class="btn btn-primary"
+								value="Submit Request" /> <a class="btn btn-link " href="#"
+								onclick="cancelRequest();">Cancel Request</a>
 						</div>
 					</s:form>
 				</div>
