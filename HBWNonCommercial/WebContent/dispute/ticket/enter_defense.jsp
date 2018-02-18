@@ -170,7 +170,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 						$("#email2").bind('blur', enableDisableSubmitButton);
 						$("#certify").bind('change', enableDisableSubmitButton);
 						$("#explainWhyID").bind('keyup', enableDisableSubmitButton);
-						
+						$("#enterDefenseID").bind('keyup', enableDisableSubmitButton);
 
 						$('#google_translate_element')
 								.bind(
@@ -359,7 +359,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 					<p>Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
-							maxlength="32700"
+							maxlength="32700" id="enterDefenseID"
 							onkeyup="setDefenseValue(this, 'enterDefenseMessage');"></textarea>
 						<span id="enterDefenseMessage" style="color: red; display: none;">Maximum
 							length reached. If you want to write more, please do not request
@@ -529,7 +529,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 							<%-- <s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" /> --%>
 							<input id="submitBtn" type="button" class="btn btn-primary"
-								value="Submit Request" /> <a class="btn btn-link " href="#"
+								value="Submit Request" /> <a class="btn btn-link " href="#submitBtn"
 								onclick="cancelRequest();">Cancel Request</a>
 						</div>
 					</s:form>

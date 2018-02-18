@@ -84,6 +84,15 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		if (violationInfo == null) {
 		    violationInfo = HBWClient.getViolationInfoByPlateNubmer(violationNumber);
 		}
+	    } else {
+		String vioNumber;
+		String checkDigit;
+		vioNumber = this.violationNumber.substring(0, 9);
+		checkDigit = this.violationNumber.substring(this.violationNumber.length() - 1);
+		if (!checkDigit.equals(calculateViolationNumberCheckDigit(vioNumber))) {
+		    addActionError("Violation numer you entered is not valid. Make sure the check digit is correct.");
+		    return INPUT;
+		}
 	    }
 	} catch (Exception e) {
 	    addActionError(
@@ -99,7 +108,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInfo);
 	return SUCCESS;
     }
-    
+
     /**
      * Calculates the check digit for a nine digit violation number. If the
      * violation number is invalid, returns "X" Creation date: (8/28/00 3:47:32 PM)
@@ -108,11 +117,10 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
      * @param argViolationNumber
      *            java.lang.String first nine digits of violation number
      */
-    @Deprecated
     public static String calculateViolationNumberCheckDigit(String argViolationNumber) {
 	int checkDigit = 0;
 	// remove lead and trail blanks
-	if (argViolationNumber.length() != 9 /*|| !isStringNumeric(argViolationNumber)*/) {
+	if (argViolationNumber.length() != 9 /* || !isStringNumeric(argViolationNumber) */) {
 	    return "X";
 	}
 

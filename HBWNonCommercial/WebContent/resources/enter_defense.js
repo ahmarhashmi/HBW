@@ -189,11 +189,37 @@ function getContextPath(){
 }
 
 function cancelRequest(){
-	if(confirm("You will lose any information and files entered into this form.")){
-		$(window).unbind('beforeunload');
-		startAfresh();		
-	}
+	ConfirmDialog("You will lose any information and files entered into this form.");
+//	if(confirm("You will lose any information and files entered into this form.")){
+//		$(window).unbind('beforeunload');
+//		startAfresh();		
+//	}
 }
+
+
+function ConfirmDialog(message) {
+    $('<div></div>').appendTo('body')
+        .html('<div><h6>'+message+'?</h6></div>')
+        .dialog({
+            modal: true, title: 'Cancel Hearing Request?', zIndex: 10000, autoOpen: true,
+            width: 'auto', resizable: false,
+            buttons: {
+            	"Cancel Request": function () {
+                    $(window).unbind('beforeunload');
+            		startAfresh();		
+//                                $(this).dialog("close");
+            		$(this).remove();
+                },
+                Stay: function () {                                                                 
+                    $(this).remove();
+                   // $(this).dialog("close");
+                }
+            },
+            close: function (event, ui) {
+                $(this).remove();
+            }
+        });
+};
 
 function startAfresh(){
 	$.get(getContextPath() + "/FileUploadServlet?reset=true", function(data) {});
@@ -300,6 +326,9 @@ function enableDisableSubmitButton(onPageload){
 	
 	var isInJudgment = $('#explainWhyID');
 	if( isInJudgment.is(':visible') && !isInJudgment.val() ){
+		isValid = false;
+	}
+	if(!$('#enterDefenseID').val()){
 		isValid = false;
 	}
 
@@ -447,10 +476,12 @@ function format_Image_Page(ticket_num, popupType, targetURL, issue_date) {
 
 	var page_text2 = "\n"
 			
-			  //+ "<!-----Script --->\n" 
-			  //+ "<script src=\"scripts/navigation.js\" language=\"Javascript\"></script>\n" 
-			  //+ "<script src=\"scripts/protocol.js\" language=\"Javascript\"></script>\n" 
-			  //+ "<!-----End of Script --->\n"
+			  // + "<!-----Script --->\n"
+			  // + "<script src=\"scripts/navigation.js\"
+				// language=\"Javascript\"></script>\n"
+			  // + "<script src=\"scripts/protocol.js\"
+				// language=\"Javascript\"></script>\n"
+			  // + "<!-----End of Script --->\n"
 			 
 		+"<script type='text/javascript'>"
 		+ "function submitProtocolForm (){\n"
@@ -492,8 +523,9 @@ function format_Image_Page(ticket_num, popupType, targetURL, issue_date) {
 		+ "> \n" + "<INPUT TYPE=HIDDEN NAME=VIOLATION_ISSUE_DATE VALUE="
 		+ issue_date + "> \n" + "</form> <!-- end of form--> \n" + "\n";
 	 
-	/*page_text2 +="\n"
-		+"<img src='../images/ticket_sample.jpg'/>"*/
+	/*
+	 * page_text2 +="\n" +"<img src='../images/ticket_sample.jpg'/>"
+	 */
 
 	page_text2 += "    \n" + "</body>\n" + "</html>\n" + "\n";
 
