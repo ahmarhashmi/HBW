@@ -1,5 +1,9 @@
 package hbw.controller.hearing.request.action;
 
+import static com.opensymphony.xwork2.Action.INPUT;
+import static com.opensymphony.xwork2.Action.LOGIN;
+import static com.opensymphony.xwork2.Action.SUCCESS;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -54,9 +58,14 @@ import hbw.controller.hearing.request.model.ViolationInfo;
  */
 @Namespace("/dispute")
 @ResultPath(value = "/")
-@Results({ @Result(name = "success", location = "dispute/ticket/verify_info.jsp"),
-	@Result(name = "input", location = "dispute/ticket/enter_defense.jsp"), })
-@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
+@Results({ @Result(name = SUCCESS, location = "dispute/ticket/verify_info.jsp"),
+	@Result(name = INPUT, location = "dispute/ticket/enter_defense.jsp"),
+	@Result(name = LOGIN, location = "dispute/ticket/broker_selection.jsp") })
+@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare")/*
+									       * ,
+									       * 
+									       * @InterceptorRef("tstSessionCheckStack")
+									       */ })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
@@ -97,6 +106,9 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
+	if (session == null || session.getAttribute(Constants.VIOLATION_NUMBER) == null) {
+	    return LOGIN;
+	}
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
 	files = new ArrayList<UploadedFile>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
@@ -153,7 +165,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    dto.setSubmittedDate(new Date());
 	    dto.setSummonsNumber(violationNumber);
 	    dto.setToken(JWTUtil.createJWT(violationNumber));
-//	    dto.setSourceLocation("DisputeATicket");
+	    // dto.setSourceLocation("DisputeATicket");
 
 	    try {
 		String response = CommonUtil.scanAndConvertFilesToTiff(dto);
@@ -170,7 +182,8 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 			}
 		    }
 		    if (!isError) {
-			addActionError(resNode.get("ErrorCode").asText()+": Unexpected response from the server. Please try again later.");
+			addActionError(resNode.get("ErrorCode").asText()
+				+ ": Unexpected response from the server. Please try again later.");
 		    }
 		    return INPUT;
 		}
@@ -189,8 +202,8 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	} catch (MalformedURLException e) {
 	    addActionError(e.getLocalizedMessage());
 	    return INPUT;
-	} catch(IOException e) {
-	    LOGGER.error("An error occurred in deleting the temp directory: "+ e.getStackTrace());
+	} catch (IOException e) {
+	    LOGGER.error("An error occurred in deleting the temp directory: " + e.getStackTrace());
 	}
 	return SUCCESS;
     }
@@ -228,7 +241,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	request.setEvidenceToBeUploaded(!affirm);
 	request.setMtvjDefense(explainWhy);
 	CreateNewHearingResult response = port.createNewHearing(request);
-	LOGGER.debug("createNewHearing.result = "+ response);
+	LOGGER.debug("createNewHearing.result = " + response);
     }
 
     /**

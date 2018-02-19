@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -23,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
+import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.Resource;
 
@@ -74,6 +76,13 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
+	
+	HttpSession session = request.getSession();
+	if (session == null || session.getAttribute(Constants.VIOLATION_NUMBER) == null) {
+	    LOGGER.error("Session has been timed out. Navigating to the home page.");
+	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Session timed out.");
+	    return;
+	}
 
 	LOGGER.info("Handling request from: "+ request.getRemoteAddr());
 

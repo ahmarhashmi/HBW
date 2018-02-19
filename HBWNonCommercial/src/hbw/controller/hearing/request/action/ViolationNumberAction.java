@@ -64,6 +64,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     public String execute() {
 	/** Set the default value to true */
 	violationInSystem = true;
+	violationNumber = violationNumber.trim();
 	try {
 	    if (!HBWClient.isViolationInSystem(violationNumber)) {
 		/** No more needed to restrict the user in case violation is not in system */
@@ -105,7 +106,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	HttpSession session = request.getSession();
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
 	session.setAttribute(Constants.VIOLATION_INFO, violationInfo);
-	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInfo);
+	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInSystem);
 	return SUCCESS;
     }
 

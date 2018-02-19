@@ -27,6 +27,12 @@ Dropzone.options.fileUploadForm = {
 	error : function(file, response) {
 		file.previewElement.classList.add("dz-error");
 		$(file.previewElement).find('.dz-error-message span').text(response.replace('Error 500: ',''));
+		var errorMessage = $(file.previewElement).find('.dz-error-message span');
+		console.log(errorMessage);
+		if( response.match(/Session timed out*/)){
+			$(window).unbind('beforeunload');
+    		startAfresh();
+		}
 	},
 	
 	init : function() {
