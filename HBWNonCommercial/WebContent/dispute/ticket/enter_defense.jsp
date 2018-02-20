@@ -52,6 +52,17 @@
 </script>
 <script type="text/javascript">
 
+function verifyIfSessionIsActive(ticket_num, targetURL, issue_date){
+	$.get(getContextPath() + "/ViewTicketServlet", function(data) {
+		if( data ==  "timedout" ){
+			$(window).unbind('beforeunload');
+			window.location='ticket/broker_selection.jsp';
+		} else{
+			imagePopUpPdf(ticket_num, targetURL, issue_date);
+		}
+	});
+}
+
 function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 	var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
 			+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
@@ -325,7 +336,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 						<div class="gap"></div>
 						<div class="form-group viewticketbuttons">
 							<a class="btn btn-primary btn-lg" href="#"
-								onclick="imagePopUpPdf('<s:property value="violationNumber"/>','test');">View
+								onclick="verifyIfSessionIsActive('<s:property value="violationNumber"/>','test');">View
 								Ticket</a> <a class="btn btn-link btn-lg"
 								href="https://get.adobe.com/reader/" target="_blank">Adobe
 								Acrobat Reader</a> <span>(required to view the ticket)</span>

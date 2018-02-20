@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -24,7 +23,7 @@ import org.apache.commons.io.FileUtils;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
-import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.Resource;
 
@@ -76,15 +75,18 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-	
-	HttpSession session = request.getSession();
-	if (session == null || session.getAttribute(Constants.VIOLATION_NUMBER) == null) {
+
+	if (!CommonUtil.isSessionActive(request)) {
 	    LOGGER.error("Session has been timed out. Navigating to the home page.");
+	    /**
+	     * DANGER: Do not change the response string, Else Front end string will also be
+	     * required to be changed.
+	     */
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Session timed out.");
 	    return;
 	}
 
-	LOGGER.info("Handling request from: "+ request.getRemoteAddr());
+	LOGGER.info("Handling request from: " + request.getRemoteAddr());
 
 	if (!ServletFileUpload.isMultipartContent(request)) {
 	    throw new IllegalArgumentException(
@@ -153,11 +155,11 @@ public class FileUploadServlet extends HttpServlet {
 			return;
 		    }
 
-		    LOGGER.info(file.getPath() +"  File uploaded SUCCESSFULLY");
+		    LOGGER.info(file.getPath() + "  File uploaded SUCCESSFULLY");
 		}
 	    }
 	} catch (Exception e) {
-	    LOGGER.error("File Upload failed due to an error: "+ e.getMessage());
+	    LOGGER.error("File Upload failed due to an error: " + e.getMessage());
 	    e.printStackTrace();
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
 	}
@@ -185,7 +187,7 @@ public class FileUploadServlet extends HttpServlet {
 	    return;
 	}
 
-	LOGGER.info("File "+fileName+" mime type is:"+ mimeType);
+	LOGGER.info("File " + fileName + " mime type is:" + mimeType);
 
 	// Set content type
 	response.setContentType(mimeType);
@@ -221,9 +223,9 @@ public class FileUploadServlet extends HttpServlet {
     private void doDeleteFile(HttpServletRequest request, HttpServletResponse response, String deleteFile) {
 	File folder = FileUtil.validateAndGetEvidenceUploadPath(request);
 	File fileName = new File(folder.getPath() + File.separator + deleteFile);
-	LOGGER.info("DELETE file:"+ fileName.getPath());
+	LOGGER.info("DELETE file:" + fileName.getPath());
 	fileName.delete();
-	LOGGER.info("file:"+fileName.getPath()+" >>> Deleted successfully." );
+	LOGGER.info("file:" + fileName.getPath() + " >>> Deleted successfully.");
     }
 
 }

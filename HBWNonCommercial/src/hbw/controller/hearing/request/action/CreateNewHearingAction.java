@@ -61,11 +61,7 @@ import hbw.controller.hearing.request.model.ViolationInfo;
 @Results({ @Result(name = SUCCESS, location = "dispute/ticket/verify_info.jsp"),
 	@Result(name = INPUT, location = "dispute/ticket/enter_defense.jsp"),
 	@Result(name = LOGIN, location = "dispute/ticket/broker_selection.jsp") })
-@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare")/*
-									       * ,
-									       * 
-									       * @InterceptorRef("tstSessionCheckStack")
-									       */ })
+@InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
 @Validations
 public class CreateNewHearingAction extends ActionSupport implements Preparable {
 
@@ -106,7 +102,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
-	if (session == null || session.getAttribute(Constants.VIOLATION_NUMBER) == null) {
+	if (!CommonUtil.isSessionActive(request)) {
 	    return LOGIN;
 	}
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);

@@ -12,16 +12,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import hbw.controller.hearing.request.model.FileValidationRequestDTO;
 
@@ -69,7 +70,7 @@ public final class CommonUtil {
 	    String payload = createJsonString(dto);
 	    writer.write(payload);
 	    writer.close();
-	    LOGGER.info("Request json for files validation is :"+ payload);
+	    LOGGER.info("Request json for files validation is :" + payload);
 
 	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    StringBuffer jsonString = new StringBuffer();
@@ -77,7 +78,7 @@ public final class CommonUtil {
 	    while ((line = br.readLine()) != null) {
 		jsonString.append(line);
 	    }
-	    LOGGER.info("Response from the server is :"+ jsonString.toString());
+	    LOGGER.info("Response from the server is :" + jsonString.toString());
 	    br.close();
 	    conn.disconnect();
 	    return jsonString.toString();
@@ -86,6 +87,23 @@ public final class CommonUtil {
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
 	}
+    }
+
+    /**
+     * @author Ahmar Nadeem
+     * 
+     *         validates the session and returns true if session is active, false
+     *         otherwise.
+     * 
+     * @param request
+     * @return
+     */
+    public static boolean isSessionActive(HttpServletRequest request) {
+	HttpSession session = request.getSession();
+	if (session == null || session.getAttribute(Constants.VIOLATION_NUMBER) == null) {
+	    return false;
+	}
+	return true;
     }
 
     /**
