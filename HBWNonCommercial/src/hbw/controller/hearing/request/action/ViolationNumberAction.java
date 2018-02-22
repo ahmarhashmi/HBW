@@ -91,7 +91,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		vioNumber = this.violationNumber.substring(0, 9);
 		checkDigit = this.violationNumber.substring(this.violationNumber.length() - 1);
 		if (!checkDigit.equals(calculateViolationNumberCheckDigit(vioNumber))) {
-		    addActionError("Violation numer you entered is not valid. Make sure the check digit is correct.");
+		    addActionError("Violation numer you entered is not valid.");
 		    return INPUT;
 		}
 	    }

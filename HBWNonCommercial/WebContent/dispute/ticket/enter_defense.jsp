@@ -52,6 +52,11 @@
 </script>
 <script type="text/javascript">
 
+function isValidEmail(value){
+	var emailFormat = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
+	return emailFormat.test(value);
+}
+
 function verifyIfSessionIsActive(ticket_num, targetURL, issue_date){
 	$.get(getContextPath() + "/ViewTicketServlet", function(data) {
 		if( data ==  "timedout" ){
@@ -93,9 +98,31 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 		}
 		Image_window.focus();
 	}
+
+	// Regular Expression to Check for Alphabets.
+	var cityFormat = new RegExp(/^[a-zA-Z]*$/);
+	var zipFormat = new RegExp(/[0-9]/);
+	var specialChar = ['!','@','#','$','%','^','&','*','(',')','_','+'];
+	var allowed = ['Backspace','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Tab', 'F5', 'Delete'];
 	$(document)
 			.ready(
 					function() {
+						$('#city').on('keydown keyup', function(e) {
+							var value = String.fromCharCode(e.which) || e.key;
+							//alert(e.which);
+							if (!allowed.includes(e.key) && e.key != ' ' && (!cityFormat.test(value))) {
+								//e.preventDefault();
+								return false;
+							}
+						}); // End of 'keydown keyup' method.
+						$('#zip').on('keydown keyup', function(e) {
+							var value = String.fromCharCode(e.which) || e.key;
+							if (!allowed.includes(e.key) && (!zipFormat.test(value) || specialChar.includes(e.key) )){
+						         // e.preventDefault();
+						          return false;
+						    }
+						}); // End of 'keydown keyup' method.
+
 						enableDisableSubmitButton(true);
 
 						/**
@@ -150,6 +177,27 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 														}
 													});
 										});
+						
+						$("#email1")
+						.on("change",
+								function() {
+									if ($(this).val() != '') {
+										if(!isValidEmail($(this).val())){
+											$("#email1FormatMsg").show();
+										} else{
+											$("#email1FormatMsg").hide();
+										}
+									}
+									if ($('#email2').val() != $(
+											this).val()) {
+										$('#emailMatchMsg').css(
+												"display", "block");
+										isValid = false;
+									} else {
+										$('#emailMatchMsg').css(
+												"display", "none");
+									}
+								});
 
 						/**
 						 * Listener for the email change to see if both emails match
@@ -159,6 +207,11 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 										"change",
 										function() {
 											if ($(this).val() != '') {
+												if(!isValidEmail($(this).val())){
+													$("#email2FormatMsg").show();
+												} else{
+													$("#email2FormatMsg").hide();
+												}
 												if ($('#email1').val() != $(
 														this).val()) {
 													$('#emailMatchMsg').css(
@@ -180,8 +233,10 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 						$("#email1").bind('blur', enableDisableSubmitButton);
 						$("#email2").bind('blur', enableDisableSubmitButton);
 						$("#certify").bind('change', enableDisableSubmitButton);
-						$("#explainWhyID").bind('keyup', enableDisableSubmitButton);
-						$("#enterDefenseID").bind('keyup', enableDisableSubmitButton);
+						$("#explainWhyID").bind('keyup',
+								enableDisableSubmitButton);
+						$("#enterDefenseID").bind('keyup',
+								enableDisableSubmitButton);
 
 						$('#google_translate_element')
 								.bind(
@@ -234,7 +289,8 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 					<hr>
 					<h4>Violation</h4>
 					<s:set name="webViolationInSystem" value="violationInSystem" />
-					<s:set name="webViolationInJudgment" value="violationInfo.violationStatusInJudgment" />
+					<s:set name="webViolationInJudgment"
+						value="violationInfo.violationStatusInJudgment" />
 					<s:if test="%{#webViolationInSystem}">
 						<div class="row">
 							<div class="col-sm-4">
@@ -355,16 +411,16 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 					<hr>
 					<h4>Enter Defense</h4>
 					<s:if test="%{#webViolationInSystem and #webViolationInJudgment}">
-					<p>Explain why you not previously responded to this request.</p>
-					<div class="form-group">
-						<textarea class="form-control" rows="10" cols="30"
-							maxlength="32700" id="explainWhyID"
-							onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
-						<span id="explainWhyMessage" style="color: red; display: none;">Maximum
-							length reached. If you want to write more, please do not request
-							a hearing online. Submit your hearing request and evidence by
-							mail or in person.</span>
-					</div>
+						<p>Explain why you not previously responded to this request.</p>
+						<div class="form-group">
+							<textarea class="form-control" rows="10" cols="30"
+								maxlength="32700" id="explainWhyID"
+								onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
+							<span id="explainWhyMessage" style="color: red; display: none;">Maximum
+								length reached. If you want to write more, please do not request
+								a hearing online. Submit your hearing request and evidence by
+								mail or in person.</span>
+						</div>
 					</s:if>
 					<div class="clearfix gap"></div>
 					<p>Explain why you believe the violation should be dismissed.</p>
@@ -490,7 +546,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
 								<s:textfield name="zip" id="zip" type="tel"
-									label="ZIP/Postal Code" class="form-control"
+									label="ZIP/Postal Code" class="form-control" min="1" max="9999999999"
 									style="max-width:250px;" labelposition="top" maxlength="10"
 									requiredLabel="true" requiredPosition="top" />
 								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
@@ -503,6 +559,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 									type="email" />
 								<span id="email1Msg" style="color: red; display: none;">Email
 									is required.</span>
+								<span id="email1FormatMsg" style="color: red; display: none;">Email format is not correct.</span>
 							</div>
 							<div class="form-group">
 								<label>Confirm Email Address</label>
@@ -513,6 +570,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 									confirm your email.</span> <span id="emailMatchMsg"
 									style="color: red; display: none;">Does not match email
 									address above.</span>
+								<span id="email2FormatMsg" style="color: red; display: none;">Email format is not correct.</span>
 							</div>
 
 
@@ -540,8 +598,8 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 							<%-- <s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" /> --%>
 							<input id="submitBtn" type="button" class="btn btn-primary"
-								value="Submit Request" /> <a class="btn btn-link " href="#submitBtn"
-								onclick="cancelRequest();">Cancel Request</a>
+								value="Submit Request" /> <a class="btn btn-link "
+								href="#submitBtn" onclick="cancelRequest();">Cancel Request</a>
 						</div>
 					</s:form>
 				</div>

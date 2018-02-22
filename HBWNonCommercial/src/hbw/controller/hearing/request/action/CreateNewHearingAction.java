@@ -189,6 +189,8 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		    addActionError("Server not responding. Please try again later.");
 		    return INPUT;
 		}
+		addActionError(e.getLocalizedMessage());
+		return INPUT;
 	    }
 	}
 	LOGGER.info("Handling the create hearing request. All validations successful.");

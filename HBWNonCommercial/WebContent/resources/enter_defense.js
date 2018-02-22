@@ -368,6 +368,12 @@ function enableDisableSubmitButton(onPageload){
 	if ($('#email1').val() != $('#email2').val()) {
 		isValid = false;
 	}
+	if( !isValidEmail('#email1').val()) ){
+		$("#email1FormatMsg").show();
+		isValid = false;
+	} else{
+		$("#email1FormatMsg").hide();
+	}
 	if ($('#affirm').is(":visible")
 			&& !$('#affirm')[0].checked) {
 		if(!onPageload){
@@ -384,8 +390,6 @@ function enableDisableSubmitButton(onPageload){
 		$("#submitBtn").attr("disabled", true);
 	}
 }
-
-
 
 function format_Image_Page(ticket_num, popupType, targetURL) {
 	var agt = navigator.userAgent.toLowerCase();
