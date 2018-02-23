@@ -23,7 +23,6 @@ public enum Resource {
     WS_CHANNEL,
     VANGAURD_VIRUS_SCAN_URL,
     DOF_BROKER_URL, 
-    VIO_IMAGE_INTERNET_WRITE_PATH,
 
     ;
 

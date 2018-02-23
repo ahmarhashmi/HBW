@@ -14,6 +14,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -29,6 +30,8 @@ import hbw.controller.hearing.request.model.FileValidationRequestDTO;
 /**
  * @author Ahmar Hashmi
  *
+ *         A common utility class that contains different utility functions to
+ *         be used across application.
  */
 public final class CommonUtil {
 
@@ -37,6 +40,7 @@ public final class CommonUtil {
     private static ObjectMapper mapper = new ObjectMapper();
 
     /**
+     * @author Ahmar Nadeem
      * 
      * @param cal
      * @return
@@ -51,21 +55,39 @@ public final class CommonUtil {
     }
 
     /**
-     * It scans the files and convert to tiff
+     * @author Ahmar Nadeem
+     * 
+     *         A utility function to get http connection for rest calls.
+     * 
+     * @param URL
+     * @param method
+     * @return
+     * @throws IOException
+     */
+    public static HttpURLConnection getConnection(final String URL, final String method) throws IOException {
+	URL url = new URL(URL);
+	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	conn.setRequestMethod(method);
+	conn.setRequestProperty("Accept", "application/json");
+	conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+	return conn;
+    }
+
+    /**
+     * @author Ahmar Nadeem
+     * 
+     *         It scans the files and converts to tiff
      * 
      * @param dto
      * @return
      */
-    public static String scanAndConvertFilesToTiff(FileValidationRequestDTO dto) {
+    public static String scanAndConvertFilesToTiff(final FileValidationRequestDTO dto) {
 	try {
-	    URL url = new URL(Resource.VANGAURD_VIRUS_SCAN_URL.getValue());
-	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	    conn.setRequestMethod("POST");
+	    HttpURLConnection conn = getConnection(Resource.VANGAURD_VIRUS_SCAN_URL.getValue(), Constants.POST);
 	    conn.setDoInput(true);
 	    conn.setDoOutput(true);
-	    conn.setRequestProperty("Accept", "application/json");
-	    conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-	    OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+	    OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), Constants.UTF8);
 
 	    String payload = createJsonString(dto);
 	    writer.write(payload);
@@ -104,6 +126,27 @@ public final class CommonUtil {
 	    return false;
 	}
 	return true;
+    }
+
+    /**
+     * @author Ahmar Nadeem
+     * 
+     *         Utility to triple encode the provided violation number for view
+     *         ticket URL.
+     * 
+     * @param violationNumber
+     * @return
+     */
+    public static String tripleEncodeViolationNumber(String violationNumber) {
+	String encoded = new String();
+	try {
+	    encoded = DatatypeConverter.printBase64Binary(violationNumber.getBytes(Constants.UTF8));
+	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
+	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
+	} catch (Exception e) {
+	    LOGGER.error(e.toString());
+	}
+	return encoded;
     }
 
     /**

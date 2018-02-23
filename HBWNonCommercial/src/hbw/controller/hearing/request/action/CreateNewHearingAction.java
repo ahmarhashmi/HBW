@@ -93,7 +93,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     @Override
     public void prepare() throws Exception {
     }
-
+    
     /**
      * The main action listener of this class.
      */
@@ -173,7 +173,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		    for (JsonNode payloadItem : payload) {
 			if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("107")) {
-			    addActionError("File name " + payloadItem.get("FileName") + " is infected.");
+			    addActionError("File name " + payloadItem.get("FileName") + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
 			    isError = true;
 			}
 		    }

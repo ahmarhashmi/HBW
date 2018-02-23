@@ -21,6 +21,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.HBWClient;
 import hbw.controller.hearing.request.common.StatesSinglton;
@@ -33,7 +34,7 @@ import hbw.controller.hearing.request.model.ViolationInfo;
 @Namespace("/dispute")
 @ResultPath(value = "/")
 @Results({ @Result(name = "success", location = "ticket/enter_defense.jsp"),
-	@Result(name = "input", location = "ticket/search_violation.jsp"), })
+	@Result(name = "input", location = "ticket/search_violation.jsp") })
 @InterceptorRefs({ @InterceptorRef("defaultStack"), @InterceptorRef("prepare") })
 @Validations
 public class ViolationNumberAction extends ActionSupport implements Preparable {
@@ -68,7 +69,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	try {
 	    if (!HBWClient.isViolationInSystem(violationNumber)) {
 		/** No more needed to restrict the user in case violation is not in system */
-		// addActionError("Violation does not exist in the system.");
+		// addActionError("Violation number not found. Check that your violation number is correct and try again.");
 		// return INPUT;
 		violationInSystem = false;
 	    }
@@ -78,7 +79,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	     */
 	    if (violationInSystem) {
 		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {
-		    addActionError("Violation is not eligible for hearing.");
+		    addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");
 		    return INPUT;
 		}
 		violationInfo = HBWClient.getViolationInfo(violationNumber);
@@ -91,7 +92,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		vioNumber = this.violationNumber.substring(0, 9);
 		checkDigit = this.violationNumber.substring(this.violationNumber.length() - 1);
 		if (!checkDigit.equals(calculateViolationNumberCheckDigit(vioNumber))) {
-		    addActionError("Violation numer you entered is not valid.");
+		    addActionError("Violation number you entered is not valid. Check that your violation number is correct and try again.");
 		    return INPUT;
 		}
 	    }
@@ -108,6 +109,18 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	session.setAttribute(Constants.VIOLATION_INFO, violationInfo);
 	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInSystem);
 	return SUCCESS;
+    }
+
+    /**
+     * @author Ahmar Nadeem
+     * 
+     *         Function to return violation number encoded to base64 thrice.
+     * @return
+     */
+    public String getVioBase64Encoded() {
+	HttpServletRequest request = ServletActionContext.getRequest();
+	HttpSession session = request.getSession();
+	return CommonUtil.tripleEncodeViolationNumber((String) session.getAttribute(Constants.VIOLATION_NUMBER));
     }
 
     /**

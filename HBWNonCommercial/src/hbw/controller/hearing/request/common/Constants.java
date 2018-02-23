@@ -22,7 +22,7 @@ public final class Constants {
     public static final String VIOLATION_NUMBER = "violationNumber";
 
     public static final String VIOLATION_INFO = "VIOLATION_INFO";
-    
+
     public static final String VIOLATION_IN_SYSTEM = "VIOLATION_IN_SYSTEM";
 
     public static final String PDF = "application/pdf";
@@ -34,5 +34,11 @@ public final class Constants {
     public static final String RETURN_CODE_ERROR = "2";
 
     public static final String RETURN_CODE = "ReturnCode";
+
+    public static final String UTF8 = "UTF-8";
+
+    public static final String POST = "POST";
+    
+    public static final String GET = "GET";
 
 }

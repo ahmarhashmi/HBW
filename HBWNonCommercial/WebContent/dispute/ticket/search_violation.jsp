@@ -90,8 +90,8 @@
 					<div class="form-group row ">
 						<s:form method="post" action="searchViolation"
 							namespace="/dispute" theme="simple" onsubmit="return validate();">
-							<div class="col-xs-3">
-								<s:textfield type="tel" id="violationNumber" autocorrect="off"
+							<div class="col-xs-3" style="width:175px">
+								<s:textfield type="tel" id="violationNumber" autocorrect="off" style="width:150px"
 									name="violationNumber" label="violationNumber" required="true"
 									maxlength="11" minlength="10" class="form-control"
 									onchange="enableDisableSearchButton(this);"

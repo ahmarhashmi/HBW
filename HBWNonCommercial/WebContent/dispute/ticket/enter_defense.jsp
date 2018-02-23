@@ -53,51 +53,9 @@
 <script type="text/javascript">
 
 function isValidEmail(value){
-	var emailFormat = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
+	var emailFormat = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
 	return emailFormat.test(value);
 }
-
-function verifyIfSessionIsActive(ticket_num, targetURL, issue_date){
-	$.get(getContextPath() + "/ViewTicketServlet", function(data) {
-		if( data ==  "timedout" ){
-			$(window).unbind('beforeunload');
-			window.location='ticket/broker_selection.jsp';
-		} else{
-			imagePopUpPdf(ticket_num, targetURL, issue_date);
-		}
-	});
-}
-
-function imagePopUpPdf(ticket_num, targetURL, issue_date) {
-	var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
-			+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
-	var Image_window = window.open("blank.html", "Ticket_Image_Screen",
-			windowprops);
-	//var page_text = format_Image_Page(ticket_num, "pdf", targetURL, issue_date);
-	var page_text = format_Image_Page(ticket_num, "pdf", 
-			"<%=request.getContextPath()%>/ViewTicketServlet", issue_date);
-
-		with (Image_window.document) {
-			open();
-			write(page_text);
-			close();
-		}
-		Image_window.focus();
-	}
-
-	function imagePopUpBrowser(ticket_num, targetURL) {
-		var windowprops = "location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,resizable=1,left="
-				+ 25 + ",top = " + 25 + ",width=" + 500 + ",height=" + 650;
-		var Image_window = window.open("blank.html", "Ticket_Image_Screen",
-				windowprops);
-		var page_text = format_Image_Page(ticket_num, "browser", targetURL);
-		with (Image_window.document) {
-			open();
-			write(page_text);
-			close();
-		}
-		Image_window.focus();
-	}
 
 	// Regular Expression to Check for Alphabets.
 	var cityFormat = new RegExp(/^[a-zA-Z]*$/);
@@ -392,7 +350,7 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 						<div class="gap"></div>
 						<div class="form-group viewticketbuttons">
 							<a class="btn btn-primary btn-lg" href="#"
-								onclick="verifyIfSessionIsActive('<s:property value="violationNumber"/>','test');">View
+								onclick="displaySummonsImage('ViewSummons', '<s:property value='vioBase64Encoded'/>'); return false;">View
 								Ticket</a> <a class="btn btn-link btn-lg"
 								href="https://get.adobe.com/reader/" target="_blank">Adobe
 								Acrobat Reader</a> <span>(required to view the ticket)</span>
@@ -546,9 +504,9 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 							<div class="form-group">
 								<label>ZIP/Postal Code</label>
 								<s:textfield name="zip" id="zip" type="tel"
-									label="ZIP/Postal Code" class="form-control" min="1" max="9999999999"
-									style="max-width:250px;" labelposition="top" maxlength="10"
-									requiredLabel="true" requiredPosition="top" />
+									label="ZIP/Postal Code" class="form-control" min="1"
+									max="9999999999" style="max-width:250px;" labelposition="top"
+									maxlength="10" requiredLabel="true" requiredPosition="top" />
 								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
 									Code is required.</span>
 							</div>
@@ -558,8 +516,9 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 									class="form-control" labelposition="top" maxlength="50"
 									type="email" />
 								<span id="email1Msg" style="color: red; display: none;">Email
-									is required.</span>
-								<span id="email1FormatMsg" style="color: red; display: none;">Email format is not correct.</span>
+									is required.</span> <span id="email1FormatMsg"
+									style="color: red; display: none;">Email format is not
+									correct.</span>
 							</div>
 							<div class="form-group">
 								<label>Confirm Email Address</label>
@@ -569,8 +528,9 @@ function imagePopUpPdf(ticket_num, targetURL, issue_date) {
 								<span id="email2Msg" style="color: red; display: none;">Please
 									confirm your email.</span> <span id="emailMatchMsg"
 									style="color: red; display: none;">Does not match email
-									address above.</span>
-								<span id="email2FormatMsg" style="color: red; display: none;">Email format is not correct.</span>
+									address above.</span> <span id="email2FormatMsg"
+									style="color: red; display: none;">Email format is not
+									correct.</span>
 							</div>
 
 

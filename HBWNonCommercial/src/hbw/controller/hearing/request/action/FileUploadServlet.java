@@ -105,10 +105,9 @@ public class FileUploadServlet extends HttpServlet {
 			    || FileUtils.sizeOf(evidencePath) >= Long
 				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"Upload limit reached. File(s) cannot be uploaded. If\r\n"
-					+ "you want to submit more evidence, please do not\r\n"
-					+ "request a hearing online. Submit your hearing request\r\n"
-					+ "and evidence by mail or in person.");
+				"Upload limit reached. File(s) cannot be uploaded. "
+				+ "If you want to submit more evidence, please do not request a hearing online. "
+				+ "Submit your hearing request and evidence by mail or in person.");
 			return;
 		    }
 		    File file = new File(evidencePath, item.getName());
@@ -119,7 +118,7 @@ public class FileUploadServlet extends HttpServlet {
 		    }
 		    if (file.exists()) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"File with the same name already exists/uploaded.");
+				"A file with the same name was already uploaded. If this is different, rename the file and try again.");
 			return;
 		    }
 
@@ -132,7 +131,7 @@ public class FileUploadServlet extends HttpServlet {
 			BufferedImage bi = ImageIO.read(item.getInputStream());
 			if (bi == null) {
 			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				    "The uploaded file is not a valid image file.");
+				    "File is damaged and cannot be uploaded.");
 			    return;
 			}
 		    } else if (type.equals("application")) {
@@ -159,7 +158,7 @@ public class FileUploadServlet extends HttpServlet {
 		}
 	    }
 	} catch (Exception e) {
-	    LOGGER.error("File Upload failed due to an error: " + e.getMessage());
+	    LOGGER.error("File not uploaded. Please try again.");
 	    e.printStackTrace();
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
 	}
