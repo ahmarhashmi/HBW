@@ -162,7 +162,7 @@ public final class HBWClient {
 
 	Vehicle veh = violation.getIssuedToVehicle();
 	if (veh != null) {
-	    info.setVehicleType(veh.getVehicleModel());
+	    info.setVehicleType(veh.getVehiclePlate().getPlateType());
 	    info.setVehicleMake(veh.getVehicleMake());
 	    info.setVehiclePlate(veh.getVehiclePlate().getPlateNumber());
 	    info.setVehicleState(veh.getVehiclePlate().getPlateState());

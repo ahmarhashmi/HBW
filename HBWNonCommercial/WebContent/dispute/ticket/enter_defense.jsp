@@ -50,10 +50,121 @@
 		return "";
 	});
 </script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
+
+		function validateForm() {
+			var isValid = true;
+			if(!$('#enterDefenseID').val()){
+				
+				$('#defenseMessage').css("color", "red");
+				isValid = false;
+			}else {
+				$('#defenseMessage').css("color", "black");
+			}
+			if (!$('#certify')[0].checked) {
+				$('#notCertified').css("color", "red");
+				isValid = false;
+			} else {
+				$('#notCertified').css("color", "black");
+			}
+			if (!$('#firstName').val()) {
+				$('#firstNameMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#firstNameMsg').css("display", "none");
+			}
+			if (!$('#lastName').val()) {
+				$('#lastNameMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#lastNameMsg').css("display", "none");
+			}
+			if (!$('#address').val()) {
+				$('#addressMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#addressMsg').css("display", "none");
+			}
+			if (!$('#city').val()) {
+				$('#cityMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#cityMsg').css("display", "none");
+			}
+			if ($('#state').val() == 1) {
+				$('#stateMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#stateMsg').css("display", "none");
+			}
+			if (!$('#zip').val()) {
+				$('#zipMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#zipMsg').css("display", "none");
+			}
+			if (!$('#email1').val()) {
+				$('#email1Msg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#email1Msg').css("display", "none");
+			}
+			if (!$('#email2').val()) {
+				$('#email2Msg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#email2Msg').css("display", "none");
+			}
+			if ($('#email1').val() != $('#email2').val()) {
+				$('#emailMatchMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#emailMatchMsg').css("display", "none");
+			}
+			if ($('#affirm').is(":visible")
+					&& !$('#affirm')[0].checked) {
+				$('#affirmMsg').css("color", "red");
+				isValid = false;
+			} else {
+				$('#affirmMsg').css("color", "black");
+			}
+
+			if (!isValid) {
+				//$("#submitBtn").removeAttr('disabled');
+				//$(':input[type="submit"]').prop('disabled', false);
+				//$("#submitBtn").css("display", "block");
+				//$("#submitBtnDisabled").css("display", "none");
+				return false;
+			}
+
+			/** Checking virus scan after all the validations are successful so that 
+			 * user has not to wait for virus scan on every submit
+			 */
+			//if (!$('#affirm').is(":visible")) {
+				//loadingDiv.style.display = "block";
+				//var infectedFiles = isAllUploadedFilesClean();
+				//if (infectedFiles.length > 0) {
+					//if (confirm("("
+							//+ infectedFiles.toString()
+							//+ ") Files are infected and deleted from the server. Do you want to update more?")) {
+						//showHideLoadingDiv(false);
+						//$("#submitBtn").removeAttr('disabled');
+						/* $("#submitBtn").css("display", "block");
+						$("#submitBtnDisabled").css("display",
+								"none");
+						$(':input[type="submit"]').prop('disabled',
+								false); */
+						//return false;
+					//}
+				//}
+			//}
+			//$(window).unbind('beforeunload');
+			return true;
+		}
 
 function enableDisableSubmitButton(onPageload){
-	
+	return false;
+	/*
 	var dz = Dropzone.forElement("#file-upload-form"); 
 	var isValid = true;
 	
@@ -114,6 +225,7 @@ function enableDisableSubmitButton(onPageload){
 	} else{
 		$("#submitBtn").attr("disabled", true);
 	}
+	*/
 }
 
 function setViolationNumber() {
@@ -164,6 +276,7 @@ function isValidEmail(value){
 						$('#submitBtn')
 								.click(
 										function(event) {
+											if(validateForm()){
 											loadingDiv.style.display = "block";
 											$("#displayError").empty();
 											event.preventDefault();
@@ -177,17 +290,11 @@ function isValidEmail(value){
 														cache : false,
 														success : function(
 																result) {
-															var errors = $(
-																	result)
-																	.find(
-																			".errors");
+															var errors = $(result).find(".errors");
 															loadingDiv.style.display = "none";
-															if ($(result).find(
-																	".errors").length == 0) {
-																var myWindow = window
-																		.open(
-																				"",
-																				"_self");
+															if ($(result).find(".errors").length == 0) {
+																$(window).unbind('beforeunload');
+																var myWindow = window.open("","_self");
 																myWindow.document
 																		.write(result);
 															} else {
@@ -209,6 +316,7 @@ function isValidEmail(value){
 															loadingDiv.style.display = "none";
 														}
 													});
+											}
 										});
 						
 						$("#email1")
@@ -293,7 +401,7 @@ function isValidEmail(value){
 															});
 										});
 					});
---></script>
+</script>
 <script type="text/javascript"
 	src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
@@ -456,7 +564,7 @@ function isValidEmail(value){
 						</div>
 					</s:if>
 					<div class="clearfix gap"></div>
-					<p>Explain why you believe the violation should be dismissed.</p>
+					<p id="defenseMessage">Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
 							maxlength="32700" id="enterDefenseID"
@@ -479,8 +587,9 @@ function isValidEmail(value){
 						The total limit for uploaded evidence is 20MB and the maximum page
 						count is 50 pages. If your evidence exceeds either the file size
 						or the page count, do not ask for a hearing online. Submit your
-						hearing request and evidence by <a href="//www1.nyc.gov/site/finance/about/contact-us.page">mail</a> or <a
-							href="//www1.nyc.gov/site/finance/about/contact-us.page">in person</a> at a <a href="#">Department of Finance
+						hearing request and evidence by <a href="http://www1.nyc.gov/site/finance/about/contact-us-by-mail.page" target="_blank">mail</a> or <a
+							href="http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page" target="_blank">in person</a> at a 
+							<a href="http://www1.nyc.gov/site/finance/about/contact-us-by-email.page" target="_blank">Department of Finance
 							Business Center.</a>
 					</p>
 					<div id="displayError"></div>
@@ -658,7 +767,6 @@ function isValidEmail(value){
 		<div class="backdrop"></div>
 		<div class="loading_image">
 			<img src="${pageContext.request.contextPath}/images/giphy.gif">
-			<p>Scanning uploaded documents...</p>
 		</div>
 	</div>
 </body>

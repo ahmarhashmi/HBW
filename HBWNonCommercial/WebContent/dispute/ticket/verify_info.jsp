@@ -135,8 +135,8 @@
 						</tr>
 						<tr>
 							<td>Address:</td>
-							<td><s:property value="address" /> <s:property
-									value="address2" /></td>
+							<td><s:property value="address" /> <s:property value="address2" />
+							<s:property value="city" /> <s:property value="state" /> <s:property value="zip" /></td>
 						</tr>
 						<tr>
 							<td>Email Address:</td>

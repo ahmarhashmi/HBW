@@ -343,11 +343,12 @@ div#header-links {
  display: block;
  z-index: 1200;
 }
-
+.loading_image img {
+    max-width: 100%;
+}
 .loading_image {
  position: fixed;
  z-index: 1500;
- background: #fff;
  display: block;
  width: 250px;
  color: #fff;
