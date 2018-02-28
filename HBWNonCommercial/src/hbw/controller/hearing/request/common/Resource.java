@@ -23,6 +23,8 @@ public enum Resource {
     WS_CHANNEL,
     VANGAURD_VIRUS_SCAN_URL,
     DOF_BROKER_URL, 
+    PROXY_IP, 
+    PROXY_PORT, 
 
     ;
 

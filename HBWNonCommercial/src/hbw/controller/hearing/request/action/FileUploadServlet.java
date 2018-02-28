@@ -103,16 +103,16 @@ public class FileUploadServlet extends HttpServlet {
 	    for (FileItem item : items) {
 		if (!item.isFormField()) {
 		    if (evidencePath.listFiles().length == Integer.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
-			    || FileUtils.sizeOf(evidencePath) >= Long
+			    || FileUtils.sizeOf(evidencePath)+item.getSize() > Long
 				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"Upload limit reached. File(s) cannot be uploaded. "
+				"Upload limit reached. File "+item.getName()+" cannot be uploaded. "
 				+ "If you want to submit more evidence, please do not request a hearing online. "
 				+ "Submit your hearing request and evidence by mail or in person.");
 			return;
 		    }
 		    File file = new File(evidencePath, item.getName());
-		    if (file.length() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
+		    if (item.getSize() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
 			return;

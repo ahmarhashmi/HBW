@@ -1,5 +1,12 @@
 package hbw.controller.hearing.request.action;
 
+import hbw.controller.hearing.request.common.CommonUtil;
+import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.StatesSinglton;
+import hbw.controller.hearing.request.model.States;
+import hbw.controller.hearing.request.model.ViolationInfo;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,12 +27,6 @@ import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-
-import hbw.controller.hearing.request.common.CommonUtil;
-import hbw.controller.hearing.request.common.Constants;
-import hbw.controller.hearing.request.common.HBWClient;
-import hbw.controller.hearing.request.common.StatesSinglton;
-import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
@@ -48,7 +49,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     private boolean violationInSystem;
 
     public String getState() {
-	return "New York";
+	return "NY";
     }
 
     private String violationNumber;
@@ -66,6 +67,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	/** Set the default value to true */
 	violationInSystem = true;
 	violationNumber = violationNumber.trim();
+	String oneYearReason = "2";
 	try {
 	    if (!HBWClient.isViolationInSystem(violationNumber)) {
 		/** No more needed to restrict the user in case violation is not in system */
@@ -78,9 +80,12 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	     * eligibility and populating info
 	     */
 	    if (violationInSystem) {
-		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {
-		    addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");
-		    return INPUT;
+		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {		
+			
+			addActionError(HBWClient.getReasonForViolationNotEligibleForHearing(violationNumber));		
+		    //addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");
+			
+			return INPUT;
 		}
 		violationInfo = HBWClient.getViolationInfo(violationNumber);
 		if (violationInfo == null) {
@@ -154,7 +159,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
      * 
      * @return
      */
-    public List<String> getStates() {
+    public List<States> getStates() {
 	return StatesSinglton.getStates();
     }
 

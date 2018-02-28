@@ -70,16 +70,37 @@ public final class HBWClient {
     public static boolean isViolationEligibleForHearing(String violationNumber) throws MalformedURLException {
 	NYCServMobileApp port = getConnection();
 
-	LOGGER.debug("Invoking isViolationEligibleForHearing...");
+	LOGGER.info("Invoking isViolationEligibleForHearing...");
 	IsViolationEligibleForHearingRequest request = new IsViolationEligibleForHearingRequest();
 	request.setCredentials(getCredentials());
 	request.setViolationNumber(violationNumber);
 	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
 
 	IsViolationEligibleForHearingResult response = port.isViolationEligibleForHearing(request);
-	LOGGER.debug("isViolationEligibleForHearing.result=" + response.isViolationEligibleForHearing());
+	LOGGER.info("isViolationEligibleForHearing.result=" + response.isViolationEligibleForHearing());
 
 	return response.isViolationEligibleForHearing();
+    }
+    
+    /**
+     * 
+     * @param violationNumber
+     * @return
+     * @throws MalformedURLException
+     */
+    public static String getReasonForViolationNotEligibleForHearing(String violationNumber) throws MalformedURLException {
+	NYCServMobileApp port = getConnection();
+
+	LOGGER.info("Invoking getReasonCodeForViolationNotEligibleForHearing...");
+	IsViolationEligibleForHearingRequest request = new IsViolationEligibleForHearingRequest();
+	request.setCredentials(getCredentials());
+	request.setViolationNumber(violationNumber);
+	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
+
+	IsViolationEligibleForHearingResult response = port.isViolationEligibleForHearing(request);
+	LOGGER.info("isViolationNotEligibleForHearing.result=" + response.getViolationNotEligibleForHearingReason());
+	
+	return response.getViolationNotEligibleForHearingReason();
     }
 
     /**

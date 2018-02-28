@@ -3,12 +3,16 @@
  */
 package hbw.controller.hearing.request.common;
 
+import hbw.controller.hearing.request.model.FileValidationRequestDTO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.Date;
 
@@ -24,8 +28,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
-
-import hbw.controller.hearing.request.model.FileValidationRequestDTO;
 
 /**
  * @author Ahmar Hashmi
@@ -65,12 +67,37 @@ public final class CommonUtil {
      * @throws IOException
      */
     public static HttpURLConnection getConnection(final String URL, final String method) throws IOException {
-	URL url = new URL(URL);
-	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	URL url = new URL(URL);	
+	
+	/*
+	Properties sysProperties = System.getProperties();
+	
+	String proxyHost = "bcpxy.nycnet";
+	//String proxyHost = "10.141.22.15";	
+	String proxyPort = "8080";
+	String proxySet = "true";
+
+	sysProperties.put("http.proxyHost", proxyHost);
+	sysProperties.put("http.proxyPort", proxyPort);
+	sysProperties.put("proxySet", proxySet);
+	*/
+	
+	String proxyIp = Resource.PROXY_IP.getValue();
+	String port = Resource.PROXY_PORT.getValue();
+	
+	HttpURLConnection conn;
+	if(proxyIp != null ){
+		LOGGER.info("Using proxy IP:"+proxyIp+":"+port);
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp,Integer.parseInt(port)));	
+		conn = (HttpURLConnection) url.openConnection(proxy);
+	} else{
+		LOGGER.info("No proxy has been set. Opening the connection at "+url);
+		conn = (HttpURLConnection) url.openConnection();
+	}
 	conn.setRequestMethod(method);
 	conn.setRequestProperty("Accept", "application/json");
 	conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
+	
 	return conn;
     }
 
@@ -83,8 +110,9 @@ public final class CommonUtil {
      * @return
      */
     public static String scanAndConvertFilesToTiff(final FileValidationRequestDTO dto) {
-	try {
-	    HttpURLConnection conn = getConnection(Resource.VANGAURD_VIRUS_SCAN_URL.getValue(), Constants.POST);
+	try {		
+    	
+	    HttpURLConnection conn = getConnection(Resource.VANGAURD_VIRUS_SCAN_URL.getValue(), Constants.POST);	    
 	    conn.setDoInput(true);
 	    conn.setDoOutput(true);
 	    OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), Constants.UTF8);
@@ -127,10 +155,6 @@ public final class CommonUtil {
 	}
 	return true;
     }
-    
-    public static void main(String[] args) {
-	System.out.println( tripleDecode("Wkcxa2VWcEdVbXhqTTFFOQ=="));
-    }
 
     /**
      * @author Ahmar Nadeem
@@ -147,18 +171,6 @@ public final class CommonUtil {
 	    encoded = DatatypeConverter.printBase64Binary(violationNumber.getBytes(Constants.UTF8));
 	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
 	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
-	} catch (Exception e) {
-	    LOGGER.error(e.toString());
-	}
-	return encoded;
-    }
-    
-    public static String tripleDecode(String password) {
-	String encoded = new String();
-	try {
-	    encoded = DatatypeConverter.parseBase64Binary(password).toString();
-	    encoded = new String(DatatypeConverter.parseBase64Binary(encoded));
-	    encoded = new String(DatatypeConverter.parseBase64Binary(encoded));
 	} catch (Exception e) {
 	    LOGGER.error(e.toString());
 	}

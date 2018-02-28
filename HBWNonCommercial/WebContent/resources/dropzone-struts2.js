@@ -1654,9 +1654,9 @@ var Dropzone = function (_Emitter) {
     value: function handleFiles(files) {
       var _this5 = this;
 
-      return files.map(function (file) {
-        return _this5.addFile(file);
-      });
+      for (var i = 0; i < files.length; i++) {
+    	  _this5.addFile(files[i]);
+      }
     }
 
     // When a folder is dropped (or files are pasted), items must be handled

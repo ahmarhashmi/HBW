@@ -65,6 +65,22 @@
 			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
 		}, 'google_translate_element');
 	}
+	
+	function showPrintPrview(){
+		// Chrome 1+
+		var isChrome = !!window.chrome && !!window.chrome.webstore;
+		if( !!window.chrome && !!window.chrome.webstore ){
+			window.print();
+		} else{
+			var divToPrint = document.getElementById('containerDiv');
+			var newWin = window.open();
+			newWin.document.write(divToPrint.innerHTML);
+			newWin.document.close();
+			newWin.focus();
+			newWin.print();
+			newWin.close();
+		}
+	}
 </script>
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -78,7 +94,7 @@
 	<jsp:include page="header.jsp" />
 	<div class="content-holder">
 
-		<div class="container">
+		<div class="container" id="containerDiv">
 			<div class="row">
 				<div class="col-sm-9 col-sm-offset-3">
 					<h1>Dispute a Ticket</h1>
@@ -95,7 +111,7 @@
 						is:<b> <s:property value="violationNumber" /></b><br> <br>
 						If you have any questions or need assistance, you may call or
 						visit your local <a
-							href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Business
+							href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Department of Finance Business
 							Center</a> and provide your violation number.
 					</p>
 
@@ -196,7 +212,7 @@
 					<br>
 
 					<div class="final_stage">
-						<button class="btn btn-primary" onclick="window.print();">Print</button>
+						<button class="btn btn-primary" onclick="showPrintPrview();">Print</button>
 						&nbsp;&nbsp;&nbsp; <input class="btn btn-link" type="button"
 							value="Return to Home Page" onclick="startAfresh();">
 					</div>

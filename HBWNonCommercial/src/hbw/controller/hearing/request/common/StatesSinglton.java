@@ -3,6 +3,8 @@
  */
 package hbw.controller.hearing.request.common;
 
+import hbw.controller.hearing.request.model.States;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,92 +14,92 @@ import java.util.List;
  */
 public class StatesSinglton {
 
-    private static List<String> states = populateStates();
+    private static List<States> states = populateStates();
 
     private StatesSinglton() {
 
     }
 
-    public static List<String> getStates() {
+    public static List<States> getStates() {
 	return states;
     }
 
-    private static List<String> populateStates() {
+    private static List<States> populateStates() {
 
-	List<String> states = new ArrayList<String>();
-	states.add("Newfoundland and Labrador");
-	states.add("Prince Edward Island");
-	states.add("Nova Scotia");
-	states.add("New Brunswick");
-	states.add("Quebec");
-	states.add("Ontario");
-	states.add("Manitoba");
-	states.add("Saskatchewan");
-	states.add("Alberta");
-	states.add("British Columbia");
-	states.add("Yukon");
-	states.add("Northwest Territories");
-	states.add("Nunavut");
-	states.add("Alabama");
-	states.add("Alaska");
-	states.add("Arizona");
-	states.add("Arkansas");
-	states.add("California");
-	states.add("Colorado");
-	states.add("Connecticut");
-	states.add("Delaware");
-	states.add("Florida");
-	states.add("Georgia");
-	states.add("Hawaii");
-	states.add("Idaho");
-	states.add("Illinois");
-	states.add("Indiana");
-	states.add("Iowa");
-	states.add("Kansas");
-	states.add("Kentucky");
-	states.add("Louisiana");
-	states.add("Maine");
-	states.add("Maryland");
-	states.add("Massachusetts");
-	states.add("Michigan");
-	states.add("Minnesota");
-	states.add("Mississippi");
-	states.add("Missouri");
-	states.add("Montana");
-	states.add("Nebraska");
-	states.add("Nevada");
-	states.add("New Hampshire");
-	states.add("New Jersey");
-	states.add("New Mexico");
-	states.add("New York");
-	states.add("North Carolina");
-	states.add("North Dakota");
-	states.add("Ohio");
-	states.add("Oklahoma");
-	states.add("Oregon");
-	states.add("Pennsylvania");
-	states.add("Rhode Island");
-	states.add("South Carolina");
-	states.add("South Dakota");
-	states.add("Tennessee");
-	states.add("Texas");
-	states.add("Utah");
-	states.add("Vermont");
-	states.add("Virginia");
-	states.add("Washington");
-	states.add("West Virginia");
-	states.add("Wisconsin");
-	states.add("Wyoming");
+	List<States> states = new ArrayList<States>();
+	states.add(new States("NL","Newfoundland and Labrador"));
+	states.add(new States("PE","Prince Edward Island"));
+	states.add(new States("NS","Nova Scotia"));
+	states.add(new States("NB","New Brunswick"));
+	states.add(new States("QC","Quebec"));
+	states.add(new States("ON","Ontario"));
+	states.add(new States("MB","Manitoba"));
+	states.add(new States("SK","Saskatchewan"));
+	states.add(new States("AB","Alberta"));
+	states.add(new States("BC","British Columbia"));
+	states.add(new States("YT","Yukon"));
+	states.add(new States("NT","Northwest Territories"));
+	states.add(new States("NU","Nunavut"));
+	states.add(new States("AL","Alabama"));
+	states.add(new States("AK","Alaska"));
+	states.add(new States("AZ","Arizona"));
+	states.add(new States("AR","Arkansas"));
+	states.add(new States("CA","California"));
+	states.add(new States("CO","Colorado"));
+	states.add(new States("CT","Connecticut"));
+	states.add(new States("DE","Delaware"));
+	states.add(new States("FL","Florida"));
+	states.add(new States("GA","Georgia"));
+	states.add(new States("HI","Hawaii"));
+	states.add(new States("ID","Idaho"));
+	states.add(new States("IL","Illinois"));
+	states.add(new States("IN","Indiana"));
+	states.add(new States("IA","Iowa"));
+	states.add(new States("KS","Kansas"));
+	states.add(new States("KY","Kentucky"));
+	states.add(new States("LA","Louisiana"));
+	states.add(new States("ME","Maine"));
+	states.add(new States("MD","Maryland"));
+	states.add(new States("MA","Massachusetts"));
+	states.add(new States("MI","Michigan"));
+	states.add(new States("MN","Minnesota"));
+	states.add(new States("MS","Mississippi"));
+	states.add(new States("MO","Missouri"));
+	states.add(new States("MT","Montana"));
+	states.add(new States("NE","Nebraska"));
+	states.add(new States("NV","Nevada"));
+	states.add(new States("NH","New Hampshire"));
+	states.add(new States("NJ","New Jersey"));
+	states.add(new States("NM","New Mexico"));
+	states.add(new States("NY","New York"));
+	states.add(new States("NC","North Carolina"));
+	states.add(new States("ND","North Dakota"));
+	states.add(new States("OH","Ohio"));
+	states.add(new States("OK","Oklahoma"));
+	states.add(new States("OR","Oregon"));
+	states.add(new States("PA","Pennsylvania"));
+	states.add(new States("RI","Rhode Island"));
+	states.add(new States("SC","South Carolina"));
+	states.add(new States("SD","South Dakota"));
+	states.add(new States("TN","Tennessee"));
+	states.add(new States("TX","Texas"));
+	states.add(new States("UT","Utah"));
+	states.add(new States("VT","Vermont"));
+	states.add(new States("VA","Virginia"));
+	states.add(new States("WA","Washington"));
+	states.add(new States("WV","West Virginia"));
+	states.add(new States("WI","Wisconsin"));
+	states.add(new States("WY","Wyoming"));
 	// Commonwealth/Territory:
-	states.add("American Samoa");
-	states.add("District of Columbia");
-	states.add("Federated States of Micronesia");
-	states.add("Guam");
-	states.add("Marshall Islands");
-	states.add("Northern Mariana Islands");
-	states.add("Palau");
-	states.add("Puerto Rico");
-	states.add("Virgin Islands");
+	states.add(new States("AS","American Samoa"));
+	states.add(new States("DC","District of Columbia"));
+	states.add(new States("FM","Federated States of Micronesia"));
+	states.add(new States("GU","Guam"));
+	states.add(new States("MH","Marshall Islands"));
+	states.add(new States("MP","Northern Mariana Islands"));
+	states.add(new States("PW","Palau"));
+	states.add(new States("PR","Puerto Rico"));
+	states.add(new States("VI","Virgin Islands"));
 
 	return states;
     }

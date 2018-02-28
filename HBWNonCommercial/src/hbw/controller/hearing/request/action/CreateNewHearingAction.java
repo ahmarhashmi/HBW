@@ -3,6 +3,18 @@ package hbw.controller.hearing.request.action;
 import static com.opensymphony.xwork2.Action.INPUT;
 import static com.opensymphony.xwork2.Action.LOGIN;
 import static com.opensymphony.xwork2.Action.SUCCESS;
+import hbw.controller.hearing.request.common.CommonUtil;
+import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.FileUtil;
+import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.JWTUtil;
+import hbw.controller.hearing.request.common.Resource;
+import hbw.controller.hearing.request.common.StatesSinglton;
+import hbw.controller.hearing.request.model.Evidence;
+import hbw.controller.hearing.request.model.FileValidationRequestDTO;
+import hbw.controller.hearing.request.model.States;
+import hbw.controller.hearing.request.model.UploadedFile;
+import hbw.controller.hearing.request.model.ViolationInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,18 +51,6 @@ import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-
-import hbw.controller.hearing.request.common.CommonUtil;
-import hbw.controller.hearing.request.common.Constants;
-import hbw.controller.hearing.request.common.FileUtil;
-import hbw.controller.hearing.request.common.HBWClient;
-import hbw.controller.hearing.request.common.JWTUtil;
-import hbw.controller.hearing.request.common.Resource;
-import hbw.controller.hearing.request.common.StatesSinglton;
-import hbw.controller.hearing.request.model.Evidence;
-import hbw.controller.hearing.request.model.FileValidationRequestDTO;
-import hbw.controller.hearing.request.model.UploadedFile;
-import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
@@ -106,6 +106,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    return LOGIN;
 	}
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
+	violationNumber = (String)session.getAttribute(Constants.VIOLATION_NUMBER);
 	files = new ArrayList<UploadedFile>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
 	List<Evidence> evidences = new ArrayList<Evidence>();
@@ -168,6 +169,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
 		if (resNode.get(Constants.RETURN_CODE) != null
 			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+			LOGGER.info("Vanguard return code is "+resNode.get(Constants.RETURN_CODE).asText());
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
@@ -193,15 +195,20 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		return INPUT;
 	    }
 	}
-	LOGGER.info("Handling the create hearing request. All validations successful.");
 	try {
+		LOGGER.info("Handling the create hearing request. All validations successful.");
+		LOGGER.info("State has been selected to be:"+state);
+		createNewHearing();
 	    FileUtil.deleteTempFolder(request);
-	    createNewHearing();
 	} catch (MalformedURLException e) {
 	    addActionError(e.getLocalizedMessage());
 	    return INPUT;
 	} catch (IOException e) {
 	    LOGGER.error("An error occurred in deleting the temp directory: " + e.getStackTrace());
+	} catch( Exception e ){
+		e.printStackTrace();
+		addActionError(e.getLocalizedMessage());
+	    return INPUT;
 	}
 	return SUCCESS;
     }
@@ -212,7 +219,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     public void createNewHearing() throws MalformedURLException {
 	NYCServMobileApp port = HBWClient.getConnection();
-	LOGGER.debug("Invoking createNewHearing...");
+	LOGGER.info("Invoking createNewHearing...");
 	CreateNewHearingRequest request = new CreateNewHearingRequest();
 	request.setCredentials(HBWClient.getCredentials());
 	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
@@ -239,6 +246,10 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	request.setEvidenceToBeUploaded(!affirm);
 	request.setMtvjDefense(explainWhy);
 	CreateNewHearingResult response = port.createNewHearing(request);
+	if(!response.isNewHearingCreated()){
+		throw new RuntimeException(response.getFeedBack().getFailureReason());
+		
+	}
 	LOGGER.debug("createNewHearing.result = " + response);
     }
 
@@ -253,7 +264,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the states
      */
-    public List<String> getStates() {
+    public List<States> getStates() {
 	return StatesSinglton.getStates();
     }
 
