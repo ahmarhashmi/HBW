@@ -49,6 +49,74 @@
 	$(window).on('beforeunload', function(event) {
 		return "";
 	});
+	
+	
+	
+	function enableDisableSubmitButton(onPageload){
+
+		var dz = Dropzone.forElement("#file-upload-form"); 
+		var isValid = true;
+
+		var isInJudgment = $('#explainWhyID');
+		if( isInJudgment.is(':visible') && !isInJudgment.val() ){
+			isValid = false;
+		}
+		if(!$('#enterDefenseID').val()){
+			isValid = false;
+		}
+
+		if (!$('#certify')[0].checked) {
+			isValid = false;
+		} 
+		if (!$('#firstName').val()) {
+			isValid = false;
+		}
+		if (!$('#lastName').val()) {
+			isValid = false;
+		}
+		if (!$('#address').val()) {
+			isValid = false;
+		}
+		if (!$('#city').val()) {
+			isValid = false;
+		}
+		if ($('#state').val() == 1) {
+			isValid = false;
+		}
+		if (!$('#zip').val()) {
+			isValid = false;
+		}
+		if (!$('#email1').val()) {
+			isValid = false;
+		}
+		if (!$('#email2').val()) {
+			isValid = false;
+		}
+		if ($('#email1').val() != $('#email2').val()) {
+			isValid = false;
+		}
+		if ($('#affirm').is(":visible")
+				&& !$('#affirm')[0].checked) {
+			if(!onPageload){
+				$('#affirmMsg').css("color", "red");
+			}
+			isValid = false;
+		} else {
+			$('#affirmMsg').css("color", "black");
+		}
+
+		if ($('#email1FormatMsg').is(":visible") || $('#email2FormatMsg').is(":visible")){
+			isValid = false;
+		}
+
+		if (isValid) {
+			$("#submitBtn").removeAttr('disabled');
+		} else{
+			$("#submitBtn").attr("disabled", true);
+		}
+	}
+	
+	
 </script>
 <script type="text/javascript">
 
@@ -81,7 +149,7 @@ function isValidEmail(value){
 						    }
 						}); // End of 'keydown keyup' method.
 
-						enableDisableSubmitButton(true);
+						
 
 						/**
 						 * Ajax submission of the page.
@@ -181,23 +249,23 @@ function isValidEmail(value){
 												}
 											}
 										});
-						$("#affirm").bind('change', enableDisableSubmitButton);
-						$("#firstName").bind('blur', enableDisableSubmitButton);
-						$("#lastName").bind('blur', enableDisableSubmitButton);
-						$("#address").bind('blur', enableDisableSubmitButton);
-						$("#city").bind('blur', enableDisableSubmitButton);
-						$("#state").bind('blur', enableDisableSubmitButton);
-						$("#zip").bind('blur', enableDisableSubmitButton);
-						$("#email1").bind('blur', enableDisableSubmitButton);
-						$("#email2").bind('blur', enableDisableSubmitButton);
-						$("#certify").bind('change', enableDisableSubmitButton);
-						$("#explainWhyID").bind('keyup',
-								enableDisableSubmitButton);
-						$("#enterDefenseID").bind('keyup',
-								enableDisableSubmitButton);
+						//$("#affirm").on('change', enableDisableSubmitButton);
+						//$("#firstName").on('blur', enableDisableSubmitButton);
+						//$("#lastName").on('blur', enableDisableSubmitButton);
+						//$("#address").on('blur', enableDisableSubmitButton);
+						//$("#city").on('blur', enableDisableSubmitButton);
+						//$("#state").on('blur', enableDisableSubmitButton);
+						//$("#zip").on('blur', enableDisableSubmitButton);
+						//$("#email1").on('blur', enableDisableSubmitButton);
+						//$("#email2").on('blur', enableDisableSubmitButton);
+						//$("#certify").on('change', enableDisableSubmitButton);
+						//$("#explainWhyID").on('keyup',
+							//	enableDisableSubmitButton);
+						//$("#enterDefenseID").on('keyup',
+								//enableDisableSubmitButton);
 
 						$('#google_translate_element')
-								.bind(
+								.on(
 										'DOMNodeInserted',
 										function(event) {
 											//$('.goog-te-menu-value span:first').html('Translate');
@@ -231,7 +299,7 @@ function isValidEmail(value){
 	}
 </script>
 </head>
-<body onload="setViolationNumber();">
+<body onload = "enableDisableSubmitButton(true);">
 	<jsp:include page="header.jsp" />
 	<div class="content-holder">
 
@@ -373,7 +441,7 @@ function isValidEmail(value){
 						<div class="form-group">
 							<textarea class="form-control" rows="10" cols="30"
 								maxlength="32700" id="explainWhyID"
-								onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
+								onkeyup="setDefenseValue(this, 'explainWhyMessage'); enableDisableSubmitButton(false);"></textarea>
 							<span id="explainWhyMessage" style="color: red; display: none;">Maximum
 								length reached. If you want to write more, please do not request
 								a hearing online. Submit your hearing request and evidence by
@@ -385,7 +453,7 @@ function isValidEmail(value){
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
 							maxlength="32700" id="enterDefenseID"
-							onkeyup="setDefenseValue(this, 'enterDefenseMessage');"></textarea>
+							onkeyup="setDefenseValue(this, 'enterDefenseMessage'); enableDisableSubmitButton(false);"></textarea>
 						<span id="enterDefenseMessage" style="color: red; display: none;">Maximum
 							length reached. If you want to write more, please do not request
 							a hearing online. Submit your hearing request and evidence by
@@ -431,7 +499,7 @@ function isValidEmail(value){
 						<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
 							<label id="affirmMsg"> <s:checkbox id="affirm"
-									name="affirm" /> I affirm that I am not uploading evidence for
+									name="affirm" onchange="enableDisableSubmitButton(false)"/> I affirm that I am not uploading evidence for
 								the judge to consider. I understand that this is the only
 								opportunity I will have to upload evidence for my hearing.
 							</label>
@@ -455,7 +523,7 @@ function isValidEmail(value){
 							<div class="form-group">
 								<label>First Name</label>
 								<s:textfield name="firstName" id="firstName" label="First Name"
-									class="form-control" labelposition="top" maxlength="30" />
+									class="form-control" labelposition="top" maxlength="30" onBlur="enableDisableSubmitButton(false)"/>
 								<span id="firstNameMsg" style="color: red; display: none;">First
 									Name is required.</span>
 							</div>
@@ -468,7 +536,7 @@ function isValidEmail(value){
 							<div class="form-group">
 								<label>Last Name</label>
 								<s:textfield name="lastName" id="lastName" label="Last Name"
-									class="form-control" labelposition="top" maxlength="30" />
+									class="form-control" labelposition="top" maxlength="30" onblur="enableDisableSubmitButton(false)"/>
 								<span id="lastNameMsg" style="color: red; display: none;">Last
 									Name is required.</span>
 							</div>
@@ -476,7 +544,7 @@ function isValidEmail(value){
 							<div class="form-group">
 								<label>Address</label>
 								<s:textfield name="address" id="address" label="Address"
-									class="form-control" labelposition="top" maxlength="50" />
+									class="form-control" labelposition="top" maxlength="50" onblur="enableDisableSubmitButton(false)" />
 								<span id="addressMsg" style="color: red; display: none;">Address
 									is required.</span>
 							</div>
@@ -488,7 +556,7 @@ function isValidEmail(value){
 							<div class="form-group">
 								<label>City</label>
 								<s:textfield name="city" id="city" label="City"
-									labelposition="top" class="form-control" maxlength="50" />
+									labelposition="top" class="form-control" maxlength="50" onblur="enableDisableSubmitButton(false)"/>
 								<span id="cityMsg" style="color: red; display: none;">City
 									is required.</span>
 							</div>
@@ -497,7 +565,7 @@ function isValidEmail(value){
 								<s:select label="State/Province" value="state" name="state"
 									id="state" name="state" class="form-control"
 									style="max-width:250px;" labelposition="top"
-									headerValue="--- Please Select ---" headerKey="1" list="states" />
+									headerValue="--- Please Select ---" headerKey="1" list="states" onblur="enableDisableSubmitButton(false)"/>
 								<span id="stateMsg" style="color: red; display: none;">Please
 									select the State/Province.</span>
 							</div>
@@ -506,7 +574,7 @@ function isValidEmail(value){
 								<s:textfield name="zip" id="zip" type="tel"
 									label="ZIP/Postal Code" class="form-control" min="1"
 									max="9999999999" style="max-width:250px;" labelposition="top"
-									maxlength="10" requiredLabel="true" requiredPosition="top" />
+									maxlength="10" requiredLabel="true" requiredPosition="top" onblur="enableDisableSubmitButton(false)"/>
 								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
 									Code is required.</span>
 							</div>
@@ -514,7 +582,7 @@ function isValidEmail(value){
 								<label>Email Address</label>
 								<s:textfield name="email1" id="email1" label="Email Address"
 									class="form-control" labelposition="top" maxlength="50"
-									type="email" />
+									type="email" onblur="enableDisableSubmitButton(false)"/>
 								<span id="email1Msg" style="color: red; display: none;">Email
 									is required.</span> <span id="email1FormatMsg"
 									style="color: red; display: none;">Email format is not
@@ -524,7 +592,7 @@ function isValidEmail(value){
 								<label>Confirm Email Address</label>
 								<s:textfield name="email2" id="email2"
 									label="Confirm Email Address" class="form-control"
-									labelposition="top" maxlength="50" type="email" />
+									labelposition="top" maxlength="50" type="email" onblur="enableDisableSubmitButton(false)"/>
 								<span id="email2Msg" style="color: red; display: none;">Please
 									confirm your email.</span> <span id="emailMatchMsg"
 									style="color: red; display: none;">Does not match email
@@ -538,7 +606,7 @@ function isValidEmail(value){
 								your hearing request. By checking this box, you agree to the
 								following:</p>
 							<div class="checkbox">
-								<label> <s:checkbox id="certify" name="certify" />I
+								<label> <s:checkbox id="certify" name="certify" onchange="enableDisableSubmitButton(false)"/>I
 									certify that I am the person named above or the authorized
 									agent of such person and I am duly authorized to make this
 									affirmation. I also affirm that all statements made and

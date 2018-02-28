@@ -127,6 +127,10 @@ public final class CommonUtil {
 	}
 	return true;
     }
+    
+    public static void main(String[] args) {
+	System.out.println( tripleDecode("Wkcxa2VWcEdVbXhqTTFFOQ=="));
+    }
 
     /**
      * @author Ahmar Nadeem
@@ -143,6 +147,18 @@ public final class CommonUtil {
 	    encoded = DatatypeConverter.printBase64Binary(violationNumber.getBytes(Constants.UTF8));
 	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
 	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
+	} catch (Exception e) {
+	    LOGGER.error(e.toString());
+	}
+	return encoded;
+    }
+    
+    public static String tripleDecode(String password) {
+	String encoded = new String();
+	try {
+	    encoded = DatatypeConverter.parseBase64Binary(password).toString();
+	    encoded = new String(DatatypeConverter.parseBase64Binary(encoded));
+	    encoded = new String(DatatypeConverter.parseBase64Binary(encoded));
 	} catch (Exception e) {
 	    LOGGER.error(e.toString());
 	}

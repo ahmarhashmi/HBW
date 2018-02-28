@@ -64,6 +64,7 @@ public class FileUploadServlet extends HttpServlet {
 	    }
 	}
 	if (request.getParameter("reset") != null) {
+	    FileUtil.deleteTempFolder(request);
 	    request.getSession().invalidate();
 	}
 
