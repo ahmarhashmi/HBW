@@ -41,4 +41,6 @@ public final class Constants {
     
     public static final String GET = "GET";
 
+    public static final String PAGE_COUNTS = "PAGE_COUNTS";
+
 }

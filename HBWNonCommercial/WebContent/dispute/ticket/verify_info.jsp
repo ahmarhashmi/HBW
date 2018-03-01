@@ -65,13 +65,13 @@
 			layout : google.translate.TranslateElement.InlineLayout.SIMPLE
 		}, 'google_translate_element');
 	}
-	
-	function showPrintPrview(){
+
+	function showPrintPrview() {
 		// Chrome 1+
 		var isChrome = !!window.chrome && !!window.chrome.webstore;
-		if( !!window.chrome && !!window.chrome.webstore ){
+		if (!!window.chrome && !!window.chrome.webstore) {
 			window.print();
-		} else{
+		} else {
 			var divToPrint = document.getElementById('containerDiv');
 			var newWin = window.open();
 			newWin.document.write(divToPrint.innerHTML);
@@ -111,8 +111,8 @@
 						is:<b> <s:property value="violationNumber" /></b><br> <br>
 						If you have any questions or need assistance, you may call or
 						visit your local <a
-							href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Department of Finance Business
-							Center</a> and provide your violation number.
+							href="javascript:openPopUpWindow('http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page','FAQPopUp','800','850','no','yes','yes','yes');">Department
+							of Finance Business Center</a> and provide your violation number.
 					</p>
 
 					<h3>Hearing Request Summary</h3>
@@ -131,12 +131,13 @@
 						<tr>
 							<td>Name:</td>
 							<td><s:property value="firstName" /> <s:property
-									value="lastName" /></td>
+									value="middleName" /> <s:property value="lastName" /></td>
 						</tr>
 						<tr>
 							<td>Address:</td>
-							<td><s:property value="address" /> <s:property value="address2" />
-							<s:property value="city" /> <s:property value="state" /> <s:property value="zip" /></td>
+							<td><s:property value="address" /> <s:property
+									value="address2" /> <s:property value="city" /> <s:property
+									value="state" /> <s:property value="zip" /></td>
 						</tr>
 						<tr>
 							<td>Email Address:</td>

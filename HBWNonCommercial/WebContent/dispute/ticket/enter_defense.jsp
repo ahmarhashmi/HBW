@@ -248,7 +248,8 @@ function isValidEmail(value){
 						$('#city').on('keydown keyup', function(e) {
 							var value = String.fromCharCode(e.which) || e.key;
 							//alert(e.which);
-							if ((e.key != 'Tab' && e.key != ' ' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
+							if ((e.keyCode >= 96 && e.keyCode <= 111) ||
+									(e.key != 'Tab' && e.key != ' ' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
 							 e.key !='ArrowRight'&& e.key !='ArrowUp'&& e.key !='ArrowDown'
 							 && e.key != 'F5'&& e.key != 'Delete') && (!cityFormat.test(value))) {
 								//e.preventDefault();
@@ -257,7 +258,8 @@ function isValidEmail(value){
 						}); // End of 'keydown keyup' method.
 						$('#zip').on('keydown keyup', function(e) {
 							var value = String.fromCharCode(e.which) || e.key;
-							if ((e.key != 'Tab' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
+							if ( !(e.keyCode >= 96 && e.keyCode <= 105) &&
+									(e.key != 'Tab' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
 							 e.key !='ArrowRight'&& e.key !='ArrowUp'&& e.key !='ArrowDown'
 							 && e.key != 'F5'&& e.key != 'Delete') && (!zipFormat.test(value) || 
 							 (e.key=='!'||e.key=='@'||e.key=='#'||e.key=='$'||e.key=='%'
@@ -295,21 +297,11 @@ function isValidEmail(value){
 															if ($(result).find(".errors").length == 0) {
 																$(window).unbind('beforeunload');
 																var myWindow = window.open("","_self");
-																myWindow.document
-																		.write(result);
+																myWindow.document.write(result);
 															} else {
-																$(
-																		"#displayError")
-																		.append(
-																				errors);
-																$('html, body')
-																		.animate(
-																				{
-																					scrollTop : $(
-																							"#displayError")
-																							.offset().top
-																				},
-																				1000);
+																$("#displayError").append(errors);
+																$('html, body').animate({
+																	scrollTop : $("#displayError").offset().top},1000);
 															}
 														},
 														error : function() {
@@ -760,6 +752,15 @@ function isValidEmail(value){
 		<img id="image" src="">
 		<div style="width: 100%; height: 100%">
 			<iframe id="frame" width="100%" height="100%"></iframe>
+			<!-- <embed id="tiffImage" width=200 height=200
+			    src="" type="image/tiff"> -->
+			<object id="tiffImageObj" width=200 height=200 classid="CLSID:106E49CF-797A-11D2-81A2-00E02C015623">
+				 <param id="tiffImageParam" name="src" value="">
+				 <param name="negative" value="yes">
+				
+				  <embed id="tiffImage" width=200 height=200 src="" type="image/tiff">
+				
+				</object>
 		</div>
 	</div>
 

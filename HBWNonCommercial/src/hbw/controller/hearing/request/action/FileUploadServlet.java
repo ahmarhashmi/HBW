@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -20,10 +21,15 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.itextpdf.text.pdf.codec.TiffImage;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import hbw.controller.hearing.request.common.CommonUtil;
+import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.Resource;
 
@@ -59,7 +65,11 @@ public class FileUploadServlet extends HttpServlet {
 	} else {
 	    String deleteFile = request.getParameter("delete");
 	    if (deleteFile != null) {
-		doDeleteFile(request, response, deleteFile);
+		try {
+		    doDeleteFile(request, response, deleteFile);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
 		response.getWriter().append("FileDeleted: ").append(deleteFile);
 	    }
 	}
@@ -80,8 +90,8 @@ public class FileUploadServlet extends HttpServlet {
 	if (!CommonUtil.isSessionActive(request)) {
 	    LOGGER.error("Session has been timed out. Navigating to the home page.");
 	    /**
-	     * DANGER: Do not change the response string, Else Front end string will also be
-	     * required to be changed.
+	     * CAUTION: Do not change the response string, Else Front end string will also
+	     * be required to be changed.
 	     */
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Session timed out.");
 	    return;
@@ -102,13 +112,18 @@ public class FileUploadServlet extends HttpServlet {
 
 	    for (FileItem item : items) {
 		if (!item.isFormField()) {
-		    if (evidencePath.listFiles().length == Integer.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
-			    || FileUtils.sizeOf(evidencePath)+item.getSize() > Long
+		    int pageCount = 1;
+
+		    StringBuilder totalCountReachedMessage = new StringBuilder("Upload limit reached. File ")
+			    .append(item.getName() + " cannot be uploaded. ")
+			    .append("If you want to submit more evidence, please do not request a hearing online. ")
+			    .append("Submit your hearing request and evidence by mail or in person.");
+		    if (getExistingCount(request) + pageCount > Integer
+			    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
+			    || FileUtils.sizeOf(evidencePath) + item.getSize() > Long
 				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"Upload limit reached. File "+item.getName()+" cannot be uploaded. "
-				+ "If you want to submit more evidence, please do not request a hearing online. "
-				+ "Submit your hearing request and evidence by mail or in person.");
+				totalCountReachedMessage.toString());
 			return;
 		    }
 		    File file = new File(evidencePath, item.getName());
@@ -123,30 +138,59 @@ public class FileUploadServlet extends HttpServlet {
 			return;
 		    }
 
+		    boolean fileWrittenToTheDrive = false;
+
 		    /**
 		     * Validate if the file type is a valid image or pdf type.
 		     */
 		    String mimeType = new MimetypesFileTypeMap().getContentType(file);
-		    String type = mimeType.split("/")[0];
-		    if (type.equals("image")) {
+		    String[] mime = mimeType.split("/");
+		    if (mime[0].equals("image") && !(mime[1].equals("tiff") || mime[1].equals("tif"))) {
 			BufferedImage bi = ImageIO.read(item.getInputStream());
 			if (bi == null) {
 			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				    "File is damaged and cannot be uploaded.");
 			    return;
 			}
-		    } else if (type.equals("application")) {
-			/*
-			 * if (!FileUtil.isPDF(item.get())) {
-			 * response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-			 * "The uploaded file is not a valid pdf file."); return; }
-			 */
+		    } else if (mime[0].equals("application")) {
+			item.write(file);
+			fileWrittenToTheDrive = true;
+			try {
+			    pageCount = getPageCountOfPDF(file);
+			    if (getExistingCount(request) + pageCount > Integer
+				    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					totalCountReachedMessage.toString());
+				return;
+			    }
+			} catch (Exception e) {
+			    file.delete();
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				    "File is damaged or not a valid pdf file, hence, cannot be uploaded.");
+			    return;
+			}
+		    } else if (mime[0].equals("image") && (mime[1].equals("tiff") || mime[1].equals("tif"))) {
+			try {
+			    pageCount = getPageCountOfTiff(item.get());
+			    if (getExistingCount(request) + pageCount > Integer
+				    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					totalCountReachedMessage.toString());
+				return;
+			    }
+			} catch (Exception e) {
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				    "File is damaged or not a valid tiff file, hence, cannot be uploaded.");
+			    return;
+			}
 		    } else {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "File not supported.");
 			return;
 		    }
 
-		    item.write(file);
+		    if (!fileWrittenToTheDrive) {
+			item.write(file);
+		    }
 		    if (getServletContext().getMimeType(file.getName()).contains("gif")
 			    && FileUtil.isAnimatedGIF(file)) {
 			file.delete();
@@ -154,6 +198,8 @@ public class FileUploadServlet extends HttpServlet {
 				"Animated giffs are not allowed. Only PDF, JPEG/JPG, BMP, or non-animated GIF's may be uploaded.");
 			return;
 		    }
+
+		    increaseDecreaseCountOfPages(request, pageCount, true);
 
 		    LOGGER.info(file.getPath() + "  File uploaded SUCCESSFULLY");
 		}
@@ -163,6 +209,73 @@ public class FileUploadServlet extends HttpServlet {
 	    e.printStackTrace();
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
 	}
+    }
+
+    /**
+     * @author Ahmar Hashmi
+     * 
+     *         Reads the provided pdf file and returns the page count.
+     *         Throws @Exception if file is not pdf or damaged.
+     * 
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    private int getPageCountOfPDF(File file) throws Exception {
+	RandomAccessFile raf = new RandomAccessFile(file, "r");
+	RandomAccessFileOrArray pdfFile = new RandomAccessFileOrArray(
+		new RandomAccessSourceFactory().createSource(raf));
+	PdfReader reader = new PdfReader(pdfFile, new byte[0]);
+	int pageCount = reader.getNumberOfPages();
+	reader.close();
+
+	return pageCount;
+    }
+
+    /**
+     * @author Ahmar Hashmi
+     * 
+     *         Reads the tiff file and returns the number of pages it contains.
+     * 
+     * @param item
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    private int getPageCountOfTiff(byte[] bytes) {
+	return TiffImage.getNumberOfPages(new RandomAccessFileOrArray(bytes));
+    }
+
+    /**
+     * @author Ahmar Hashmi
+     * 
+     *         Increases or decreases the count to the page count stored in the
+     *         session based on the flag
+     * 
+     * @param request
+     * @param pageCount
+     * @param increase
+     */
+    private void increaseDecreaseCountOfPages(HttpServletRequest request, int pageCount, boolean increase) {
+	Integer existingCount = getExistingCount(request);
+	if (increase) {
+	    request.getSession().setAttribute(Constants.PAGE_COUNTS, existingCount + pageCount);
+	} else {
+	    request.getSession().setAttribute(Constants.PAGE_COUNTS, existingCount - pageCount);
+	}
+    }
+
+    /**
+     * @author Ahmar Hashmi
+     * 
+     *         Gets the existing count session object and returns the count. Returns
+     *         zero if object is not previously stored.
+     * 
+     * @param request
+     * @return
+     */
+    private int getExistingCount(HttpServletRequest request) {
+	Integer existingCount = (Integer) request.getSession().getAttribute(Constants.PAGE_COUNTS);
+	return existingCount == null ? 0 : existingCount;
     }
 
     /**
@@ -219,13 +332,24 @@ public class FileUploadServlet extends HttpServlet {
      * @param request
      * @param response
      * @param deleteFile
+     * @throws Exception
      */
-    private void doDeleteFile(HttpServletRequest request, HttpServletResponse response, String deleteFile) {
+    private void doDeleteFile(HttpServletRequest request, HttpServletResponse response, String deleteFile)
+	    throws Exception {
 	File folder = FileUtil.validateAndGetEvidenceUploadPath(request);
-	File fileName = new File(folder.getPath() + File.separator + deleteFile);
-	LOGGER.info("DELETE file:" + fileName.getPath());
-	fileName.delete();
-	LOGGER.info("file:" + fileName.getPath() + " >>> Deleted successfully.");
+	File file = new File(folder.getPath() + File.separator + deleteFile);
+	int pageCount = 1;
+	if (FileUtil.getFileExtension(deleteFile).equals("tiff")
+		|| FileUtil.getFileExtension(deleteFile).equals("tif")) {
+
+	    pageCount = getPageCountOfTiff(FileUtils.readFileToByteArray(file));
+	} else if (FileUtil.getFileExtension(deleteFile).equals("pdf")) {
+	    pageCount = getPageCountOfPDF(file);
+	}
+	LOGGER.info("DELETE file:" + file.getPath());
+	file.delete();
+	increaseDecreaseCountOfPages(request, pageCount, false);
+	LOGGER.info("file:" + file.getPath() + " >>> Deleted successfully.");
     }
 
 }

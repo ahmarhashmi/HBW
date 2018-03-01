@@ -131,13 +131,22 @@ Dropzone.options.fileUploadForm = {
 						duration : 800
 					},
 					open : function(event, ui) {
-						var expression = /pdf/;
-						if( file.name.match(expression)){
+						var pdfFormat = /pdf/;
+						var tiffFormat = /tif/;
+						if( file.name.match(pdfFormat)){
 							$("#image").hide();
+							$("#tiffImageObj").hide();
 							$("#frame").show();
 							$("#frame").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name);
-						} else{
+						} else if(file.name.match(tiffFormat)){
 							$("#frame").hide();
+							$("#image").hide();
+							$("#tiffImageObj").show();
+							$("#tiffImage").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name);
+							$("#tiffImageParam").attr("value", file.name);
+						}  else{
+							$("#frame").hide();
+							$("#tiffImageObj").hide();
 							$("#image").show();
 							$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name);
 						}
