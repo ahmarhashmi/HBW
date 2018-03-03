@@ -93,7 +93,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     @Override
     public void prepare() throws Exception {
     }
-    
+
     /**
      * The main action listener of this class.
      */
@@ -106,7 +106,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    return LOGIN;
 	}
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
-	violationNumber = (String)session.getAttribute(Constants.VIOLATION_NUMBER);
+	violationNumber = (String) session.getAttribute(Constants.VIOLATION_NUMBER);
 	files = new ArrayList<UploadedFile>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
 	List<Evidence> evidences = new ArrayList<Evidence>();
@@ -169,13 +169,14 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
 		if (resNode.get(Constants.RETURN_CODE) != null
 			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
-			LOGGER.info("Vanguard return code is "+resNode.get(Constants.RETURN_CODE).asText());
+		    LOGGER.info("Vanguard return code is " + resNode.get(Constants.RETURN_CODE).asText());
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
 			if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("107")) {
-			    addActionError("File name " + payloadItem.get("FileName") + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
+			    addActionError("File name " + payloadItem.get("FileName")
+				    + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
 			    isError = true;
 			}
 		    }
@@ -196,18 +197,23 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    }
 	}
 	try {
-		LOGGER.info("Handling the create hearing request. All validations successful.");
-		LOGGER.info("State has been selected to be:"+state);
-		createNewHearing();
+	    LOGGER.info("Handling the create hearing request. All validations successful.");
+	    LOGGER.info("State has been selected to be:" + state);
+	    createNewHearing();
 	    FileUtil.deleteTempFolder(request);
 	} catch (MalformedURLException e) {
 	    addActionError(e.getLocalizedMessage());
 	    return INPUT;
 	} catch (IOException e) {
 	    LOGGER.error("An error occurred in deleting the temp directory: " + e.getStackTrace());
-	} catch( Exception e ){
-		e.printStackTrace();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    if (e.getMessage() != null && e.getMessage().toLowerCase().contains("invalid defense")) {
+		addActionError(
+			"Something wrong with the defense you entered. There might be some unauthorized content in it. Please check and try again.");
+	    } else {
 		addActionError(e.getLocalizedMessage());
+	    }
 	    return INPUT;
 	}
 	return SUCCESS;
@@ -246,9 +252,9 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	request.setEvidenceToBeUploaded(!affirm);
 	request.setMtvjDefense(explainWhy);
 	CreateNewHearingResult response = port.createNewHearing(request);
-	if(!response.isNewHearingCreated()){
-		throw new RuntimeException(response.getFeedBack().getFailureReason());
-		
+	if (!response.getFeedBack().isSuccess()) {
+	    throw new RuntimeException(response.getFeedBack().getFailureReason());
+
 	}
 	LOGGER.debug("createNewHearing.result = " + response);
     }

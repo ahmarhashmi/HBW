@@ -1,4 +1,4 @@
-"use strict";
+ "use strict";
 
 var NOACTION = false;
 
@@ -8,14 +8,15 @@ var infectedFiles = [];
 
 Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
-	acceptedFiles : "image/gif,image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
+	//acceptedFiles : "image/gif,image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
+	acceptedFiles : ".jpeg,.jpg,.pjpeg,.gif,.pdf,.bmp,.tiff,.tif",
 	addRemoveLinks : true,
 	dictRemoveFileConfirmation: true,
 	autoProcessQueue : true,
 	uploadMultiple : true,
 	parallelUploads : 1,
-	dictInvalidFileType : "File type not supported.",
-	maxFiles : 100,
+	dictInvalidFileType : "File type is not supported.",
+	maxFiles : 50,
 
 	success : function(file, response) {
 		var imgName = response;
@@ -53,7 +54,13 @@ Dropzone.options.fileUploadForm = {
 			 * var index = files.indexOf(file); if (index > -1) {
 			 * files.splice(index, 1); }
 			 */
-			if(this.getAcceptedFiles().length == 0){
+			var succesfiles = this.getFilesWithStatus(Dropzone.SUCCESS), total=0;
+			$.each(succesfiles, function(file){
+			   total+=file.size;
+			});		
+			
+			//if(this.getAcceptedFiles().length == 0){
+			if(total == 0){
 				$('#affirmCheckBox').css("display", "block");
 				$('#affirmCheckBoxPrompt').css("display", "block");
 			}
@@ -96,7 +103,8 @@ Dropzone.options.fileUploadForm = {
 		       };
                
 	           removeExceptionbutton.onclick = function () {
-	               file.previewElement.remove();            	
+	               //file.previewElement.remove();
+	        	   file.previewElement.innerHTML = "";	        	   
 	               NOACTION = true;
 	           };
                   
@@ -105,8 +113,8 @@ Dropzone.options.fileUploadForm = {
 	          file.previewElement.appendChild(cancelbutton);
 	          file.previewElement.appendChild(removeExceptionbutton);
 	          file.previewElement.appendChild(clearfixdiv);
-                  
-            // file.previewElement.appendChild(file._captionBox);
+                 
+	          // file.previewElement.appendChild(file._captionBox);	          
 			var isTypeAllowed = file.type.match(/image.*/) || file.type === 'application/pdf';
 
 			if (!isTypeAllowed) {
@@ -131,22 +139,13 @@ Dropzone.options.fileUploadForm = {
 						duration : 800
 					},
 					open : function(event, ui) {
-						var pdfFormat = /pdf/;
-						var tiffFormat = /tif/;
-						if( file.name.match(pdfFormat)){
+						var expression = /pdf/;
+						if( file.name.match(expression)){
 							$("#image").hide();
-							$("#tiffImageObj").hide();
 							$("#frame").show();
 							$("#frame").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name);
-						} else if(file.name.match(tiffFormat)){
+						} else{
 							$("#frame").hide();
-							$("#image").hide();
-							$("#tiffImageObj").show();
-							$("#tiffImage").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name);
-							$("#tiffImageParam").attr("value", file.name);
-						}  else{
-							$("#frame").hide();
-							$("#tiffImageObj").hide();
 							$("#image").show();
 							$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name);
 						}
@@ -246,4 +245,3 @@ function displaySummonsImage(ViewSummons, encodedVioNumber)
       var image_window = window.open(summonsURL, "Ticket_Image_Screen",windowprops);
       image_window.focus();
 }
-

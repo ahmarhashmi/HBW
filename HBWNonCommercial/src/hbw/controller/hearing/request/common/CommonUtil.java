@@ -82,11 +82,11 @@ public final class CommonUtil {
 	sysProperties.put("proxySet", proxySet);
 	*/
 	
-	String proxyIp = Resource.PROXY_IP.getValue();
-	String port = Resource.PROXY_PORT.getValue();
+	String proxyIp = Resource.PROXY_IP.getValue().trim();
+	String port = Resource.PROXY_PORT.getValue().trim();
 	
 	HttpURLConnection conn;
-	if(proxyIp != null ){
+	if(null != proxyIp && proxyIp.length()>3){
 		LOGGER.info("Using proxy IP:"+proxyIp+":"+port);
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp,Integer.parseInt(port)));	
 		conn = (HttpURLConnection) url.openConnection(proxy);

@@ -45,6 +45,18 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-53440151-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-53440151-1');
+</script>
+
+
 <script type="text/javascript">
 	$(window).on('beforeunload', function(event) {
 		return "";
@@ -238,7 +250,7 @@ function isValidEmail(value){
 }
 
 	// Regular Expression to Check for Alphabets.
-	var cityFormat = new RegExp(/^[a-zA-Z]*$/);
+	var cityFormat = new RegExp(/^[a-zA-Z_ ]*$/);
 	var zipFormat = new RegExp(/[0-9]/);
 	var specialChar = ['!','@','#','$','%','^','&','*','(',')','_','+'];
 	var allowed = ['Backspace','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Tab', 'F5', 'Delete'];
@@ -249,7 +261,8 @@ function isValidEmail(value){
 							var value = String.fromCharCode(e.which) || e.key;
 							//alert(e.which);
 							if ((e.keyCode >= 96 && e.keyCode <= 111) ||
-									(e.key != 'Tab' && e.key != ' ' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
+							(e.key != 'whitespace' && e.key != 'Tab' && e.key != ' ' 
+							&& e.key != 'Backspace' && e.key !='ArrowLeft'&&
 							 e.key !='ArrowRight'&& e.key !='ArrowUp'&& e.key !='ArrowDown'
 							 && e.key != 'F5'&& e.key != 'Delete') && (!cityFormat.test(value))) {
 								//e.preventDefault();
@@ -258,8 +271,8 @@ function isValidEmail(value){
 						}); // End of 'keydown keyup' method.
 						$('#zip').on('keydown keyup', function(e) {
 							var value = String.fromCharCode(e.which) || e.key;
-							if ( !(e.keyCode >= 96 && e.keyCode <= 105) &&
-									(e.key != 'Tab' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
+							if (!(e.keyCode >= 96 && e.keyCode <= 105) &&
+							(e.key != 'Tab' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
 							 e.key !='ArrowRight'&& e.key !='ArrowUp'&& e.key !='ArrowDown'
 							 && e.key != 'F5'&& e.key != 'Delete') && (!zipFormat.test(value) || 
 							 (e.key=='!'||e.key=='@'||e.key=='#'||e.key=='$'||e.key=='%'
@@ -297,11 +310,21 @@ function isValidEmail(value){
 															if ($(result).find(".errors").length == 0) {
 																$(window).unbind('beforeunload');
 																var myWindow = window.open("","_self");
-																myWindow.document.write(result);
+																myWindow.document
+																		.write(result);
 															} else {
-																$("#displayError").append(errors);
-																$('html, body').animate({
-																	scrollTop : $("#displayError").offset().top},1000);
+																$(
+																		"#displayError")
+																		.append(
+																				errors);
+																$('html, body')
+																		.animate(
+																				{
+																					scrollTop : $(
+																							"#displayError")
+																							.offset().top
+																				},
+																				1000);
 															}
 														},
 														error : function() {
@@ -405,6 +428,11 @@ function isValidEmail(value){
 		}, 'google_translate_element');
 	}
 </script>
+
+<style type="text/css">
+   	input.watermark { color: #999; } //light silver color
+</style>
+    
 </head>
 <body onload="setViolationNumber();">
 	<jsp:include page="header.jsp" />
@@ -637,7 +665,7 @@ function isValidEmail(value){
 							</div>
 							<div class="form-group">
 								<label>Middle Initial (Optional)</label>
-								<s:textfield name="middleName" label="Middle Initial"
+								<s:textfield name="middleName" id="middleName" label="Middle Initial"
 									class="form-control" style="max-width:50px;"
 									labelposition="top" maxlength="1" />
 							</div>
@@ -653,6 +681,7 @@ function isValidEmail(value){
 								<label>Address</label>
 								<s:textfield name="address" id="address" label="Address"
 									class="form-control" labelposition="top" maxlength="50" />
+								<span class="help-block" id="addresshelpmsg">Street address, P.O. Box, etc.</span>
 								<span id="addressMsg" style="color: red; display: none;">Address
 									is required.</span>
 							</div>
@@ -660,6 +689,7 @@ function isValidEmail(value){
 								<label>Address Line 2 (Optional)</label>
 								<s:textfield name="address2" maxlength="50" class="form-control"
 									label="Address Line 2 (optional)" labelposition="top" />
+								<span class="help-block" id="address2helpmsg">Apartment, suite, unit, etc.</span>
 							</div>
 							<div class="form-group">
 								<label>City</label>
@@ -752,15 +782,6 @@ function isValidEmail(value){
 		<img id="image" src="">
 		<div style="width: 100%; height: 100%">
 			<iframe id="frame" width="100%" height="100%"></iframe>
-			<!-- <embed id="tiffImage" width=200 height=200
-			    src="" type="image/tiff"> -->
-			<object id="tiffImageObj" width=200 height=200 classid="CLSID:106E49CF-797A-11D2-81A2-00E02C015623">
-				 <param id="tiffImageParam" name="src" value="">
-				 <param name="negative" value="yes">
-				
-				  <embed id="tiffImage" width=200 height=200 src="" type="image/tiff">
-				
-				</object>
 		</div>
 	</div>
 

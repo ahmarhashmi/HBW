@@ -2,11 +2,13 @@ package hbw.controller.hearing.request.action;
 
 import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.HBWClient;
 import hbw.controller.hearing.request.common.StatesSinglton;
 import hbw.controller.hearing.request.model.States;
 import hbw.controller.hearing.request.model.ViolationInfo;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +69,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	/** Set the default value to true */
 	violationInSystem = true;
 	violationNumber = violationNumber.trim();
-	String oneYearReason = "2";
+	
 	try {
 	    if (!HBWClient.isViolationInSystem(violationNumber)) {
 		/** No more needed to restrict the user in case violation is not in system */
@@ -102,17 +104,30 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		}
 	    }
 	} catch (Exception e) {
+		e.printStackTrace();
 	    addActionError(
-		    "We are having trouble connecting to your system. We are aware of the issue and actively working on it. Please try again later.");
+		  //  "We are having trouble connecting to your system. We are aware of the issue and actively working on it. Please try again later.");
+	    "We are having a system error. We are aware of the issue and actively working on it. Please try again later.");
 	    return INPUT;
-	}
-
+	}	
+	
 	LOGGER.info("Violation number " + this.violationNumber + " accepted for hearing request.");
-	HttpServletRequest request = ServletActionContext.getRequest();
+	HttpServletRequest request = ServletActionContext.getRequest();	
 	HttpSession session = request.getSession();
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
 	session.setAttribute(Constants.VIOLATION_INFO, violationInfo);
 	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInSystem);
+	
+	try {
+		if(!session.isNew())
+		FileUtil.deleteTempFolder(request);
+	} catch (IOException e) {		
+		e.printStackTrace();
+		session.invalidate();
+		addActionError("Close the browser and try again later.");
+		return INPUT;
+	}
+	
 	return SUCCESS;
     }
 

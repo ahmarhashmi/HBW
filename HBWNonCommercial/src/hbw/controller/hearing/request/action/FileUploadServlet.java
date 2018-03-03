@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.List;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -20,6 +19,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.PdfReader;
@@ -86,7 +86,8 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-
+    File file = null;
+    
 	if (!CommonUtil.isSessionActive(request)) {
 	    LOGGER.error("Session has been timed out. Navigating to the home page.");
 	    /**
@@ -109,24 +110,33 @@ public class FileUploadServlet extends HttpServlet {
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 	try {
 	    List<FileItem> items = uploadHandler.parseRequest(request);
-
+	    
 	    for (FileItem item : items) {
 		if (!item.isFormField()) {
 		    int pageCount = 1;
 
-		    StringBuilder totalCountReachedMessage = new StringBuilder("Upload limit reached. File ")
+		    StringBuilder totalCountReachedMessage = new StringBuilder(Resource.MAX_NUMBER_OF_EVIDENCES.getValue()+" pages upload limit will be violated with this file. So")
 			    .append(item.getName() + " cannot be uploaded. ")
-			    .append("If you want to submit more evidence, please do not request a hearing online. ")
+			    .append("If you want to submit more evidence, please do not request a hearing online. So")
 			    .append("Submit your hearing request and evidence by mail or in person.");
+		    
+		    StringBuilder totalSizeReachedMessage = new StringBuilder((Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())/1024/1024)+
+			    " MB upload limit will be voilated with this file. So")
+				    .append(item.getName() + " cannot be uploaded. ")
+				    .append("If you want to submit more evidence, please do not request a hearing online. ")
+				    .append("Submit your hearing request and evidence by mail or in person.");
+		    
 		    if (getExistingCount(request) + pageCount > Integer
 			    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
 			    || FileUtils.sizeOf(evidencePath) + item.getSize() > Long
 				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				totalCountReachedMessage.toString());
+					totalSizeReachedMessage.toString());
+			//file should be removed
+			item.delete();
 			return;
 		    }
-		    File file = new File(evidencePath, item.getName());
+		    file = new File(evidencePath, item.getName());
 		    if (item.getSize() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
@@ -143,68 +153,95 @@ public class FileUploadServlet extends HttpServlet {
 		    /**
 		     * Validate if the file type is a valid image or pdf type.
 		     */
-		    String mimeType = new MimetypesFileTypeMap().getContentType(file);
+		    //String mimeType = new MimetypesFileTypeMap().getContentType(file);	
+		    //change because of wrong mime type for pdf and bmp application/octate-stream
+		    
+		    LOGGER.info("(item.getContentType ::::::::::::: " + item.getContentType());
+		   
+		    String mimeType = item.getContentType();
 		    String[] mime = mimeType.split("/");
-		    if (mime[0].equals("image") && !(mime[1].equals("tiff") || mime[1].equals("tif"))) {
-			BufferedImage bi = ImageIO.read(item.getInputStream());
-			if (bi == null) {
-			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				    "File is damaged and cannot be uploaded.");
-			    return;
-			}
-		    } else if (mime[0].equals("application")) {
+		    
+		    LOGGER.info("(mime[0]::::::::::::: " + mime[0]);
+		    LOGGER.info("(mime[1]::::::::::::: " + mime[1]);		    
+		    
+		    if (mime[0].equals("image") && !(mime[1].toLowerCase().equals("tiff"))) {			
+		    	BufferedImage bi = ImageIO.read(item.getInputStream());
+				if (bi == null) {
+				    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					    "File is damaged and cannot be uploaded.");
+				    return;
+				}		    
+		    } else if (mime[0].equals("application") && mime[1].toLowerCase().equals("pdf")) {		    	
 			item.write(file);
-			fileWrittenToTheDrive = true;
+			fileWrittenToTheDrive = true;						
 			try {
 			    pageCount = getPageCountOfPDF(file);
+			    
+			    LOGGER.info(" Total pages so far = " + (getExistingCount(request) + pageCount));
+			    
 			    if (getExistingCount(request) + pageCount > Integer
 				    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					totalCountReachedMessage.toString());
+				
+				//removing file so that we are not uploading it
+				if(null!=file)
+				file.delete();
 				return;
 			    }
 			} catch (Exception e) {
+				if(null!=file)
 			    file.delete();
 			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				    "File is damaged or not a valid pdf file, hence, cannot be uploaded.");
 			    return;
 			}
-		    } else if (mime[0].equals("image") && (mime[1].equals("tiff") || mime[1].equals("tif"))) {
-			try {
-			    pageCount = getPageCountOfTiff(item.get());
+		    			  
+		    } else if (mime[0].equals("image") && (mime[1].toLowerCase().equals("tiff"))) {
+			try {				
+				pageCount = getPageCountOfTiff(item.get());		    
+			    
+			    LOGGER.info(pageCount  + " == Total page count for tiff == "+ (getExistingCount(request) + pageCount));
 			    if (getExistingCount(request) + pageCount > Integer
 				    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					totalCountReachedMessage.toString());
+					totalCountReachedMessage.toString());				
 				return;
 			    }
-			} catch (Exception e) {
+			} catch (Exception e) {				
 			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				    "File is damaged or not a valid tiff file, hence, cannot be uploaded.");
 			    return;
 			}
 		    } else {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "File not supported.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, mime[0]+"/"+mime[1]+"File not supported.");
 			return;
 		    }
 
 		    if (!fileWrittenToTheDrive) {
 			item.write(file);
 		    }
-		    if (getServletContext().getMimeType(file.getName()).contains("gif")
-			    && FileUtil.isAnimatedGIF(file)) {
+		    
+		  String fileExt = FilenameUtils.getExtension(file.getName());
+		    
+		  //if (getServletContext().getMimeType(file.getName()).contains("gif")
+		   
+		  if (fileExt.toLowerCase().equals("gif") && FileUtil.isAnimatedGIF(file)) {
 			file.delete();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"Animated giffs are not allowed. Only PDF, JPEG/JPG, BMP, or non-animated GIF's may be uploaded.");
+				"Animated gif is not allowed. Only PDF, JPEG/JPG, TIFF, BMP, or non-animated gif can be uploaded.");
 			return;
 		    }
 
 		    increaseDecreaseCountOfPages(request, pageCount, true);
-
+		    pageCount = 1;
+		    
 		    LOGGER.info(file.getPath() + "  File uploaded SUCCESSFULLY");
 		}
 	    }
 	} catch (Exception e) {
+		if(null!=file)
+		file.delete();
 	    LOGGER.error("File not uploaded. Please try again.");
 	    e.printStackTrace();
 	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
@@ -241,7 +278,7 @@ public class FileUploadServlet extends HttpServlet {
      * @return
      */
     @SuppressWarnings("deprecation")
-    private int getPageCountOfTiff(byte[] bytes) {
+    private int getPageCountOfTiff(byte[] bytes) {    	
 	return TiffImage.getNumberOfPages(new RandomAccessFileOrArray(bytes));
     }
 
@@ -256,11 +293,11 @@ public class FileUploadServlet extends HttpServlet {
      * @param increase
      */
     private void increaseDecreaseCountOfPages(HttpServletRequest request, int pageCount, boolean increase) {
-	Integer existingCount = getExistingCount(request);
+	int existingCount = getExistingCount(request);
 	if (increase) {
-	    request.getSession().setAttribute(Constants.PAGE_COUNTS, existingCount + pageCount);
+	    request.getSession().setAttribute(Constants.PAGE_COUNTS, (existingCount + pageCount));
 	} else {
-	    request.getSession().setAttribute(Constants.PAGE_COUNTS, existingCount - pageCount);
+	    request.getSession().setAttribute(Constants.PAGE_COUNTS, (existingCount - pageCount));
 	}
     }
 

@@ -26,6 +26,8 @@ public final class Constants {
     public static final String VIOLATION_IN_SYSTEM = "VIOLATION_IN_SYSTEM";
 
     public static final String PDF = "application/pdf";
+    
+    public static final String TIFF = "image/tiff";
 
     public static final String SUMMON = "summon";
 
@@ -42,5 +44,4 @@ public final class Constants {
     public static final String GET = "GET";
 
     public static final String PAGE_COUNTS = "PAGE_COUNTS";
-
 }
