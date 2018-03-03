@@ -210,7 +210,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    e.printStackTrace();
 	    if (e.getMessage() != null && e.getMessage().toLowerCase().contains("invalid defense")) {
 		addActionError(
-			"Something wrong with the defense you entered. There might be some unauthorized content in it. Please check and try again.");
+			"Something wrong with the defense you entered. There might be some unauthorized characters in it. Please check and try again.");
 	    } else {
 		addActionError(e.getLocalizedMessage());
 	    }
