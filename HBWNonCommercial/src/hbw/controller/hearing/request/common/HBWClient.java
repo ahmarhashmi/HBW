@@ -81,14 +81,15 @@ public final class HBWClient {
 
 	return response.isViolationEligibleForHearing();
     }
-    
+
     /**
      * 
      * @param violationNumber
      * @return
      * @throws MalformedURLException
      */
-    public static String getReasonForViolationNotEligibleForHearing(String violationNumber) throws MalformedURLException {
+    public static String getReasonForViolationNotEligibleForHearing(String violationNumber)
+	    throws MalformedURLException {
 	NYCServMobileApp port = getConnection();
 
 	LOGGER.info("Invoking getReasonCodeForViolationNotEligibleForHearing...");
@@ -99,7 +100,7 @@ public final class HBWClient {
 
 	IsViolationEligibleForHearingResult response = port.isViolationEligibleForHearing(request);
 	LOGGER.info("isViolationNotEligibleForHearing.result=" + response.getViolationNotEligibleForHearingReason());
-	
+
 	return response.getViolationNotEligibleForHearingReason();
     }
 
@@ -208,7 +209,8 @@ public final class HBWClient {
     public static Credentials getCredentials() {
 	Credentials cred = new Credentials();
 	cred.setUserID(Resource.USER_ID.getValue());
-	cred.setPassword(Resource.PASSWORD.getValue());
+	cred.setPassword(CommonUtil.tripleDecodePlainText(Resource.PASSWORD.getValue()));
+
 	return cred;
     }
 

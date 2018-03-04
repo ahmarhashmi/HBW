@@ -67,37 +67,26 @@ public final class CommonUtil {
      * @throws IOException
      */
     public static HttpURLConnection getConnection(final String URL, final String method) throws IOException {
-	URL url = new URL(URL);	
-	
-	/*
-	Properties sysProperties = System.getProperties();
-	
-	String proxyHost = "bcpxy.nycnet";
-	//String proxyHost = "10.141.22.15";	
-	String proxyPort = "8080";
-	String proxySet = "true";
+	URL url = new URL(URL);
 
-	sysProperties.put("http.proxyHost", proxyHost);
-	sysProperties.put("http.proxyPort", proxyPort);
-	sysProperties.put("proxySet", proxySet);
-	*/
-	
-	String proxyIp = Resource.PROXY_IP.getValue().trim();
-	String port = Resource.PROXY_PORT.getValue().trim();
-	
+	String proxyIp = Resource.PROXY_IP.getValue();
+	String port = Resource.PROXY_PORT.getValue();
+
 	HttpURLConnection conn;
-	if(null != proxyIp && proxyIp.length()>3){
-		LOGGER.info("Using proxy IP:"+proxyIp+":"+port);
-		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp,Integer.parseInt(port)));	
-		conn = (HttpURLConnection) url.openConnection(proxy);
-	} else{
-		LOGGER.info("No proxy has been set. Opening the connection at "+url);
-		conn = (HttpURLConnection) url.openConnection();
+	if (null != proxyIp && proxyIp.trim().length() > 3) {
+	    proxyIp = Resource.PROXY_IP.getValue().trim();
+	    port = Resource.PROXY_PORT.getValue().trim();
+	    LOGGER.info("Using proxy IP:" + proxyIp + ":" + port);
+	    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp, Integer.parseInt(port)));
+	    conn = (HttpURLConnection) url.openConnection(proxy);
+	} else {
+	    LOGGER.info("No proxy has been set. Opening the connection at " + url);
+	    conn = (HttpURLConnection) url.openConnection();
 	}
 	conn.setRequestMethod(method);
 	conn.setRequestProperty("Accept", "application/json");
 	conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-	
+
 	return conn;
     }
 
@@ -110,9 +99,9 @@ public final class CommonUtil {
      * @return
      */
     public static String scanAndConvertFilesToTiff(final FileValidationRequestDTO dto) {
-	try {		
-    	
-	    HttpURLConnection conn = getConnection(Resource.VANGAURD_VIRUS_SCAN_URL.getValue(), Constants.POST);	    
+	try {
+
+	    HttpURLConnection conn = getConnection(Resource.VANGAURD_VIRUS_SCAN_URL.getValue(), Constants.POST);
 	    conn.setDoInput(true);
 	    conn.setDoOutput(true);
 	    OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), Constants.UTF8);
@@ -159,22 +148,41 @@ public final class CommonUtil {
     /**
      * @author Ahmar Nadeem
      * 
-     *         Utility to triple encode the provided violation number for view
-     *         ticket URL.
+     *         Utility to triple encode the provided plain text.
      * 
-     * @param violationNumber
+     * @param plainText
      * @return
      */
-    public static String tripleEncodeViolationNumber(String violationNumber) {
+    public static String tripleEncodePlainText(String plainText) {
 	String encoded = new String();
 	try {
-	    encoded = DatatypeConverter.printBase64Binary(violationNumber.getBytes(Constants.UTF8));
+	    encoded = DatatypeConverter.printBase64Binary(plainText.getBytes(Constants.UTF8));
 	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
 	    encoded = new String(DatatypeConverter.printBase64Binary(encoded.getBytes(Constants.UTF8)));
 	} catch (Exception e) {
 	    LOGGER.error(e.toString());
 	}
 	return encoded;
+    }
+
+    /**
+     * @author Ahmar Nadeem
+     * 
+     *         Utility to triple decode the provided encoded text.
+     * 
+     * @param encodedText
+     * @return
+     */
+    public static String tripleDecodePlainText(String encodedText) {
+	String decoded = new String();
+	try {
+	    decoded = new String(DatatypeConverter.parseBase64Binary(encodedText));
+	    decoded = new String(DatatypeConverter.parseBase64Binary(decoded));
+	    decoded = new String(DatatypeConverter.parseBase64Binary(decoded));
+	} catch (Exception e) {
+	    LOGGER.error(e.toString());
+	}
+	return decoded;
     }
 
     /**

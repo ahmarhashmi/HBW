@@ -117,14 +117,14 @@ public class FileUploadServlet extends HttpServlet {
 
 		    StringBuilder totalCountReachedMessage = new StringBuilder(Resource.MAX_NUMBER_OF_EVIDENCES.getValue()+" pages upload limit will be violated with this file. So")
 			    .append(item.getName() + " cannot be uploaded. ")
-			    .append("If you want to submit more evidence, please do not request a hearing online. So")
+			    .append("If you want to submit more evidence, please do not request a hearing online. ")
 			    .append("Submit your hearing request and evidence by mail or in person.");
 		    
 		    StringBuilder totalSizeReachedMessage = new StringBuilder((Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())/1024/1024)+
-			    " MB upload limit will be voilated with this file. So")
-				    .append(item.getName() + " cannot be uploaded. ")
-				    .append("If you want to submit more evidence, please do not request a hearing online. ")
-				    .append("Submit your hearing request and evidence by mail or in person.");
+			    " MB upload limit will be voilated with this file. So ")
+			    .append(item.getName() + " cannot be uploaded. ")
+			    .append("If you want to submit more evidence, please do not request a hearing online. ")
+			    .append("Submit your hearing request and evidence by mail or in person.");
 		    
 		    if (getExistingCount(request) + pageCount > Integer
 			    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())

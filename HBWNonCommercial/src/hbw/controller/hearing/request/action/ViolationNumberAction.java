@@ -140,7 +140,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     public String getVioBase64Encoded() {
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession();
-	return CommonUtil.tripleEncodeViolationNumber((String) session.getAttribute(Constants.VIOLATION_NUMBER));
+	return CommonUtil.tripleEncodePlainText((String) session.getAttribute(Constants.VIOLATION_NUMBER));
     }
 
     /**
