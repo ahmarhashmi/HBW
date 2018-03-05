@@ -153,7 +153,6 @@ Dropzone.options.fileUploadForm = {
 					title : file.name,
 					buttons : [ {
 						text : "Ok",
-						icon : "ui-icon-heart",
 						click : function() {
 							$(this).dialog("close");
 						}
