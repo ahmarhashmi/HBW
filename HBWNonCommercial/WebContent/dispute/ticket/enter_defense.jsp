@@ -66,64 +66,83 @@
 
 		function validateForm() {
 			var isValid = true;
+			var isInJudgment = $('#explainWhyID');
+			if( isInJudgment.is(':visible') && !isInJudgment.val() ){
+				$('#explainWhyTitle').css("color", "red");
+				$('#explainWhyID').focus();
+				return false;
+			}else {
+				$('#explainWhyTitle').css("color", "black");
+			}
 			if(!$('#enterDefenseID').val()){
-				
 				$('#defenseMessage').css("color", "red");
-				isValid = false;
+				$('#enterDefenseID').focus();
+				return false;
 			}else {
 				$('#defenseMessage').css("color", "black");
 			}
-			if (!$('#certify')[0].checked) {
-				$('#notCertified').css("color", "red");
-				isValid = false;
+			if ($('#affirm').is(":visible")
+					&& !$('#affirm')[0].checked) {
+				$('#affirmMsg').css("color", "red");
+				$('html, body').animate({
+					scrollTop : $("#file-upload-form").offset().top},500);
+				return false;
 			} else {
-				$('#notCertified').css("color", "black");
+				$('#affirmMsg').css("color", "black");
 			}
 			if (!$('#firstName').val()) {
 				$('#firstNameMsg').css("display", "block");
-				isValid = false;
+				$('#firstName').focus();
+				return false;
 			} else {
 				$('#firstNameMsg').css("display", "none");
 			}
 			if (!$('#lastName').val()) {
 				$('#lastNameMsg').css("display", "block");
-				isValid = false;
+				$('#lastName').focus();
+				return false;
 			} else {
 				$('#lastNameMsg').css("display", "none");
 			}
 			if (!$('#address').val()) {
 				$('#addressMsg').css("display", "block");
-				isValid = false;
+				$('#address').focus();
+				return false;
 			} else {
 				$('#addressMsg').css("display", "none");
 			}
 			if (!$('#city').val()) {
 				$('#cityMsg').css("display", "block");
-				isValid = false;
+				$('#city').focus();
+				return false;
 			} else {
 				$('#cityMsg').css("display", "none");
 			}
 			if ($('#state').val() == 1) {
 				$('#stateMsg').css("display", "block");
-				isValid = false;
+				$('#state').focus();
+				return false;
 			} else {
 				$('#stateMsg').css("display", "none");
 			}
 			if (!$('#zip').val()) {
 				$('#zipMsg').css("display", "block");
-				isValid = false;
+				$('#zip').focus();
+				return false;
 			} else {
 				$('#zipMsg').css("display", "none");
 			}
 			if (!$('#email1').val()) {
 				$('#email1Msg').css("display", "block");
-				isValid = false;
+				$('#email1').focus();
+				return false;
 			} else {
 				$('#email1Msg').css("display", "none");
 			}
 			if (!$('#email2').val()) {
 				$('#email2Msg').css("display", "block");
-				isValid = false;
+				$('#email2').focus();
+				return false;
 			} else {
 				$('#email2Msg').css("display", "none");
 			}
@@ -133,12 +152,11 @@
 			} else {
 				$('#emailMatchMsg').css("display", "none");
 			}
-			if ($('#affirm').is(":visible")
-					&& !$('#affirm')[0].checked) {
-				$('#affirmMsg').css("color", "red");
-				isValid = false;
+			if (!$('#certify')[0].checked) {
+				$('#notCertified').css("color", "red");
+				return false;
 			} else {
-				$('#affirmMsg').css("color", "black");
+				$('#notCertified').css("color", "black");
 			}
 
 			if (!isValid) {
@@ -572,7 +590,7 @@ function isValidEmail(value){
 					<hr>
 					<h4>Enter Defense</h4>
 					<s:if test="%{#webViolationInSystem and #webViolationInJudgment}">
-						<p>Explain why you not previously responded to this request.</p>
+						<p id="explainWhyTitle">Explain why you have not previously responded to this request.</p>
 						<div class="form-group">
 							<textarea class="form-control" rows="10" cols="30"
 								maxlength="32700" id="explainWhyID"

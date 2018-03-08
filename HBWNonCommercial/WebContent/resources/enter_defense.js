@@ -10,6 +10,7 @@ Dropzone.options.fileUploadForm = {
 	maxFilesize : 20, // MB
 	//acceptedFiles : "image/gif,image/pjpeg,image/jpeg,image/jpg,image/tiff,image/bmp,application/pdf",
 	acceptedFiles : ".jpeg,.jpg,.pjpeg,.gif,.pdf,.bmp,.tiff,.tif",
+	createImageThumbnails:false,
 	addRemoveLinks : true,
 	dictRemoveFileConfirmation: true,
 	autoProcessQueue : true,
@@ -49,7 +50,7 @@ Dropzone.options.fileUploadForm = {
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', function(file){
-			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name, function(data) {});
+			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name.replace(/\s/g, ''), function(data) {});
 			/*
 			 * var index = files.indexOf(file); if (index > -1) {
 			 * files.splice(index, 1); }
@@ -143,11 +144,11 @@ Dropzone.options.fileUploadForm = {
 						if( file.name.match(expression)){
 							$("#image").hide();
 							$("#frame").show();
-							$("#frame").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name);
+							$("#frame").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name.replace(/\s/g, ''));
 						} else{
 							$("#frame").hide();
 							$("#image").show();
-							$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name);
+							$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name.replace(/\s/g, ''));
 						}
 					},
 					title : file.name,

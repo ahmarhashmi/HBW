@@ -173,6 +173,9 @@
 							</td>
 						</tr>
 					</table>
+					<s:set name="webViolationInSystem" value="violationInSystem" />
+					<s:set name="webViolationInJudgment"
+						value="violationInfo.violationStatusInJudgment" />
 					<table class="table-responsive table table-striped">
 						<thead>
 							<tr>
@@ -180,10 +183,23 @@
 
 							</tr>
 						</thead>
+						<s:if test="%{#webViolationInSystem and #webViolationInJudgment}">
+							<tr>
+								<td>
+									<p>
+										<b>Explain why you not previously responded to this
+											request.</b>
+									</p> <br>
+									<p>
+										<s:property value="explainWhy" />
+									</p>
+								</td>
+							</tr>
+						</s:if>
 						<tr>
 							<td>
-								<p>Your statement as to why you believe the violation should
-									be dismissed.</p> <br>
+								<p><b>Your statement as to why you believe the violation should
+									be dismissed.</b></p> <br>
 								<p>
 									<s:property value="defense" />
 								</p>

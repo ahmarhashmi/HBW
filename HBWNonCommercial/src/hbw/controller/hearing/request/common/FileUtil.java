@@ -49,7 +49,7 @@ public final class FileUtil {
      * @param request
      * @return
      */
-    public static File validateAndGetEvidenceUploadPath(HttpServletRequest request) {
+    public static File validateAndGetEvidenceUploadPath(HttpServletRequest request, String requestFrom) {
 	HttpSession session = request.getSession();
 	String violationNumber = (String) session.getAttribute(Constants.VIOLATION_NUMBER);
 	String basePath = Resource.EVIDENCE_UPLOAD_LOCATION.getValue();
@@ -63,18 +63,25 @@ public final class FileUtil {
 	 * files/folders other than the current session, we need to delete those files
 	 * to keep the directory clean.
 	 */
+	
 	File pathTillViolationNumber = new File(basePath + violationNumber.trim());
 	if (pathTillViolationNumber.exists()) {
 	    for (File child : pathTillViolationNumber.listFiles()) {
-		if (child.getName().equals(session.getId())) {
-		    continue;
-		}
-
-		try {
-		    FileUtils.forceDelete(child);
-		} catch (IOException e) {
-		    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: " + e);
-		}
+	    	//LOGGER.info("violationNumber before delete = " + violationNumber +" -- session.getId = "+ session.getId()  +" -- requestFrom  = "+ requestFrom);
+			if (child.getName().equals(session.getId()) && !requestFrom.equals("FileUploadServlet_doGetFile") 
+					&& !requestFrom.equals("FileUploadServlet_doPost") && !requestFrom.equals("create_hearing_execute")
+					&& !requestFrom.equals("FileUploadServlet_doDeleteFile")) {
+				//LOGGER.info("CHILDS = " + child.getName());			
+				try {				
+				    FileUtils.forceDelete(child);
+				} catch (IOException e) {
+				    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: " + e);
+				}		    
+			}
+			else
+			{
+				continue;
+			}
 	    }
 	}
 
@@ -165,9 +172,10 @@ public final class FileUtil {
      * @throws IOException 
      */
     public static void deleteTempFolder(HttpServletRequest request) throws IOException {
-	File folder = validateAndGetEvidenceUploadPath(request);
+	File folder = validateAndGetEvidenceUploadPath(request, "FileUtil_deleteTempFolder");
 	if (folder.exists()) {
-	    FileUtils.cleanDirectory(folder.getParentFile().getParentFile());
+	    //FileUtils.cleanDirectory(folder.getParentFile().getParentFile());
+	    FileUtils.cleanDirectory(folder);
 	}
     }
 

@@ -61,16 +61,16 @@ public class FileUploadServlet extends HttpServlet {
 
 	String requestedFileName = request.getParameter("file");
 	if (requestedFileName != null) {
-	    doGetFile(request, response, requestedFileName);
+	    doGetFile(request, response, requestedFileName.replaceAll("\\s+", ""));
 	} else {
 	    String deleteFile = request.getParameter("delete");
 	    if (deleteFile != null) {
 		try {
-		    doDeleteFile(request, response, deleteFile);
+		    doDeleteFile(request, response, deleteFile.replaceAll("\\s+", ""));
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
-		response.getWriter().append("FileDeleted: ").append(deleteFile);
+		response.getWriter().append("FileDeleted: ").append(deleteFile.replaceAll("\\s+", ""));
 	    }
 	}
 	if (request.getParameter("reset") != null) {
@@ -105,7 +105,7 @@ public class FileUploadServlet extends HttpServlet {
 		    "Request is not multipart, please 'multipart/form-data' enctype for your form.");
 	}
 
-	File evidencePath = FileUtil.validateAndGetEvidenceUploadPath(request);
+	File evidencePath = FileUtil.validateAndGetEvidenceUploadPath(request,"FileUploadServlet_doPost");
 
 	ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 	try {
@@ -136,7 +136,7 @@ public class FileUploadServlet extends HttpServlet {
 			item.delete();
 			return;
 		    }
-		    file = new File(evidencePath, item.getName());
+		    file = new File(evidencePath, item.getName().replaceAll("\\s+",""));
 		    if (item.getSize() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
@@ -324,13 +324,13 @@ public class FileUploadServlet extends HttpServlet {
      * @param requestedFileName
      */
     private void doGetFile(HttpServletRequest request, HttpServletResponse response, String requestedFileName) {
-	File folder = FileUtil.validateAndGetEvidenceUploadPath(request);
+	File folder = FileUtil.validateAndGetEvidenceUploadPath(request, "FileUploadServlet_doGetFile");
 	// Get the absolute path of the image
 	ServletContext sc = getServletContext();
 	String fileName = folder.getPath() + File.separator + requestedFileName;
 
 	// Get the MIME type of the image
-	String mimeType = sc.getMimeType(fileName);
+	String mimeType = sc.getMimeType(fileName.toLowerCase());
 	if (mimeType == null) {
 	    sc.log("Could not get MIME type of " + fileName);
 	    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -373,7 +373,7 @@ public class FileUploadServlet extends HttpServlet {
      */
     private void doDeleteFile(HttpServletRequest request, HttpServletResponse response, String deleteFile)
 	    throws Exception {
-	File folder = FileUtil.validateAndGetEvidenceUploadPath(request);
+	File folder = FileUtil.validateAndGetEvidenceUploadPath(request, "FileUploadServlet_doDeleteFile");
 	File file = new File(folder.getPath() + File.separator + deleteFile);
 	int pageCount = 1;
 	if (FileUtil.getFileExtension(deleteFile).equals("tiff")

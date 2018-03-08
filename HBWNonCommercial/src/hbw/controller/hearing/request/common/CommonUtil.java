@@ -109,7 +109,7 @@ public final class CommonUtil {
 	    String payload = createJsonString(dto);
 	    writer.write(payload);
 	    writer.close();
-	    LOGGER.info("Request json for files validation is :" + payload);
+	    //LOGGER.info("Request json for files validation is :" + payload);
 
 	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    StringBuffer jsonString = new StringBuffer();

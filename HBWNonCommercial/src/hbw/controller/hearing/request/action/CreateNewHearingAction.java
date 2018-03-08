@@ -28,6 +28,7 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.InterceptorRef;
@@ -45,6 +46,8 @@ import org.example.nycservmobileapp.Name;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.itextpdf.text.pdf.codec.TiffImage;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.util.logging.Logger;
@@ -88,16 +91,34 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
     private String violationNumber;
 
-    private List<UploadedFile> files;
+    private boolean violationInSystem;
 
+    private List<UploadedFile> files;
+    
     @Override
     public void prepare() throws Exception {
+    }
+    
+    public String getTotalPagesUploaded() {
+	HttpServletRequest request = ServletActionContext.getRequest();
+	HttpSession session = request.getSession();
+	String count = (String) session.getAttribute(Constants.PAGE_COUNTS);
+	return count == null ? "0" : count;
+    }
+    
+    
+    /**
+     * @return the violationInSystem
+     */
+    public boolean isViolationInSystem() {
+	return violationInSystem;
     }
 
     /**
      * The main action listener of this class.
      */
-    @Action(value = "/create_hearing")
+    @SuppressWarnings("deprecation")
+	@Action(value = "/create_hearing")
     public String execute() {
 
 	HttpServletRequest request = ServletActionContext.getRequest();
@@ -105,10 +126,11 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	if (!CommonUtil.isSessionActive(request)) {
 	    return LOGIN;
 	}
+	violationInSystem = (Boolean)session.getAttribute(Constants.VIOLATION_IN_SYSTEM);
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
 	violationNumber = (String) session.getAttribute(Constants.VIOLATION_NUMBER);
 	files = new ArrayList<UploadedFile>();
-	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request);
+	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request, "create_hearing_execute");
 	List<Evidence> evidences = new ArrayList<Evidence>();
 	if (uploadedFiles.exists()) {
 	    UploadedFile uploadedFile;
@@ -119,6 +141,18 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		uploadedFile.setPageCount(1);
 
 		String mimeType = new MimetypesFileTypeMap().getContentType(file);
+		
+		LOGGER.info("mimeType for confirmation page = " + mimeType + " -- " + file.getName());
+		
+		if (mimeType.equals(Constants.TIFF)) {			
+			try {				
+				byte[] fileBytes  = FileUtils.readFileToByteArray(file);				
+				uploadedFile.setPageCount(TiffImage.getNumberOfPages(new RandomAccessFileOrArray(fileBytes)));
+			} catch (IOException e) {				
+				e.printStackTrace();
+			}			
+		}		
+		
 		if (mimeType.equals(Constants.PDF) || mimeType.equals("application/octet-stream")) {
 		    try {
 			Document document = new Document();
@@ -166,20 +200,60 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
 	    try {
 		String response = CommonUtil.scanAndConvertFilesToTiff(dto);
-		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
+		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);		
+		if (null != resNode.get(0)) {
+					if (resNode.get(0).get(Constants.RETURN_CODE) != null
+							&& resNode.get(0).get(Constants.RETURN_CODE)
+									.asText().equals(
+											Constants.RETURN_CODE_ERROR)) {
+						if (null == resNode.get(0).get("payload")
+								|| resNode.get(0).get("payload").asText()
+										.equals("")) {
+							if (resNode.get(0).get("ErrorCode").asText()
+									.equals("106")) {
+								addActionError("Total file size is greater then allowed limit.");
+							} else if (resNode.get(0).get("ErrorCode").asText()
+									.equals("101")) {
+								addActionError("Duplicate Summon found. Cannot be uploaded.");
+							} else {
+								addActionError("Processing Error, try again later.");
+							}
+							return INPUT;
+						}
+					}
+				}
 		if (resNode.get(Constants.RETURN_CODE) != null
 			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
 		    LOGGER.info("Vanguard return code is " + resNode.get(Constants.RETURN_CODE).asText());
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
-			if (payloadItem.get("ErrorCode") != null
-				&& payloadItem.get("ErrorCode").asText().equals("107")) {
-			    addActionError("File name " + payloadItem.get("FileName")
-				    + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
-			    isError = true;
-			}
-		    }
+		    	if (payloadItem.get("ErrorCode") != null
+						&& payloadItem.get("ErrorCode").asText().equals("101")) {
+					    addActionError("Duplicate Summon found. Cannot be uploaded.");
+					    isError = true;
+					}
+					else if (payloadItem.get("ErrorCode") != null
+							&& payloadItem.get("ErrorCode").asText().equals("105")) {
+						    addActionError("File name " + payloadItem.get("FileName") + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
+						    isError = true;
+						}
+					else if (payloadItem.get("ErrorCode") != null
+							&& payloadItem.get("ErrorCode").asText().equals("107")) {
+						    addActionError("File name " + payloadItem.get("FileName") + " is not a valid file name. Cannot be uploaded.");
+						    isError = true;
+						}
+					else if (payloadItem.get("ErrorCode") != null
+							&& payloadItem.get("ErrorCode").asText().equals("106")) {
+						    addActionError("File name " + payloadItem.get("FileName") + " is not a valid file size. Cannot be uploaded.");
+						    isError = true;
+						}
+					else if (payloadItem.get("ErrorCode") != null
+							&& payloadItem.get("ErrorCode").asText().equals("112")) {
+						    addActionError("File name " + payloadItem.get("FileName") + " is duplicate file. Cannot be uploaded.");
+						    isError = true;
+						}
+				    }
 		    if (!isError) {
 			addActionError(resNode.get("ErrorCode").asText()
 				+ ": Unexpected response from the server. Please try again later.");
