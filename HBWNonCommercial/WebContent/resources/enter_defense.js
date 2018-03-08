@@ -25,6 +25,7 @@ Dropzone.options.fileUploadForm = {
 		$('#affirm').attr("checked", false);
 		$('#affirmCheckBox').css("display", "none");
 		$('#affirmCheckBoxPrompt').css("display", "none");
+		getTotalUploadedInfo();
 	},
 	error : function(file, response) {
 		file.previewElement.classList.add("dz-error");
@@ -40,33 +41,23 @@ Dropzone.options.fileUploadForm = {
 	init : function() {
 		this.on('maxfilesexceeded', function(file) {
 			this.removeFile(file);
-			enableDisableSubmitButton();
-		});
-		
-		this.on('success', function(file) {
-// files.push(file);
-			enableDisableSubmitButton();
 		});
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', function(file){
-			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name.replace(/\s/g, ''), function(data) {});
-			/*
-			 * var index = files.indexOf(file); if (index > -1) {
-			 * files.splice(index, 1); }
-			 */
+			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name.replace(/\s/g, ''), function(data) {
+				$("#totalCountSpan").html( data );
+			});
 			var succesfiles = this.getFilesWithStatus(Dropzone.SUCCESS), total=0;
 			$.each(succesfiles, function(file){
 			   total+=file.size;
 			});		
 			
-			//if(this.getAcceptedFiles().length == 0){
 			if(total == 0){
 				$('#affirmCheckBox').css("display", "block");
 				$('#affirmCheckBoxPrompt').css("display", "block");
 			}
 			$("#displayError").empty();
-			enableDisableSubmitButton();
 		});
 
 		var wrapperThis = this;
@@ -187,6 +178,17 @@ function setDefenseValue(obj, errorMessageSpanId) {
 	} else if (obj.value.length < 32700) {
 		document.getElementById(errorMessageSpanId).style.display = "none";
 	}
+}
+
+function getTotalUploadedInfo(){	
+	$.get(getContextPath() + "/FileUploadServlet?uploadInfo=true", function(data) {
+		$("#totalCountSpan").html( data );
+	});
+	
+	
+	//$('totalCountSpan').html('').append( getContextPath() + "/FileUploadServlet?uploadInfo=true" );
+	//alert(response);
+	//
 }
 
 //function sleep(ms) {

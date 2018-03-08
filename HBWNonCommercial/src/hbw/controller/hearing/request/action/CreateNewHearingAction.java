@@ -94,16 +94,9 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     private boolean violationInSystem;
 
     private List<UploadedFile> files;
-    
+
     @Override
     public void prepare() throws Exception {
-    }
-    
-    public String getTotalPagesUploaded() {
-	HttpServletRequest request = ServletActionContext.getRequest();
-	HttpSession session = request.getSession();
-	String count = (String) session.getAttribute(Constants.PAGE_COUNTS);
-	return count == null ? "0" : count;
     }
     
     

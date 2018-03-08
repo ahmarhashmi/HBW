@@ -638,10 +638,13 @@ function isValidEmail(value){
 					</s:if>
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
-						class="dropzone" method="POST"></form>
+						class="dropzone" method="POST">
+					</form>
+					<div id="totalCountDiv"
+						style="width: 100%; height: 20px; margin-top: 5px; margin-bottom: 5px; align-items: right;">
+						<span class="pull-right" id="totalCountSpan"></span>
+					</div>
 					<br>
-
-
 					<p id="affirmCheckBoxPrompt">You must check the box below if
 						you are not uploading evidence. By checking this box, you agree to
 						the following:</p>
