@@ -2,6 +2,7 @@ package hbw.controller.hearing.request.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -12,6 +13,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
+import com.itextpdf.text.io.RandomAccessSourceFactory;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.itextpdf.text.pdf.codec.TiffImage;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
@@ -50,7 +55,7 @@ public final class FileUtil {
      * @return
      */
     public static File validateAndGetEvidenceUploadPath(HttpServletRequest request, String requestFrom) {
-	HttpSession session = request.getSession();
+	HttpSession session = request.getSession(false);
 	String violationNumber = (String) session.getAttribute(Constants.VIOLATION_NUMBER);
 	String basePath = Resource.EVIDENCE_UPLOAD_LOCATION.getValue();
 	if (basePath != null && !(Constants.BACK_SLASH.equals(basePath.substring(basePath.length() - 1))
@@ -177,6 +182,40 @@ public final class FileUtil {
 	    //FileUtils.cleanDirectory(folder.getParentFile().getParentFile());
 	    FileUtils.cleanDirectory(folder);
 	}
+    }
+    
+    /**
+     * @author Ahmar Hashmi
+     * 
+     *         Reads the provided pdf file and returns the page count.
+     *         Throws @Exception if file is not pdf or damaged.
+     * 
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public static int getPageCountOfPDF(File file) throws Exception {
+	RandomAccessFile raf = new RandomAccessFile(file, "r");
+	RandomAccessFileOrArray pdfFile = new RandomAccessFileOrArray(
+		new RandomAccessSourceFactory().createSource(raf));
+	PdfReader reader = new PdfReader(pdfFile, new byte[0]);
+	int pageCount = reader.getNumberOfPages();
+	reader.close();
+
+	return pageCount;
+    }
+    
+    /**
+     * @author Ahmar Hashmi
+     * 
+     *         Reads the tiff file and returns the number of pages it contains.
+     * 
+     * @param item
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static int getPageCountOfTiff(byte[] bytes) {
+	return TiffImage.getNumberOfPages(new RandomAccessFileOrArray(bytes));
     }
 
 }

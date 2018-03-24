@@ -5,9 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -22,11 +23,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.struts2.ServletActionContext;
 
-import com.itextpdf.text.io.RandomAccessSourceFactory;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
-import com.itextpdf.text.pdf.codec.TiffImage;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
@@ -60,7 +58,11 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-
+    
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+    response.setDateHeader("Expires", 0);
+    
 	String requestedFileName = request.getParameter("file");
 	if (requestedFileName != null) {
 	    doGetFile(request, response, requestedFileName.replaceAll("\\s+", ""));
@@ -79,7 +81,7 @@ public class FileUploadServlet extends HttpServlet {
 	}
 	if (request.getParameter("reset") != null) {
 	    FileUtil.deleteTempFolder(request);
-	    request.getSession().invalidate();
+//	    request.getSession(false).invalidate();
 	    return;
 	}
 	if (request.getParameter("uploadInfo") != null) {
@@ -96,20 +98,20 @@ public class FileUploadServlet extends HttpServlet {
      * @throws IOException
      */
     private void populateTotalUploadInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	HttpSession session = request.getSession();
+	HttpSession session = request.getSession(false);
 	Integer count = (Integer) session.getAttribute(Constants.PAGE_COUNTS);
-	LOGGER.info("TOTAL Page uploaded so far: "+count);
+	LOGGER.info("TOTAL Page uploaded so far: " + count);
 	Double filesTotalSize = (double) (FileUtils
 		.sizeOf(FileUtil.validateAndGetEvidenceUploadPath(request, "FileUploadServlet_doGetFile")));
-	LOGGER.info("TOTAL uploaded files size in bytes: "+filesTotalSize);
+	LOGGER.info("TOTAL uploaded files size in bytes: " + filesTotalSize);
 
 	// Double size = Double.MIN_VALUE;
 	DecimalFormat df = new DecimalFormat("#0.00");
-	if( count == 0 ) {
+	if (count == 0) {
 	    return;
 	} else {
-	    response.getWriter().append("<b>Total</b> ").append(count == null ? "0" : count.toString()).append(" pages, ")
-		.append(df.format(filesTotalSize / 1024 / 1024)).append(" MB");
+	    response.getWriter().append("<b>Total</b> ").append(count == null ? "0" : count.toString())
+		    .append(" pages, ").append(df.format(filesTotalSize / 1024 / 1024)).append(" MB");
 	}
 
     }
@@ -120,10 +122,16 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-	File file = null;
-
+    	
+	response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+    response.setDateHeader("Expires", 0);
+    
+	File file = null;	
+	//LOGGER.info(" -- Session in servlet is :::::::::: " + request.getSession());
 	if (!CommonUtil.isSessionActive(request)) {
-	    LOGGER.error("Session has been timed out. Navigating to the home page.");
+		
+	    LOGGER.error("Session has been timed out. Navigating to the home page.");	    
 	    /**
 	     * CAUTION: Do not change the response string, Else Front end string will also
 	     * be required to be changed.
@@ -150,7 +158,7 @@ public class FileUploadServlet extends HttpServlet {
 		    int pageCount = 1;
 
 		    StringBuilder totalCountReachedMessage = new StringBuilder(Resource.MAX_NUMBER_OF_EVIDENCES
-			    .getValue() + " pages upload limit will be violated with this file. So")
+			    .getValue() + " pages upload limit will be violated with this file. So ")
 				    .append(item.getName() + " cannot be uploaded. ")
 				    .append("If you want to submit more evidence, please do not request a hearing online. ")
 				    .append("Submit your hearing request and evidence by mail or in person.");
@@ -163,26 +171,32 @@ public class FileUploadServlet extends HttpServlet {
 				    .append("Submit your hearing request and evidence by mail or in person.");
 
 		    if (getExistingCount(request) + pageCount > Integer
-			    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())
-			    || FileUtils.sizeOf(evidencePath) + item.getSize() > Long
-				    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				totalSizeReachedMessage.toString());
-			// file should be removed
-			item.delete();
-			return;
-		    }
-		    file = new File(evidencePath, item.getName().replaceAll("\\s+", ""));
-		    if (item.getSize() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
-			return;
-		    }
-		    if (file.exists()) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"A file with the same name was already uploaded. If this is different, rename the file and try again.");
-			return;
-		    }
+					.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						totalCountReachedMessage.toString());
+				// file should be removed
+				item.delete();
+				return;
+			}
+			if (FileUtils.sizeOf(evidencePath) + item.getSize() > Long
+					.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						totalSizeReachedMessage.toString());
+				// file should be removed
+				item.delete();
+				return;
+			}
+			file = new File(evidencePath, item.getName().replaceAll("\\s+", ""));
+			if (item.getSize() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
+				return;
+			}
+			if (file.exists()) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"A file with the same name was already uploaded. If this is different, rename the file and try again.");
+				return;
+			}
 
 		    boolean fileWrittenToTheDrive = false;
 
@@ -192,13 +206,13 @@ public class FileUploadServlet extends HttpServlet {
 		    // String mimeType = new MimetypesFileTypeMap().getContentType(file);
 		    // change because of wrong mime type for pdf and bmp application/octate-stream
 
-		    LOGGER.info("(item.getContentType ::::::::::::: " + item.getContentType());
+		    //LOGGER.info("(item.getContentType ::::::::::::: " + item.getContentType());
 
 		    String mimeType = item.getContentType();
 		    String[] mime = mimeType.split("/");
 
-		    LOGGER.info("(mime[0]::::::::::::: " + mime[0]);
-		    LOGGER.info("(mime[1]::::::::::::: " + mime[1]);
+		   // LOGGER.info("(mime[0]::::::::::::: " + mime[0]);
+		   // LOGGER.info("(mime[1]::::::::::::: " + mime[1]);
 
 		    if (mime[0].equals("image") && !(mime[1].toLowerCase().equals("tiff"))) {
 			BufferedImage bi = ImageIO.read(item.getInputStream());
@@ -211,9 +225,9 @@ public class FileUploadServlet extends HttpServlet {
 			item.write(file);
 			fileWrittenToTheDrive = true;
 			try {
-			    pageCount = getPageCountOfPDF(file);
+			    pageCount = FileUtil.getPageCountOfPDF(file);
 
-			    LOGGER.info(" Total pages so far = " + (getExistingCount(request) + pageCount));
+			    //LOGGER.info(" Total pages so far = " + (getExistingCount(request) + pageCount));
 
 			    if (getExistingCount(request) + pageCount > Integer
 				    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
@@ -235,10 +249,10 @@ public class FileUploadServlet extends HttpServlet {
 
 		    } else if (mime[0].equals("image") && (mime[1].toLowerCase().equals("tiff"))) {
 			try {
-			    pageCount = getPageCountOfTiff(item.get());
+			    pageCount = FileUtil.getPageCountOfTiff(item.get());
 
-			    LOGGER.info(pageCount + " == Total page count for tiff == "
-				    + (getExistingCount(request) + pageCount));
+			   // LOGGER.info(pageCount + " == Total page count for tiff == "
+				  //  + (getExistingCount(request) + pageCount));
 			    if (getExistingCount(request) + pageCount > Integer
 				    .parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -289,40 +303,6 @@ public class FileUploadServlet extends HttpServlet {
     /**
      * @author Ahmar Hashmi
      * 
-     *         Reads the provided pdf file and returns the page count.
-     *         Throws @Exception if file is not pdf or damaged.
-     * 
-     * @param file
-     * @return
-     * @throws Exception
-     */
-    private int getPageCountOfPDF(File file) throws Exception {
-	RandomAccessFile raf = new RandomAccessFile(file, "r");
-	RandomAccessFileOrArray pdfFile = new RandomAccessFileOrArray(
-		new RandomAccessSourceFactory().createSource(raf));
-	PdfReader reader = new PdfReader(pdfFile, new byte[0]);
-	int pageCount = reader.getNumberOfPages();
-	reader.close();
-
-	return pageCount;
-    }
-
-    /**
-     * @author Ahmar Hashmi
-     * 
-     *         Reads the tiff file and returns the number of pages it contains.
-     * 
-     * @param item
-     * @return
-     */
-    @SuppressWarnings("deprecation")
-    private int getPageCountOfTiff(byte[] bytes) {
-	return TiffImage.getNumberOfPages(new RandomAccessFileOrArray(bytes));
-    }
-
-    /**
-     * @author Ahmar Hashmi
-     * 
      *         Increases or decreases the count to the page count stored in the
      *         session based on the flag
      * 
@@ -333,9 +313,9 @@ public class FileUploadServlet extends HttpServlet {
     private void increaseDecreaseCountOfPages(HttpServletRequest request, int pageCount, boolean increase) {
 	int existingCount = getExistingCount(request);
 	if (increase) {
-	    request.getSession().setAttribute(Constants.PAGE_COUNTS, (existingCount + pageCount));
+	    request.getSession(false).setAttribute(Constants.PAGE_COUNTS, (existingCount + pageCount));
 	} else {
-	    request.getSession().setAttribute(Constants.PAGE_COUNTS, (existingCount - pageCount));
+	    request.getSession(false).setAttribute(Constants.PAGE_COUNTS, (existingCount - pageCount));
 	}
     }
 
@@ -349,7 +329,7 @@ public class FileUploadServlet extends HttpServlet {
      * @return
      */
     private int getExistingCount(HttpServletRequest request) {
-	Integer existingCount = (Integer) request.getSession().getAttribute(Constants.PAGE_COUNTS);
+	Integer existingCount = (Integer) request.getSession(false).getAttribute(Constants.PAGE_COUNTS);
 	return existingCount == null ? 0 : existingCount;
     }
 
@@ -362,7 +342,10 @@ public class FileUploadServlet extends HttpServlet {
      * @param requestedFileName
      */
     private void doGetFile(HttpServletRequest request, HttpServletResponse response, String requestedFileName) {
+    	
 	File folder = FileUtil.validateAndGetEvidenceUploadPath(request, "FileUploadServlet_doGetFile");
+	FileInputStream in = null;
+    OutputStream out = null;
 	// Get the absolute path of the image
 	ServletContext sc = getServletContext();
 	String fileName = folder.getPath() + File.separator + requestedFileName;
@@ -385,8 +368,8 @@ public class FileUploadServlet extends HttpServlet {
 	response.setContentLength((int) file.length());
 	try {
 	    // Open the file and output streams
-	    FileInputStream in = new FileInputStream(file);
-	    OutputStream out = response.getOutputStream();
+	     in = new FileInputStream(file);
+	     out = response.getOutputStream();
 
 	    // Copy the contents of the file to the output stream
 	    byte[] buf = new byte[1024];
@@ -394,10 +377,31 @@ public class FileUploadServlet extends HttpServlet {
 	    while ((count = in.read(buf)) >= 0) {
 		out.write(buf, 0, count);
 	    }
-	    in.close();
-	    out.close();
+	    //in.close();
+	    //out.close();
 	} catch (IOException e) {
 	    e.printStackTrace();
+	}
+	finally
+	{
+		 if(null!=out)
+		    {
+		    	try {
+		    		out.flush();
+					out.close();
+				} catch (IOException e1) {				
+					e1.printStackTrace();
+				}
+		    }
+		 
+		if(null!=in) {
+		    	try {		    		
+					in.close();
+				} catch (IOException e1) {				
+					e1.printStackTrace();
+				}
+		    }
+		   
 	}
     }
 
@@ -417,12 +421,17 @@ public class FileUploadServlet extends HttpServlet {
 	if (FileUtil.getFileExtension(deleteFile).equals("tiff")
 		|| FileUtil.getFileExtension(deleteFile).equals("tif")) {
 
-	    pageCount = getPageCountOfTiff(FileUtils.readFileToByteArray(file));
+	    pageCount = FileUtil.getPageCountOfTiff(FileUtils.readFileToByteArray(file));
 	} else if (FileUtil.getFileExtension(deleteFile).equals("pdf")) {
-	    pageCount = getPageCountOfPDF(file);
+	    pageCount = FileUtil.getPageCountOfPDF(file);
 	}
-	LOGGER.info("DELETE file:" + file.getPath());
+	
+	try{
 	file.delete();
+	LOGGER.info("DELETED file:" + file.getPath());
+	    } catch (Exception e) {
+			 LOGGER.error("File is not deleted" + e);	   
+		 }
 	increaseDecreaseCountOfPages(request, pageCount, false);
 	LOGGER.info("file:" + file.getPath() + " >>> Deleted successfully.");
     }

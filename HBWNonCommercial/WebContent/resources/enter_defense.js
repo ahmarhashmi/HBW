@@ -45,7 +45,7 @@ Dropzone.options.fileUploadForm = {
 		
 		/** This function is triggered when user attempts to delete a file */
 		this.on('removedfile', function(file){
-			$.get(getContextPath() + "/FileUploadServlet?delete="+file.name.replace(/\s/g, ''), function(data) {
+			$.get(getContextPath() + "/FileUploadServlet?delete="+encodeURIComponent(file.name), function(data) {
 				$("#totalCountSpan").html( data );
 			});
 			var succesfiles = this.getFilesWithStatus(Dropzone.SUCCESS), total=0;
@@ -111,59 +111,64 @@ Dropzone.options.fileUploadForm = {
 
 			if (!isTypeAllowed) {
 				wrapperThis.removeFile(file);
-				alert("File type not supported");
+				alert("File type is not supported");
 			}
 			
 			file.previewElement.addEventListener('click', function() {
-				if(file.status == 'success' && !NOACTION){					
-				$("#dialog").innerHTML = file.previewElement;
-				$("#dialog").dialog({
-					width: 800,
-					height: 600,
-					closeOnEscape : true,
-					modal : true,
-					show : {
-						effect : "blind",
-						duration : 1000
-					},
-					hide : {
-						effect : "explode",
-						duration : 800
-					},
-					open : function(event, ui) {
-						var expression = /pdf/;
-						if( file.name.match(expression)){
-							$("#image").hide();
-							$("#frame").show();
-							$("#frame").attr("src", getContextPath() + "/FileUploadServlet?file="+file.name.replace(/\s/g, ''));
-						} else{
-							$("#frame").hide();
-							$("#image").show();
-							$("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+file.name.replace(/\s/g, ''));
-						}
-					},
-					title : file.name,
-					buttons : [ {
-						text : "Ok",
-						click : function() {
-							$(this).dialog("close");
-						}
-					} ]
-					});
-				}
-				NOACTION = false;
-			
-			});
-			// }
+			    var isPDF = file.name.match(/pdf/);
+			    if(file.status == 'success' && !NOACTION){     
+			    $("#dialog").innerHTML = file.previewElement;
+			    $("#dialog").dialog({
+			     width: 800,
+			     height: 600,
+			     closeOnEscape : true,
+			     modal : true,
+			     show : {
+			      effect : "blind",
+			      duration : 1000
+			     },
+			     hide : function( event, ui){
+			       if( isPDF ){
+			        $("#frame").removeAttr("src");
+			       }
+			       $(this).dialog("close");
+			     },
+			     open : function(event, ui) {
+			      if( isPDF ){
+			       $("#image").hide();
+			       $("#frame").show();
+			       $("#frame").attr("src", getContextPath() + "/FileUploadServlet?file="+encodeURIComponent(file.name));
+			      } else{
+			       $("#frame").hide();
+			       $("#image").show();
+			       $("#image").attr('src', getContextPath() + "/FileUploadServlet?file="+encodeURIComponent(file.name));
+			      }
+			     },
+			     title : file.name,
+			     buttons : [ {
+			      text : "Ok",
+			      click : function() {
+			       if( isPDF ){
+			        $("#frame").removeAttr("src");
+			       }
+			       else
+			    	   {
+			    	   $("#image").removeAttr("src");   
+			    	   }
+			       $(this).dialog("close");
+			      }
+			     } ]
+			     });
+			    }
+			    NOACTION = false;
+			   
+			   });		
 		});
 
 		this.on('sendingmultiple', function(data, xhr, formData) {
 			formData.append("Username", $("#Username").val());
 		});
-	}/*
-		 * , accept: function (file, done) { alert('hi'+ file.name); if
-		 * (file.name == "justinbieber.jpg") { done("Naha, you don't."); } }
-		 */
+	}
 };
 
 function setDefenseValue(obj, errorMessageSpanId) {

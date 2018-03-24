@@ -3,6 +3,7 @@
  */
 package hbw.controller.hearing.request.common;
 
+import hbw.controller.hearing.request.model.DeleteSummon;
 import hbw.controller.hearing.request.model.FileValidationRequestDTO;
 
 import java.io.BufferedReader;
@@ -15,13 +16,25 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ApplicationAware;
+import org.apache.struts2.interceptor.CookiesAware;
+import org.apache.struts2.interceptor.PrincipalAware;
+import org.apache.struts2.interceptor.PrincipalProxy;
+import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.interceptor.SessionAware;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -83,6 +96,7 @@ public final class CommonUtil {
 	    LOGGER.info("No proxy has been set. Opening the connection at " + url);
 	    conn = (HttpURLConnection) url.openConnection();
 	}
+	
 	conn.setRequestMethod(method);
 	conn.setRequestProperty("Accept", "application/json");
 	conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -99,8 +113,7 @@ public final class CommonUtil {
      * @return
      */
     public static String scanAndConvertFilesToTiff(final FileValidationRequestDTO dto) {
-	try {
-
+	try {		
 	    HttpURLConnection conn = getConnection(Resource.VANGAURD_VIRUS_SCAN_URL.getValue(), Constants.POST);
 	    conn.setDoInput(true);
 	    conn.setDoOutput(true);
@@ -117,16 +130,49 @@ public final class CommonUtil {
 	    while ((line = br.readLine()) != null) {
 		jsonString.append(line);
 	    }
-	    LOGGER.info("Response from the server is :" + jsonString.toString());
+	    LOGGER.info(dto.getSummonsNumber() + " CreateHearing response from the VGD server is :" + jsonString.toString());
 	    br.close();
 	    conn.disconnect();
 	    return jsonString.toString();
 	} catch (MalformedURLException e) {
 	    throw new RuntimeException(e);
 	} catch (IOException e) {
+		e.printStackTrace();
+	    //throw new RuntimeException("Server is busy, please try again later.");
 	    throw new RuntimeException(e);
 	}
-    }
+   }
+    
+    public static String deleteSummon(final DeleteSummon ds) {
+    	try {
+    		//LOGGER.info("deleteSummon :" + Resource.VANGAURD_DELETE_SUMMON_URL.getValue());
+    		 
+    	    HttpURLConnection conn = getConnection(Resource.VANGAURD_DELETE_SUMMON_URL.getValue(), Constants.POST);
+    	    conn.setDoInput(true);
+    	    conn.setDoOutput(true);
+    	    OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), Constants.UTF8);
+
+    	    String payload = createJsonString(ds);
+    	    writer.write(payload);
+    	    writer.close();
+    	    //LOGGER.info("Request json for files validation is :" + payload);
+
+    	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    	    StringBuffer jsonString = new StringBuffer();
+    	    String line;
+    	    while ((line = br.readLine()) != null) {
+    		jsonString.append(line);
+    	    }
+    	    LOGGER.info(ds.getSummonsNumber() +  " deleteSummon response from the server is :" + jsonString.toString());
+    	    br.close();
+    	    conn.disconnect();
+    	    return jsonString.toString();
+    	} catch (MalformedURLException e) {
+    	    throw new RuntimeException(e);
+    	} catch (IOException e) {
+    	    throw new RuntimeException(e);
+    	}
+     }
 
     /**
      * @author Ahmar Nadeem
@@ -137,9 +183,12 @@ public final class CommonUtil {
      * @param request
      * @return
      */
-    public static boolean isSessionActive(HttpServletRequest request) {
-	HttpSession session = request.getSession();
-	if (session == null || session.getAttribute(Constants.VIOLATION_NUMBER) == null) {
+    public static boolean isSessionActive(HttpServletRequest requesta) {
+	HttpSession session = requesta.getSession(false);
+	
+	LOGGER.info("Checking Orignal  session = " + session.getId());
+	
+	if (null == session || null == session.getAttribute(Constants.VIOLATION_NUMBER)) {
 	    return false;
 	}
 	return true;
@@ -184,7 +233,15 @@ public final class CommonUtil {
 	}
 	return decoded;
     }
-
+    /**
+     * @param ds
+     * @return
+     * @throws JsonProcessingException
+     */
+    private static String createJsonString(DeleteSummon ds) throws JsonProcessingException {
+	return mapper.writeValueAsString(ds);
+    }
+    
     /**
      * @param dto
      * @return
@@ -202,4 +259,4 @@ public final class CommonUtil {
     public static JsonNode parseJsonStringToObject(String json) throws IOException {
 	return mapper.readValue(json, JsonNode.class);
     }
-}
+ }

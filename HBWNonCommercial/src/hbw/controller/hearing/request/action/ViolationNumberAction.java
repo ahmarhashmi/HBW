@@ -10,8 +10,10 @@ import hbw.controller.hearing.request.model.ViolationInfo;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
@@ -22,6 +24,14 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.ApplicationAware;
+import org.apache.struts2.interceptor.CookiesAware;
+import org.apache.struts2.interceptor.PrincipalAware;
+import org.apache.struts2.interceptor.PrincipalProxy;
+import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -109,22 +119,25 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		  //  "We are having trouble connecting to your system. We are aware of the issue and actively working on it. Please try again later.");
 	    "We are having a system error. We are aware of the issue and actively working on it. Please try again later.");
 	    return INPUT;
-	}	
+	}		
 	
-	LOGGER.info("Violation number " + this.violationNumber + " accepted for hearing request.");
 	HttpServletRequest request = ServletActionContext.getRequest();	
-	HttpSession session = request.getSession();
+	HttpSession session = request.getSession(false);
+
+	LOGGER.info("Violation number " + this.violationNumber + " accepted for hearing request.");
+			
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
 	session.setAttribute(Constants.VIOLATION_INFO, violationInfo);
 	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInSystem);
 	
+	session.setAttribute(Constants.PAGE_COUNTS, (0));
+	
 	try {
-		if(!session.isNew())
 		FileUtil.deleteTempFolder(request);
-	} catch (IOException e) {		
+	} catch (IOException e) {
+		LOGGER.error("Error in sesssion ...");
 		e.printStackTrace();
-		session.invalidate();
-		addActionError("Close the browser and try again later.");
+		addActionError("Session is over, close the browser and try again later.");
 		return INPUT;
 	}
 	
@@ -139,7 +152,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
      */
     public String getVioBase64Encoded() {
 	HttpServletRequest request = ServletActionContext.getRequest();
-	HttpSession session = request.getSession();
+	HttpSession session = request.getSession(false);
 	return CommonUtil.tripleEncodePlainText((String) session.getAttribute(Constants.VIOLATION_NUMBER));
     }
 
@@ -223,5 +236,5 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     public void setViolationInSystem(boolean violationInSystem) {
 	this.violationInSystem = violationInSystem;
     }
-
+    
 }

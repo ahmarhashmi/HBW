@@ -200,17 +200,21 @@ public final class HBWClient {
 	URL wsdlURL = new URL(Resource.WSDL_URI.getValue());
 	NYCServMobileApp_Service ss = new NYCServMobileApp_Service(wsdlURL, SERVICE_NAME);
 	return ss.getNYCServMobileAppSOAP();
-    }
-
+    }  
+    
+    private static Credentials cred = null;
+    
     /**
      * 
      * @return
      */
     public static Credentials getCredentials() {
-	Credentials cred = new Credentials();
-	cred.setUserID(Resource.USER_ID.getValue());
-	cred.setPassword(CommonUtil.tripleDecodePlainText(Resource.PASSWORD.getValue()));
-
+    if(null==cred){
+		cred = new Credentials();
+		cred.setUserID(Resource.USER_ID.getValue());
+		cred.setPassword(CommonUtil.tripleDecodePlainText(Resource.PASSWORD.getValue()));
+		//LOGGER.info(cred.getUserID()+" -- "+cred.getPassword());
+    	}
 	return cred;
     }
 

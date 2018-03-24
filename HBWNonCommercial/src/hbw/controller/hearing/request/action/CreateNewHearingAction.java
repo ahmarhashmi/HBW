@@ -3,18 +3,6 @@ package hbw.controller.hearing.request.action;
 import static com.opensymphony.xwork2.Action.INPUT;
 import static com.opensymphony.xwork2.Action.LOGIN;
 import static com.opensymphony.xwork2.Action.SUCCESS;
-import hbw.controller.hearing.request.common.CommonUtil;
-import hbw.controller.hearing.request.common.Constants;
-import hbw.controller.hearing.request.common.FileUtil;
-import hbw.controller.hearing.request.common.HBWClient;
-import hbw.controller.hearing.request.common.JWTUtil;
-import hbw.controller.hearing.request.common.Resource;
-import hbw.controller.hearing.request.common.StatesSinglton;
-import hbw.controller.hearing.request.model.Evidence;
-import hbw.controller.hearing.request.model.FileValidationRequestDTO;
-import hbw.controller.hearing.request.model.States;
-import hbw.controller.hearing.request.model.UploadedFile;
-import hbw.controller.hearing.request.model.ViolationInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -44,16 +31,26 @@ import org.example.nycservmobileapp.NYCServMobileApp;
 import org.example.nycservmobileapp.Name;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
-import com.itextpdf.text.pdf.codec.TiffImage;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
+import hbw.controller.hearing.request.common.CommonUtil;
+import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.FileUtil;
+import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.JWTUtil;
+import hbw.controller.hearing.request.common.Resource;
+import hbw.controller.hearing.request.common.StatesSinglton;
+import hbw.controller.hearing.request.model.DeleteSummon;
+import hbw.controller.hearing.request.model.Evidence;
+import hbw.controller.hearing.request.model.FileValidationRequestDTO;
+import hbw.controller.hearing.request.model.States;
+import hbw.controller.hearing.request.model.UploadedFile;
+import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
@@ -98,8 +95,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     @Override
     public void prepare() throws Exception {
     }
-    
-    
+
     /**
      * @return the violationInSystem
      */
@@ -110,54 +106,52 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * The main action listener of this class.
      */
-    @SuppressWarnings("deprecation")
-	@Action(value = "/create_hearing")
+    @Action(value = "/create_hearing")
     public String execute() {
-
+    
+    boolean noHearing = false;
+    	
 	HttpServletRequest request = ServletActionContext.getRequest();
-	HttpSession session = request.getSession();
+	HttpSession session = request.getSession(false);
 	if (!CommonUtil.isSessionActive(request)) {
 	    return LOGIN;
 	}
-	violationInSystem = (Boolean)session.getAttribute(Constants.VIOLATION_IN_SYSTEM);
+	violationInSystem = (Boolean) session.getAttribute(Constants.VIOLATION_IN_SYSTEM);
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
 	violationNumber = (String) session.getAttribute(Constants.VIOLATION_NUMBER);
+	
+	LOGGER.info("REQUEST RECEIVED for Violation No. "+violationNumber + " -- SessionId = "+ session.getId());
+			
 	files = new ArrayList<UploadedFile>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request, "create_hearing_execute");
 	List<Evidence> evidences = new ArrayList<Evidence>();
 	if (uploadedFiles.exists()) {
 	    UploadedFile uploadedFile;
+	    int totalPages = 0;
 	    for (File file : uploadedFiles.listFiles()) {
 		uploadedFile = new UploadedFile();
 		uploadedFile.setFileName(file.getName());
-		uploadedFile.setFileSize(file.length() / 1024);
-		uploadedFile.setPageCount(1);
+		uploadedFile.setFileSize(FileUtils.sizeOf(file) / 1024);
 
-		String mimeType = new MimetypesFileTypeMap().getContentType(file);
-		
-		LOGGER.info("mimeType for confirmation page = " + mimeType + " -- " + file.getName());
-		
-		if (mimeType.equals(Constants.TIFF)) {			
-			try {				
-				byte[] fileBytes  = FileUtils.readFileToByteArray(file);				
-				uploadedFile.setPageCount(TiffImage.getNumberOfPages(new RandomAccessFileOrArray(fileBytes)));
-			} catch (IOException e) {				
-				e.printStackTrace();
-			}			
-		}		
-		
-		if (mimeType.equals(Constants.PDF) || mimeType.equals("application/octet-stream")) {
+		if (FileUtil.getFileExtension(file.getName()).equals("tiff")
+			|| FileUtil.getFileExtension(file.getName()).equals("tif")) {
+
 		    try {
-			Document document = new Document();
-			document.open();
-			PdfReader reader;
-			reader = new PdfReader(file.getPath());
-			uploadedFile.setPageCount(reader.getNumberOfPages());
+			uploadedFile.setPageCount(FileUtil.getPageCountOfTiff(FileUtils.readFileToByteArray(file)));
 		    } catch (IOException e) {
 			e.printStackTrace();
 		    }
+		} else if (FileUtil.getFileExtension(file.getName()).equals("pdf")) {
+		    try {
+			uploadedFile.setPageCount(FileUtil.getPageCountOfPDF(file));
+		    } catch (Exception e) {
+			e.printStackTrace();
+		    }
+		} else {
+		    uploadedFile.setPageCount(1);
 		}
 		files.add(uploadedFile);
+		totalPages += uploadedFile.getPageCount();
 
 		try {
 		    Evidence evidence = new Evidence();
@@ -170,9 +164,15 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		    return INPUT;
 		}
 	    }
+	    UploadedFile total = new UploadedFile();
+	    total.setFileName("TOTAL");
+	    total.setPageCount(totalPages);
+	    total.setFileSize(FileUtils.sizeOf(uploadedFiles) / 1024);
+	    files.add(total);
 	}
 
-	LOGGER.info("Handling the create hearing request");
+	LOGGER.info(violationNumber +" : Handling the create hearing request");
+	
 	if (!certify) {
 	    addActionError("You must certify.");
 	    return INPUT;
@@ -193,60 +193,58 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 
 	    try {
 		String response = CommonUtil.scanAndConvertFilesToTiff(dto);
-		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);		
+		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
 		if (null != resNode.get(0)) {
-					if (resNode.get(0).get(Constants.RETURN_CODE) != null
-							&& resNode.get(0).get(Constants.RETURN_CODE)
-									.asText().equals(
-											Constants.RETURN_CODE_ERROR)) {
-						if (null == resNode.get(0).get("payload")
-								|| resNode.get(0).get("payload").asText()
-										.equals("")) {
-							if (resNode.get(0).get("ErrorCode").asText()
-									.equals("106")) {
-								addActionError("Total file size is greater then allowed limit.");
-							} else if (resNode.get(0).get("ErrorCode").asText()
-									.equals("101")) {
-								addActionError("Duplicate Summon found. Cannot be uploaded.");
-							} else {
-								addActionError("Processing Error, try again later.");
-							}
-							return INPUT;
-						}
-					}
-				}
-		if (resNode.get(Constants.RETURN_CODE) != null
+		    if (resNode.get(0).get(Constants.RETURN_CODE) != null
+			    && resNode.get(0).get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {	
+		    	
+		    	noHearing = true;
+		    	
+			    if (resNode.get(0).get("ErrorCode").asText().equals("106")) {
+				addActionError("Total file size is greater then allowed limit.");
+			    } else if (resNode.get(0).get("ErrorCode").asText().equals("101")) {
+				addActionError("Duplicate Summon found. Cannot be uploaded.");
+			    } else {
+				addActionError("Some Processing Error occur, try again later.");
+			    }
+			    return INPUT;
+			}		    
+		}
+		else if (resNode.get(Constants.RETURN_CODE) != null
 			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+			
+			noHearing = true;
+			
 		    LOGGER.info("Vanguard return code is " + resNode.get(Constants.RETURN_CODE).asText());
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
-		    	if (payloadItem.get("ErrorCode") != null
-						&& payloadItem.get("ErrorCode").asText().equals("101")) {
-					    addActionError("Duplicate Summon found. Cannot be uploaded.");
-					    isError = true;
-					}
-					else if (payloadItem.get("ErrorCode") != null
-							&& payloadItem.get("ErrorCode").asText().equals("105")) {
-						    addActionError("File name " + payloadItem.get("FileName") + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
-						    isError = true;
-						}
-					else if (payloadItem.get("ErrorCode") != null
-							&& payloadItem.get("ErrorCode").asText().equals("107")) {
-						    addActionError("File name " + payloadItem.get("FileName") + " is not a valid file name. Cannot be uploaded.");
-						    isError = true;
-						}
-					else if (payloadItem.get("ErrorCode") != null
-							&& payloadItem.get("ErrorCode").asText().equals("106")) {
-						    addActionError("File name " + payloadItem.get("FileName") + " is not a valid file size. Cannot be uploaded.");
-						    isError = true;
-						}
-					else if (payloadItem.get("ErrorCode") != null
-							&& payloadItem.get("ErrorCode").asText().equals("112")) {
-						    addActionError("File name " + payloadItem.get("FileName") + " is duplicate file. Cannot be uploaded.");
-						    isError = true;
-						}
-				    }
+			if (payloadItem.get("ErrorCode") != null
+				&& payloadItem.get("ErrorCode").asText().equals("101")) {
+			    addActionError("Duplicate Summon found. Cannot be uploaded.");
+			    isError = true;
+			} else if (payloadItem.get("ErrorCode") != null
+				&& payloadItem.get("ErrorCode").asText().equals("105")) {
+			    addActionError("File name " + payloadItem.get("FileName")
+				    + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
+			    isError = true;
+			} else if (payloadItem.get("ErrorCode") != null
+				&& payloadItem.get("ErrorCode").asText().equals("107")) {
+			    addActionError("File name " + payloadItem.get("FileName")
+				    + " is not a valid file name. Cannot be uploaded.");
+			    isError = true;
+			} else if (payloadItem.get("ErrorCode") != null
+				&& payloadItem.get("ErrorCode").asText().equals("106")) {
+			    addActionError("File name " + payloadItem.get("FileName")
+				    + " is not a valid file size. Cannot be uploaded.");
+			    isError = true;
+			} else if (payloadItem.get("ErrorCode") != null
+				&& payloadItem.get("ErrorCode").asText().equals("112")) {
+			    addActionError("File name " + payloadItem.get("FileName")
+				    + " is duplicate file. Cannot be uploaded.");
+			    isError = true;
+			}
+		    }
 		    if (!isError) {
 			addActionError(resNode.get("ErrorCode").asText()
 				+ ": Unexpected response from the server. Please try again later.");
@@ -255,35 +253,77 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		}
 	    } catch (Exception e) {
 		e.printStackTrace();
+		
+		
+		try{
+		
 		if (e.getMessage().contains("Connection timed out:")) {
-		    addActionError("Server not responding. Please try again later.");
-		    return INPUT;
+			    addActionError("Server not responding. Please try again later.");
+			    return INPUT;
 		}
+		//new code in case of exception delete the recently create request 
+		if(e.getMessage().contains("HTTP response code: 503") || e.getMessage().contains("HTTP response code: 403")){
+				LOGGER.error("Going to delete Summon from VGD server.");
+				deleteVGDSummonsNumber(violationNumber);
+				addActionError("Server is busy. Please try again later.");
+			    return INPUT;
+			}
+		}catch(Exception exp){
+			LOGGER.error("Exception in VGD delete  === " + exp.getMessage());			
+		}
+				
 		addActionError(e.getLocalizedMessage());
 		return INPUT;
 	    }
 	}
 	try {
 	    LOGGER.info("Handling the create hearing request. All validations successful.");
-	    LOGGER.info("State has been selected to be:" + state);
-	    createNewHearing();
-	    FileUtil.deleteTempFolder(request);
+	    //LOGGER.info("State has been selected to be:" + state);
+	    
+	    if(!noHearing) {
+	    	createNewHearing();
+	    	FileUtil.deleteTempFolder(request);
+	    }
 	} catch (MalformedURLException e) {
-	    addActionError(e.getLocalizedMessage());
+	    e.printStackTrace();
+		addActionError("Server is busy, please try later.");
+	    
 	    return INPUT;
 	} catch (IOException e) {
 	    LOGGER.error("An error occurred in deleting the temp directory: " + e.getStackTrace());
+	    return INPUT;
 	} catch (Exception e) {
+		deleteVGDSummonsNumber(violationNumber);
 	    e.printStackTrace();
 	    if (e.getMessage() != null && e.getMessage().toLowerCase().contains("invalid defense")) {
 		addActionError(
 			"Something wrong with the defense you entered. There might be some unauthorized characters in it. Please check and try again.");
-	    } else {
-		addActionError(e.getLocalizedMessage());
+	    } else {		
+		addActionError("Error while create hearing, please try later");
 	    }
 	    return INPUT;
 	}
 	return SUCCESS;
+    }
+    
+    public void deleteVGDSummonsNumber(String violationNumber)
+    {
+    
+    	DeleteSummon ds = new DeleteSummon();	
+	    ds.setSummonsNumber(violationNumber);
+	    ds.setToken(JWTUtil.createJWT(violationNumber));	    
+	    
+	    String response = CommonUtil.deleteSummon(ds);;
+		JsonNode resNode;
+		try {
+			resNode = CommonUtil.parseJsonStringToObject(response);
+			if (null != resNode.get(0)) {
+				//need to code here
+				LOGGER.info(resNode.get(0).get("ReturnCode")+"");
+			}
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}		
     }
 
     /**
@@ -292,7 +332,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     public void createNewHearing() throws MalformedURLException {
 	NYCServMobileApp port = HBWClient.getConnection();
-	LOGGER.info("Invoking createNewHearing...");
+	LOGGER.info(violationNumber + " :Invoking createNewHearing...");
 	CreateNewHearingRequest request = new CreateNewHearingRequest();
 	request.setCredentials(HBWClient.getCredentials());
 	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
@@ -323,7 +363,10 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    throw new RuntimeException(response.getFeedBack().getFailureReason());
 
 	}
-	LOGGER.debug("createNewHearing.result = " + response);
+	else
+	{
+		LOGGER.info(violationNumber + " : createNewHearing.result from DOF isNewHearingCreated() = " + response.isNewHearingCreated() + " --getFeedBack().isSuccess()--  "+ response.getFeedBack().isSuccess());
+	}
     }
 
     /**
@@ -363,7 +406,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the firstName
      */
-    @RequiredStringValidator(fieldName = "firstName", message = "Fist Name is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "firstName", message = "Fist Name is required.", trim = true)
     public String getFirstName() {
 	return firstName;
     }
@@ -394,7 +437,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the lastName
      */
-    @RequiredStringValidator(fieldName = "lastName", message = "Last Name is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "lastName", message = "Last Name is required.", trim = true)
     public String getLastName() {
 	return lastName;
     }
@@ -410,7 +453,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the address
      */
-    @RequiredStringValidator(fieldName = "address", message = "Address is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "address", message = "Address is required.", trim = true)
     public String getAddress() {
 	return address;
     }
@@ -441,7 +484,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the city
      */
-    @RequiredStringValidator(fieldName = "city", message = "City is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "city", message = "City is required.", trim = true)
     public String getCity() {
 	return city;
     }
@@ -473,7 +516,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the zip
      */
-    @RequiredStringValidator(fieldName = "zip", message = "Zip/Postal Code is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "zip", message = "Zip/Postal Code is required.", trim = true)
     public String getZip() {
 	return zip;
     }
@@ -489,7 +532,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the email1
      */
-    @RequiredStringValidator(fieldName = "email1", message = "Email is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "email1", message = "Email is required.", trim = true)
     public String getEmail1() {
 	return email1;
     }
@@ -505,7 +548,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     /**
      * @return the email2
      */
-    @RequiredStringValidator(fieldName = "email2", message = "Confirm email is rquired.", trim = true)
+    @RequiredStringValidator(fieldName = "email2", message = "Confirm email is required.", trim = true)
     public String getEmail2() {
 	return email2;
     }

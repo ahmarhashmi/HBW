@@ -22,13 +22,17 @@ public enum Resource {
     PASSWORD, 
     WS_CHANNEL,
     VANGAURD_VIRUS_SCAN_URL,
+    VANGAURD_DELETE_SUMMON_URL,
     DOF_BROKER_URL, 
     PROXY_IP, 
     PROXY_PORT, 
 
     ;
 
-    private static final String PROPERTIES_FILE_NAME = "config.properties";
+   //private static final String ENV_PROP = System.getProperty("config.properties");
+   //private static final String PROPERTIES_FILE_NAME = ENV_PROP;
+    
+    private static final String PROPERTIES_FILE_NAME = "config.properties";    
 
     private static final Logger logger = Log4j2LoggerFactory.getLogger(Resource.class);
 
@@ -40,7 +44,9 @@ public enum Resource {
 	if (properties == null) {
 	    properties = new Properties();
 	    try {
-		properties.load(Resource.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME));
+	    	//logger.info("ENV_PROP == " + ENV_PROP);
+	    	properties.load(Resource.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME));		 
+		 
 	    } catch (Exception e) {
 		logger.error("Unable to load " + PROPERTIES_FILE_NAME + " file from classpath.", e);
 		System.exit(1);

@@ -14,8 +14,8 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/bootstrap.min.css">
 
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/css/font-awesome.min.css">
+<link rel="stylesheet" 
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
@@ -307,12 +307,27 @@ function isValidEmail(value){
 						 * Ajax submission of the page.
 						 */
 						$('#submitBtn')
-								.click(
+								.click(								
 										function(event) {
-											if(validateForm()){
+										console.log("Crete Hearing Proces Starts ...");
+										var me = $(this);
+										
+										event.preventDefault();
+										event.stopImmediatePropagation();
+																				  									
+											if(validateForm()){											
+											//$('#submitBtn').prop('disabled', true);
+																																
+											if ( me.data('requestRunning') ) {
+												console.log("Crete hearing process is already running -- no action");
+        										return;
+    										}
+    										
+    										me.data('requestRunning', true); 
+    										  									
 											loadingDiv.style.display = "block";
 											$("#displayError").empty();
-											event.preventDefault();
+											
 											var processData = $('#mainForm')
 													.serialize();
 											$
@@ -321,16 +336,22 @@ function isValidEmail(value){
 														url : "<s:url action='create_hearing' />",
 														data : processData,
 														cache : false,
+														//async : false,														
 														success : function(
 																result) {
+															console.log("request in progress ...");
+															me.data('requestRunning', false);
+															
 															var errors = $(result).find(".errors");
-															loadingDiv.style.display = "none";
+															loadingDiv.style.display = "none";														
+															
 															if ($(result).find(".errors").length == 0) {
+															console.log("request in progress ... In if");
 																$(window).unbind('beforeunload');
 																var myWindow = window.open("","_self");
-																myWindow.document
-																		.write(result);
+																myWindow.document.write(result);
 															} else {
+																console.log("request in progress ... In else");
 																$(
 																		"#displayError")
 																		.append(
@@ -344,12 +365,20 @@ function isValidEmail(value){
 																				},
 																				1000);
 															}
-														},
-														error : function() {
+														},														
+														error : function(t) {														
 															loadingDiv.style.display = "none";
-														}
+															console.log("Some Error happens in ajax call ...");
+															
+														},														
+														complete: function(){
+															console.log("Proces Completes ...");																																								
+														 	me.data('requestRunning', false);														 	
+															//$('#submitBtn').prop('disabled', false);	
+														}														
 													});
-											}
+											}																						
+											return false;
 										});
 						
 						$("#email1")
@@ -638,20 +667,20 @@ function isValidEmail(value){
 					</s:if>
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
-						class="dropzone" method="POST">
-					</form>
+						class="dropzone" method="POST"></form>
 					<div id="totalCountDiv"
 						style="width: 100%; height: 20px; margin-top: 5px; margin-bottom: 5px; align-items: right;">
 						<span class="pull-right" id="totalCountSpan"></span>
 					</div>
 					<br>
+
+
 					<p id="affirmCheckBoxPrompt">You must check the box below if
 						you are not uploading evidence. By checking this box, you agree to
 						the following:</p>
-					<s:form method="post" action="create_hearing" namespace="/dispute"
-						theme="simple" id="mainForm">
+					<s:form theme="simple" id="mainForm" action="#" method="#">
 
-						<s:textfield id="violationHidden" name="violationNumber"
+						<s:textfield id="violationHidden" name="violationHidden" value="123"
 							style="display:none" />
 						<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
@@ -784,13 +813,15 @@ function isValidEmail(value){
 						<div class="form-group">
 							<%-- <s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" /> --%>
-							<input id="submitBtn" type="button" class="btn btn-primary"
-								value="Submit Request" /> <a class="btn btn-link "
+								<input id="submitBtn" type="button" class="btn btn-primary"
+								value="Submit Request" />
+							 <a class="btn btn-link "
 								href="#submitBtn"
-								onclick="cancelRequestConfirmationDialog('You will lose any information and files entered into this form.');">Cancel
+								onclick="cancelRequestConfirmationDialog('Would you like to cancel the request, you will lose all uploaded information and files');">Cancel
 								Request</a>
 						</div>
 					</s:form>
+					
 				</div>
 			</div>
 		</div>

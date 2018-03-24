@@ -1322,17 +1322,6 @@ var Dropzone = function (_Emitter) {
               efct = e.dataTransfer.effectAllowed;
             } catch (error) {}
             e.dataTransfer.dropEffect = 'move' === efct || 'linkMove' === efct ? 'move' : 'copy';
-            try {
-            	//console.log( $('#file-uploader-container').hide());
-            	//$('#inFile').close()
-            	 // The file dialog on Chrome allows users to drag files from the dialog onto
-            	 // the dropzone, causing the browser the crash when the file dialog is closed.
-            	 // A drop effect of 'none' prevents the file from being dropped
-            	 e.dataTransfer.dropEffect = this.isFileDialogActive ? 'none' : 'copy'; // eslint-disable-line no-param-reassign;
-            } catch (err) {
-            	 // continue regardless of error
-            	 console.log(err);
-            }
 
             noPropagation(e);
             return _this3.emit("dragover", e);

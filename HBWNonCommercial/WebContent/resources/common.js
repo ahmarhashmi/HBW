@@ -64,7 +64,7 @@ function openTicketPopUp()
 
 function openRedlightTicketPopup()
 {
-	openPopUpWindow('../sample/redLightViolationSample.html','RedLightTicketPopUp','700','840','no','yes','no','no');
+	openPopUpWindow('../sample/redLightViolationSample.html','RedLightTicketPopUp','700','640','no','yes','no','no');
 }
 
 function openBusLaneCameraViolationPopup()
@@ -74,5 +74,5 @@ function openBusLaneCameraViolationPopup()
 
 function openSpeedCameraViolationPopup()
 {
-	openPopUpWindow('../sample/speedCameraViolationSample.html','SpeedCameraViolationPopUp','700','840','no','no','no','no');
+	openPopUpWindow('../sample/speedCameraViolationSample.html','SpeedCameraViolationPopUp','700','640','no','no','no','no');
 }

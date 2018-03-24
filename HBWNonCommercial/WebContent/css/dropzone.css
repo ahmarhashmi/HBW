@@ -400,7 +400,7 @@
     border: 1px dashed #929292;
     /* min-height: 360px; */
     height: 207px;
-    width: 700px;
+    width: 100%;
     -webkit-border-radius: 5px;
     border-radius: 5px;
     background: #f1f1f1;
@@ -863,4 +863,20 @@ input.deletebutton {
     top: 7px;
     right: 10px;
 }
+}
+
+.dz-error-mark:before {
+ content: "\f057";font-family: fontawesome;display: block;font-size: 28px;line-height: 25px;
+}
+
+.dz-error-mark svg {
+ display: none !important;
+}
+
+.dz-error-mark svg{
+ display: none !important;
+}
+
+.dz-success-marka:before {
+ content: "\f058";font-family: fontawesome;display: block;font-size: 28px;line-height: 25px;
 }

@@ -1,9 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
-<%@ page contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="s" uri="/struts-tags"%>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,8 +127,8 @@
 						</tr>
 						<tr>
 							<td>Name:</td>
-							<td><s:property value="firstName" /> <s:property
-									value="middleName" /> <s:property value="lastName" /></td>
+							<td><s:property value="firstName" /> <s:property value="middleName" /> 
+							 <s:property value="lastName" /></td>
 						</tr>
 						<tr>
 							<td>Address:</td>
