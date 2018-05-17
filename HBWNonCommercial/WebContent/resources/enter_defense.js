@@ -16,7 +16,7 @@ Dropzone.options.fileUploadForm = {
 	autoProcessQueue : true,
 	uploadMultiple : true,
 	parallelUploads : 1,
-	dictInvalidFileType : "File type is not supported.",
+	dictInvalidFileType : "File type is not supported. Please submit a PDF, JPEG/JPG, TIFF, BMP, or non-animated gif.",
 	maxFiles : 50,
 
 	success : function(file, response) {
@@ -111,7 +111,7 @@ Dropzone.options.fileUploadForm = {
 
 			if (!isTypeAllowed) {
 				wrapperThis.removeFile(file);
-				alert("File type is not supported");
+				alert("File type is not supported. Please submit a PDF, JPEG/JPG, TIFF, BMP, or non-animated gif.");
 			}
 			
 			file.previewElement.addEventListener('click', function() {
@@ -206,7 +206,7 @@ function getContextPath(){
 
 function cancelRequestConfirmationDialog(message) {
     $('<div></div>').appendTo('body')
-        .html('<div><h6>'+message+'?</h6></div>')
+        .html('<div><h6>'+message+'</h6></div>')
         .dialog({
             modal: true, title: 'Cancel Hearing Request?', zIndex: 10000, autoOpen: true,
             width: 'auto', resizable: false,

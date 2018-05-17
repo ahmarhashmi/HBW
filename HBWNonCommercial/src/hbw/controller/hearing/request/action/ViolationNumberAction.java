@@ -4,6 +4,7 @@ import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
 import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.HBWMessages;
 import hbw.controller.hearing.request.common.StatesSinglton;
 import hbw.controller.hearing.request.model.States;
 import hbw.controller.hearing.request.model.ViolationInfo;
@@ -81,24 +82,27 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	violationNumber = violationNumber.trim();
 	
 	try {
-	    if (!HBWClient.isViolationInSystem(violationNumber)) {
+	    /**
+	     * In case violation is not in system, there's no sense of checking it's
+	     * eligibility and populating info
+	     */
+		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {	
+			String message = HBWClient.getReasonForViolationNotEligibleForHearing(violationNumber);
+			if(null != message && message.contains("The check digit is invalid."))
+				message = HBWMessages.VIOLATION_SEARCH_INVALID_ENTRY;
+			addActionError(message);		
+		    //addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");			
+			return INPUT;
+		}
+	
+		if (!HBWClient.isViolationInSystem(violationNumber)) {
 		/** No more needed to restrict the user in case violation is not in system */
 		// addActionError("Violation number not found. Check that your violation number is correct and try again.");
 		// return INPUT;
 		violationInSystem = false;
 	    }
-	    /**
-	     * In case violation is not in system, there's no sense of checking it's
-	     * eligibility and populating info
-	     */
-	    if (violationInSystem) {
-		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {		
-			
-			addActionError(HBWClient.getReasonForViolationNotEligibleForHearing(violationNumber));		
-		    //addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");
-			
-			return INPUT;
-		}
+	
+	    if (violationInSystem) {	
 		violationInfo = HBWClient.getViolationInfo(violationNumber);
 		if (violationInfo == null) {
 		    violationInfo = HBWClient.getViolationInfoByPlateNubmer(violationNumber);
@@ -109,15 +113,13 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		vioNumber = this.violationNumber.substring(0, 9);
 		checkDigit = this.violationNumber.substring(this.violationNumber.length() - 1);
 		if (!checkDigit.equals(calculateViolationNumberCheckDigit(vioNumber))) {
-		    addActionError("Violation number you entered is not valid. Check that your violation number is correct and try again.");
+		    addActionError(HBWMessages.VIOLATION_SEARCH_INVALID_ENTRY);
 		    return INPUT;
 		}
 	    }
 	} catch (Exception e) {
 		e.printStackTrace();
-	    addActionError(
-		  //  "We are having trouble connecting to your system. We are aware of the issue and actively working on it. Please try again later.");
-	    "We are having a system error. We are aware of the issue and actively working on it. Please try again later.");
+	    addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 	    return INPUT;
 	}		
 	
@@ -137,7 +139,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	} catch (IOException e) {
 		LOGGER.error("Error in sesssion ...");
 		e.printStackTrace();
-		addActionError("Session is over, close the browser and try again later.");
+		addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 		return INPUT;
 	}
 	

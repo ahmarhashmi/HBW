@@ -47,13 +47,13 @@
 
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-53440151-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116506688-1"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'UA-53440151-1');
+  gtag('config', 'UA-116506688-1');
 </script>
 
 
@@ -126,11 +126,19 @@
 				$('#stateMsg').css("display", "none");
 			}
 			if (!$('#zip').val()) {
-				$('#zipMsg').css("display", "block");
+				$('#zipEmptyMsg').css("display", "block");
 				$('#zip').focus();
 				return false;
 			} else {
-				$('#zipMsg').css("display", "none");
+				$('#zipEmptyMsg').css("display", "none");
+				var isZipValid = /^[a-zA-Z0-9-_]+$/.test($('#zip').val());
+				if (isZipValid) {
+					$('#zipInvalidMsg').css("display", "none");
+				} else{
+					$('#zipInvalidMsg').css("display", "block");
+					$('#zip').focus();
+			     	return false;
+			    }
 			}
 			if (!$('#email1').val()) {
 				$('#email1Msg').css("display", "block");
@@ -288,6 +296,7 @@ function isValidEmail(value){
 							}
 						}); // End of 'keydown keyup' method.
 						$('#zip').on('keydown keyup', function(e) {
+							return;
 							var value = String.fromCharCode(e.which) || e.key;
 							if (!(e.keyCode >= 96 && e.keyCode <= 105) &&
 							(e.key != 'Tab' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
@@ -487,18 +496,33 @@ function isValidEmail(value){
 
 		<div class="container">
 			<div class="row">
-				<div class="col-sm-9 col-sm-offset-3">
-					<h1>Dispute a Ticket</h1>
-					<h3>Enter Defense & Evidence</h3>
-					<p>Use this form to plead “Not Guilty” to your violation and
-						request a hearing. After you submit the form and any evidence you
-						have, a judge will review the case. The judge's decision will be
-						emailed in about 75 days.</p>
-					<hr>
-					<h4>Violation</h4>
 					<s:set name="webViolationInSystem" value="violationInSystem" />
 					<s:set name="webViolationInJudgment"
 						value="violationInfo.violationStatusInJudgment" />
+				<div class="col-sm-9 col-sm-offset-3">
+					<h1>Dispute a Ticket</h1>
+					<h3>Enter Defense & Evidence</h3>
+					<s:if test="%{#webViolationInJudgment}">
+						<p>Use this form to plead “Not Guilty” to your violation and
+						request a hearing. 
+						</p>
+						<b>The violation you entered is in judgment.</b>
+						<p style="margin-top: 15px;">
+						Outstanding violations go into judgment after approximately 100 days,
+						after which only the registered owner or his/her authorized
+						representative may request a hearing. If the judge does grant your
+						request for a hearing, he/she will review any evidence you may have
+						submitted along with your defense to the violation itself. The judge's
+						decision will be emailed in about 45 days.</p>
+					</s:if>
+					<s:else>
+					<p>Use this form to plead “Not Guilty” to your violation and
+						request a hearing. After you submit the form and any evidence you
+						have, a judge will review the case. The judge's decision will be
+						emailed in about 45 days.</p>
+					</s:else>
+					<hr>
+					<h4>Violation</h4>
 					<s:if test="%{#webViolationInSystem}">
 						<div class="row">
 							<div class="col-sm-4">
@@ -575,19 +599,19 @@ function isValidEmail(value){
 									</tr>
 									<tr>
 										<td>Penalty:</td>
-										<td><s:property value="violationInfo.penalty" /></td>
+										<td>$<s:property value="violationInfo.penalty" /></td>
 									</tr>
 									<tr>
 										<td>Interest:</td>
-										<td><s:property value="violationInfo.interest" /></td>
+										<td>$<s:property value="violationInfo.interest" /></td>
 									</tr>
 									<tr>
 										<td>Reduction:</td>
-										<td><s:property value="violationInfo.reduction" /></td>
+										<td>$<s:property value="violationInfo.reduction" /></td>
 									</tr>
 									<tr>
 										<td>Paid:</td>
-										<td><s:property value="violationInfo.paid" /></td>
+										<td>$<s:property value="violationInfo.paid" /></td>
 									</tr>
 									<tr class="total">
 										<td>Balance Due:</td>
@@ -624,10 +648,7 @@ function isValidEmail(value){
 							<textarea class="form-control" rows="10" cols="30"
 								maxlength="32700" id="explainWhyID"
 								onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
-							<span id="explainWhyMessage" style="color: red; display: none;">Maximum
-								length reached. If you want to write more, please do not request
-								a hearing online. Submit your hearing request and evidence by
-								mail or in person.</span>
+							<span id="explainWhyMessage" style="color: red; display: none;">Your message cannot exceed 32700 characters. If you want to write more, please do not request a hearing online. Submit your hearing request and evidence by mail or in person.</span>
 						</div>
 					</s:if>
 					<div class="clearfix gap"></div>
@@ -763,8 +784,9 @@ function isValidEmail(value){
 									label="ZIP/Postal Code" class="form-control" min="1"
 									max="9999999999" style="max-width:250px;" labelposition="top"
 									maxlength="10" requiredLabel="true" requiredPosition="top" />
-								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
-									Code is required.</span>
+								<span id="zipEmptyMsg" style="color: red; display: none;">Zip/Postal
+	Code is required.</span><span id="zipInvalidMsg" style="color: red; display: none;">Zip/Postal
+	Code format is not valid.</span>
 							</div>
 							<div class="form-group">
 								<label>Email Address</label>
@@ -782,9 +804,9 @@ function isValidEmail(value){
 									label="Confirm Email Address" class="form-control"
 									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
-									confirm your email.</span> <span id="emailMatchMsg"
+									confirm your email address.</span> <span id="emailMatchMsg"
 									style="color: red; display: none;">Does not match email
-									address above.</span> <span id="email2FormatMsg"
+									address above. Please try again.</span> <span id="email2FormatMsg"
 									style="color: red; display: none;">Email format is not
 									correct.</span>
 							</div>
@@ -806,10 +828,7 @@ function isValidEmail(value){
 								</label>
 
 							</div>
-						</div>
-
-						<p>Once you submit your request, your hearing will be
-							scheduled.</p>
+						</div>						
 						<div class="form-group">
 							<%-- <s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" /> --%>
@@ -817,7 +836,7 @@ function isValidEmail(value){
 								value="Submit Request" />
 							 <a class="btn btn-link "
 								href="#submitBtn"
-								onclick="cancelRequestConfirmationDialog('Would you like to cancel the request, you will lose all uploaded information and files');">Cancel
+								onclick="cancelRequestConfirmationDialog('Warning: You have not yet submitted your request. If you leave the page, you will lose any information and files you have entered into this form.');">Cancel
 								Request</a>
 						</div>
 					</s:form>

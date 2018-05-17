@@ -31,6 +31,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
+import hbw.controller.hearing.request.common.HBWMessages;
 import hbw.controller.hearing.request.common.Resource;
 
 /**
@@ -136,7 +137,7 @@ public class FileUploadServlet extends HttpServlet {
 	     * CAUTION: Do not change the response string, Else Front end string will also
 	     * be required to be changed.
 	     */
-	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Session timed out.");
+	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 	    return;
 	}
 
@@ -156,19 +157,10 @@ public class FileUploadServlet extends HttpServlet {
 	    for (FileItem item : items) {
 		if (!item.isFormField()) {
 		    int pageCount = 1;
+		    		    
+		    StringBuilder totalCountReachedMessage = new StringBuilder(HBWMessages.FILE_UPLOAD_SERVLET_MAX_PAGES);
 
-		    StringBuilder totalCountReachedMessage = new StringBuilder(Resource.MAX_NUMBER_OF_EVIDENCES
-			    .getValue() + " pages upload limit will be violated with this file. So ")
-				    .append(item.getName() + " cannot be uploaded. ")
-				    .append("If you want to submit more evidence, please do not request a hearing online. ")
-				    .append("Submit your hearing request and evidence by mail or in person.");
-
-		    StringBuilder totalSizeReachedMessage = new StringBuilder((Long
-			    .parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue()) / 1024 / 1024)
-			    + " MB upload limit will be voilated with this file. So ")
-				    .append(item.getName() + " cannot be uploaded. ")
-				    .append("If you want to submit more evidence, please do not request a hearing online. ")
-				    .append("Submit your hearing request and evidence by mail or in person.");
+		    StringBuilder totalSizeReachedMessage = new StringBuilder(HBWMessages.FILE_UPLOAD_SERVLET_MAX_SIZE);
 
 		    if (getExistingCount(request) + pageCount > Integer
 					.parseInt(Resource.MAX_NUMBER_OF_EVIDENCES.getValue())) {
@@ -188,13 +180,11 @@ public class FileUploadServlet extends HttpServlet {
 			}
 			file = new File(evidencePath, item.getName().replaceAll("\\s+", ""));
 			if (item.getSize() > Long.parseLong(Resource.MAX_TOTAL_SIZE_OF_EVIDENCE.getValue())) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"File cannot be greater than " + Resource.MAX_TOTAL_SIZE_OF_EVIDENCE + "MB");
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,HBWMessages.FILE_UPLOAD_SERVLET_TOTAL_FILE_SIZE);
 				return;
 			}
 			if (file.exists()) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"A file with the same name was already uploaded. If this is different, rename the file and try again.");
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.FILE_UPLOAD_SERVLET_FILE_ALREADY_EXIST);
 				return;
 			}
 
@@ -217,8 +207,7 @@ public class FileUploadServlet extends HttpServlet {
 		    if (mime[0].equals("image") && !(mime[1].toLowerCase().equals("tiff"))) {
 			BufferedImage bi = ImageIO.read(item.getInputStream());
 			if (bi == null) {
-			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				    "File is damaged and cannot be uploaded.");
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.FILE_UPLOAD_SERVLET_FILE_IS_DAMAGED);
 			    return;
 			}
 		    } else if (mime[0].equals("application") && mime[1].toLowerCase().equals("pdf")) {
@@ -242,8 +231,7 @@ public class FileUploadServlet extends HttpServlet {
 			} catch (Exception e) {
 			    if (null != file)
 				file.delete();
-			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				    "File is damaged or not a valid pdf file, hence, cannot be uploaded.");
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.FILE_UPLOAD_SERVLET_INVALID_PDF);			   
 			    return;
 			}
 
@@ -260,13 +248,11 @@ public class FileUploadServlet extends HttpServlet {
 				return;
 			    }
 			} catch (Exception e) {
-			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				    "File is damaged or not a valid tiff file, hence, cannot be uploaded.");
+			    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.FILE_UPLOAD_SERVLET_INVALID_TIFF);				    
 			    return;
 			}
 		    } else {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				mime[0] + "/" + mime[1] + "File not supported.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.FILE_UPLOAD_SERVLET_SUPPORTED_FILE);			
 			return;
 		    }
 
@@ -280,8 +266,7 @@ public class FileUploadServlet extends HttpServlet {
 
 		    if (fileExt.toLowerCase().equals("gif") && FileUtil.isAnimatedGIF(file)) {
 			file.delete();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"Animated gif is not allowed. Only PDF, JPEG/JPG, TIFF, BMP, or non-animated gif can be uploaded.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.FILE_UPLOAD_SERVLET_INVALID_GIF);				
 			return;
 		    }
 
@@ -296,7 +281,7 @@ public class FileUploadServlet extends HttpServlet {
 		file.delete();
 	    LOGGER.error("File not uploaded. Please try again.");
 	    e.printStackTrace();
-	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
+	    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 	}
     }
 

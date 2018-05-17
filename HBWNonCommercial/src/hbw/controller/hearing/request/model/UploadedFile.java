@@ -11,7 +11,7 @@ public class UploadedFile {
 
     private String fileName;
     private int pageCount;
-    private long fileSize;
+    private String fileSize;
 
     /**
      * @return the fileName
@@ -46,7 +46,7 @@ public class UploadedFile {
     /**
      * @return the fileSize
      */
-    public long getFileSize() {
+    public String getFileSize() {
 	return fileSize;
     }
 
@@ -54,7 +54,7 @@ public class UploadedFile {
      * @param fileSize
      *            the fileSize to set
      */
-    public void setFileSize(long fileSize) {
+    public void setFileSize(String fileSize) {
 	this.fileSize = fileSize;
     }
 }

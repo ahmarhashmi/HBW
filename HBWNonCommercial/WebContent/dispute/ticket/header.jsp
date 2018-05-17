@@ -59,7 +59,7 @@
 				<a href="#" class="toggle-mobile-side-nav visible-phone"
 					id="nav-open-btn">Menu</a><span
 					class="welcome-text hidden-phone agency-header"></span>
-				<div class="agency-logo-wrapper">
+				<div class="agency-logo-wrapper" id="header_image">
 					<a href="http://www1.nyc.gov/site/finance/index.page"><img class="agency-logo"
 						src="${pageContext.request.contextPath}/images/nyc_finance_logo.png" alt="Department of Finance"></a>
 				</div>

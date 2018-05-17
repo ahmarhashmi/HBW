@@ -25,6 +25,17 @@
 	href="${pageContext.request.contextPath}/css/header.css">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/common.js"></script>
+	
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116506688-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-116506688-1');
+</script>
+
 <script>
 	$(document)
 			.ready(
@@ -64,14 +75,18 @@
 	}
 
 	function showPrintPrview() {
-		// Chrome 1+
-		var isChrome = !!window.chrome && !!window.chrome.webstore;
-		if (!!window.chrome && !!window.chrome.webstore) {
+					
+		var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+		var isChrome = !!window.chrome && !!window.chrome.webstore;		
+		
+		if (isChrome || isSafari) {			
 			window.print();
-		} else {
-			var divToPrint = document.getElementById('containerDiv');
+		}
+		else {			
+			var divTop = document.getElementById('header_image');
+			var divToPrint =  document.getElementById('containerDiv');
 			var newWin = window.open();
-			newWin.document.write(divToPrint.innerHTML);
+			newWin.document.write(divTop.innerHTML + divToPrint.innerHTML);
 			newWin.document.close();
 			newWin.focus();
 			newWin.print();
@@ -102,7 +117,7 @@
 						email address. Print and save a copy of the email or make a
 						screenshot of this page for your records.<br> <br> An
 						Administrative Law Judge’s decision will be sent to the email
-						address you supplied in about 75 days.<b> Please make sure to
+						address you supplied in about 45 days.<b> Please make sure to
 							add NYCServ@finance.nyc.gov to your address book</b> and keep the
 						email for your records.<br> <br> Your violation number
 						is:<b> <s:property value="violationNumber" /></b><br> <br>
@@ -131,16 +146,24 @@
 							 <s:property value="lastName" /></td>
 						</tr>
 						<tr>
-							<td>Address:</td>
+							<td rowspan="2">Address:</td>
 							<td><s:property value="address" /> <s:property
-									value="address2" /> <s:property value="city" /> <s:property
-									value="state" /> <s:property value="zip" /></td>
+									value="address2" /> </td>
+						</tr>
+						<tr>
+							<td style="border: 0;">
+							<s:property value="city" />, <s:property
+									value="state" /> <s:property value="zip" />
+							</td>
 						</tr>
 						<tr>
 							<td>Email Address:</td>
 							<td><s:property value="email1" /></td>
 						</tr>
 					</table>
+					<s:set name="webViolationInSystem" value="violationInSystem" />
+					<s:set name="webViolationInJudgment"
+						value="violationInfo.violationStatusInJudgment" />
 					<table class="table-responsive table table-striped">
 						<thead>
 							<tr>
@@ -166,13 +189,13 @@
 						</tr>
 						<tr>
 							<td>Amount Due:</td>
-							<td>$<s:property value="violationInfo.balanceDue" />
+							<td>
+							<s:if test="%{#webViolationInSystem}">
+								$<s:property value="violationInfo.balanceDue" />
+							</s:if>
 							</td>
 						</tr>
 					</table>
-					<s:set name="webViolationInSystem" value="violationInSystem" />
-					<s:set name="webViolationInJudgment"
-						value="violationInfo.violationStatusInJudgment" />
 					<table class="table-responsive table table-striped">
 						<thead>
 							<tr>
@@ -184,22 +207,18 @@
 							<tr>
 								<td>
 									<p>
-										<b>Explain why you not previously responded to this
+										<b>Explain why you have not previously responded to this
 											request.</b>
-									</p> <br>
-									<p>
-										<s:property value="explainWhy" />
 									</p>
+									<textarea class="form-control" style="height:214px;width:100%" readonly ><s:property value="explainWhy" /></textarea>
 								</td>
 							</tr>
 						</s:if>
 						<tr>
 							<td>
 								<p><b>Your statement as to why you believe the violation should
-									be dismissed.</b></p> <br>
-								<p>
-									<s:property value="defense" />
-								</p>
+									be dismissed.</b></p>
+								<textarea class="form-control" style="height:214px;width:100%" readonly ><s:property value="defense" /></textarea>
 							</td>
 						</tr>
 					</table>
@@ -218,7 +237,7 @@
 								<tr>
 									<td><s:property value="fileName" /></td>
 									<td align="center"><s:property value="pageCount" /></td>
-									<td align="center"><s:property value="fileSize" />&nbsp;KB</td>
+									<td align="center"><s:property value="fileSize" />&nbsp;MB</td>
 								</tr>
 							</s:iterator>
 						</table>

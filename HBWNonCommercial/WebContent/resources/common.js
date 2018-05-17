@@ -39,7 +39,7 @@ function validate() {
 		if (val.length == 10) {
 			isValid = /^\d+$/.test(val);
 			if (!isValid) {
-				violation.focus(true);
+				violation.focus();
 				document.getElementById("errorMessage").innerHTML = "A 10-digit Violation Number can only contain numbers.";
 				document.getElementById("errorDiv").style.display = "block";
 				return false;
@@ -47,7 +47,7 @@ function validate() {
 		} else {
 			isValid = /^(\d{9}-)?\d{1}$/.test(val);
 			if (!isValid) {
-				violation.focus(true);
+				violation.focus();
 				document.getElementById("errorMessage").innerHTML = "An 11-digit Violation Number can only contain numbers with a hyphen before last number.";
 				document.getElementById("errorDiv").style.display = "block";
 				return false;

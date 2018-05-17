@@ -28,13 +28,13 @@
 
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-53440151-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116506688-1"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'UA-53440151-1');
+  gtag('config', 'UA-116506688-1');
 </script>
 
 
@@ -126,7 +126,7 @@ within 30 days of your violation or notice of liability date. After you
 submit the form and any supporting evidence, a judge will review your
 case.</p>
 <p>If your violation is in judgment, you may request a hearing up to
-one year after the judgment date— but if the judge finds you guilty, you
+one year after the judgment date—but if the judge finds you guilty, you
 may be required to pay all outstanding penalties.</p>
 <hr>
 <h4 id="Content">What is my violation number?</h4>

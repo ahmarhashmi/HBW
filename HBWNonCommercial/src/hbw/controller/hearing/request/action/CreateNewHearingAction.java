@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
+import hbw.controller.hearing.request.common.HBWMessages;
 import hbw.controller.hearing.request.common.CommonUtil;
 import hbw.controller.hearing.request.common.Constants;
 import hbw.controller.hearing.request.common.FileUtil;
@@ -54,7 +56,7 @@ import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
- *
+ * 
  */
 @Namespace("/dispute")
 @ResultPath(value = "/")
@@ -91,6 +93,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
     private boolean violationInSystem;
 
     private List<UploadedFile> files;
+    DecimalFormat df = new DecimalFormat("#0.00");
 
     @Override
     public void prepare() throws Exception {
@@ -108,9 +111,10 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     @Action(value = "/create_hearing")
     public String execute() {
-    
-    boolean noHearing = false;
-    	
+
+	boolean noHearing = false;
+	String tmpviolationNumber = null;
+
 	HttpServletRequest request = ServletActionContext.getRequest();
 	HttpSession session = request.getSession(false);
 	if (!CommonUtil.isSessionActive(request)) {
@@ -119,9 +123,9 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	violationInSystem = (Boolean) session.getAttribute(Constants.VIOLATION_IN_SYSTEM);
 	violationInfo = (ViolationInfo) session.getAttribute(Constants.VIOLATION_INFO);
 	violationNumber = (String) session.getAttribute(Constants.VIOLATION_NUMBER);
-	
-	LOGGER.info("REQUEST RECEIVED for Violation No. "+violationNumber + " -- SessionId = "+ session.getId());
-			
+
+	LOGGER.info("REQUEST RECEIVED for Violation No. " + violationNumber + " -- SessionId = " + session.getId());
+
 	files = new ArrayList<UploadedFile>();
 	File uploadedFiles = FileUtil.validateAndGetEvidenceUploadPath(request, "create_hearing_execute");
 	List<Evidence> evidences = new ArrayList<Evidence>();
@@ -131,7 +135,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    for (File file : uploadedFiles.listFiles()) {
 		uploadedFile = new UploadedFile();
 		uploadedFile.setFileName(file.getName());
-		uploadedFile.setFileSize(FileUtils.sizeOf(file) / 1024);
+		uploadedFile.setFileSize(df.format((double) FileUtils.sizeOf(file) / 1024 / 1024));
 
 		if (FileUtil.getFileExtension(file.getName()).equals("tiff")
 			|| FileUtil.getFileExtension(file.getName()).equals("tif")) {
@@ -167,12 +171,12 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    UploadedFile total = new UploadedFile();
 	    total.setFileName("TOTAL");
 	    total.setPageCount(totalPages);
-	    total.setFileSize(FileUtils.sizeOf(uploadedFiles) / 1024);
+	    total.setFileSize(df.format((double) FileUtils.sizeOf(uploadedFiles) / 1024 / 1024));
 	    files.add(total);
 	}
 
-	LOGGER.info(violationNumber +" : Handling the create hearing request");
-	
+	LOGGER.info(violationNumber + " : Handling the create hearing request");
+
 	if (!certify) {
 	    addActionError("You must certify.");
 	    return INPUT;
@@ -187,8 +191,12 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	    FileValidationRequestDTO dto = new FileValidationRequestDTO();
 	    dto.setFiles(evidences);
 	    dto.setSubmittedDate(new Date());
-	    dto.setSummonsNumber(violationNumber);
-	    dto.setToken(JWTUtil.createJWT(violationNumber));
+
+	    // removing hyphen from violation number
+	    tmpviolationNumber = violationNumber.replace("-", "");
+
+	    dto.setSummonsNumber(tmpviolationNumber);
+	    dto.setToken(JWTUtil.createJWT(tmpviolationNumber));
 	    // dto.setSourceLocation("DisputeATicket");
 
 	    try {
@@ -196,134 +204,132 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 		JsonNode resNode = CommonUtil.parseJsonStringToObject(response);
 		if (null != resNode.get(0)) {
 		    if (resNode.get(0).get(Constants.RETURN_CODE) != null
-			    && resNode.get(0).get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {	
-		    	
-		    	noHearing = true;
-		    	
-			    if (resNode.get(0).get("ErrorCode").asText().equals("106")) {
-				addActionError("Total file size is greater then allowed limit.");
-			    } else if (resNode.get(0).get("ErrorCode").asText().equals("101")) {
-				addActionError("Duplicate Summon found. Cannot be uploaded.");
-			    } else {
-				addActionError("Some Processing Error occur, try again later.");
-			    }
-			    return INPUT;
-			}		    
-		}
-		else if (resNode.get(Constants.RETURN_CODE) != null
-			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
-			
+			    && resNode.get(0).get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+
 			noHearing = true;
-			
+
+			if (resNode.get(0).get("ErrorCode").asText().equals("106")) {
+			    addActionError(HBWMessages.CREATE_HEARING_FILE_SIZE_LIMIT);
+			} else if (resNode.get(0).get("ErrorCode").asText().equals("101")) {
+			    addActionError(HBWMessages.CREATE_HEARING_SUMMON_ALREADY_SUBMITTED);
+			} else {
+			    addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
+			}
+			return INPUT;
+		    }
+		} else if (resNode.get(Constants.RETURN_CODE) != null
+			&& resNode.get(Constants.RETURN_CODE).asText().equals(Constants.RETURN_CODE_ERROR)) {
+
+		    noHearing = true;
+		    String msg;
+
 		    LOGGER.info("Vanguard return code is " + resNode.get(Constants.RETURN_CODE).asText());
 		    JsonNode payload = resNode.get("Payload");
 		    boolean isError = false;
 		    for (JsonNode payloadItem : payload) {
 			if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("101")) {
-			    addActionError("Duplicate Summon found. Cannot be uploaded.");
+			    addActionError(HBWMessages.CREATE_HEARING_SUMMON_ALREADY_SUBMITTED);
 			    isError = true;
 			} else if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("105")) {
-			    addActionError("File name " + payloadItem.get("FileName")
-				    + " is corrupt or malicious and identified as infected. Cannot be uploaded.");
+			    msg = payloadItem.get("FileName") + HBWMessages.CREATE_HEARING_CORRUPT_FILE;
+			    addActionError(msg);
 			    isError = true;
 			} else if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("107")) {
-			    addActionError("File name " + payloadItem.get("FileName")
-				    + " is not a valid file name. Cannot be uploaded.");
+			    msg = payloadItem.get("FileName") + HBWMessages.CREATE_HEARING_NOT_A_VALID_FILE_NAME;
+			    addActionError(msg);
 			    isError = true;
 			} else if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("106")) {
-			    addActionError("File name " + payloadItem.get("FileName")
-				    + " is not a valid file size. Cannot be uploaded.");
+			    msg = payloadItem.get("FileName") + HBWMessages.CREATE_HEARING_NOT_A_VALID_FILE_SIZE;
+			    addActionError(msg);
 			    isError = true;
 			} else if (payloadItem.get("ErrorCode") != null
 				&& payloadItem.get("ErrorCode").asText().equals("112")) {
-			    addActionError("File name " + payloadItem.get("FileName")
-				    + " is duplicate file. Cannot be uploaded.");
+			    addActionError(HBWMessages.CREATE_HEARING_DUPLICATE_FILE);
 			    isError = true;
 			}
 		    }
 		    if (!isError) {
-			addActionError(resNode.get("ErrorCode").asText()
-				+ ": Unexpected response from the server. Please try again later.");
+			LOGGER.info(resNode.get("ErrorCode").asText());
+			addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 		    }
 		    return INPUT;
 		}
 	    } catch (Exception e) {
 		e.printStackTrace();
-		
-		
-		try{
-		
-		if (e.getMessage().contains("Connection timed out:")) {
-			    addActionError("Server not responding. Please try again later.");
-			    return INPUT;
+
+		try {
+		    LOGGER.error("Exception in VGD Response");
+
+		    if (e.getMessage().contains("HTTP response code: 503")) {
+			LOGGER.error("Going to delete Summon from VGD server.");
+			deleteVGDSummonsNumber(tmpviolationNumber);
+			addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
+			return INPUT;
+		    }
+		} catch (Exception exp) {
+		    LOGGER.error("Exception in VGD delete  === " + exp.getMessage());
 		}
-		//new code in case of exception delete the recently create request 
-		if(e.getMessage().contains("HTTP response code: 503") || e.getMessage().contains("HTTP response code: 403")){
-				LOGGER.error("Going to delete Summon from VGD server.");
-				deleteVGDSummonsNumber(violationNumber);
-				addActionError("Server is busy. Please try again later.");
-			    return INPUT;
-			}
-		}catch(Exception exp){
-			LOGGER.error("Exception in VGD delete  === " + exp.getMessage());			
-		}
-				
-		addActionError(e.getLocalizedMessage());
+
+		addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 		return INPUT;
 	    }
 	}
 	try {
 	    LOGGER.info("Handling the create hearing request. All validations successful.");
-	    //LOGGER.info("State has been selected to be:" + state);
-	    
-	    if(!noHearing) {
-	    	createNewHearing();
-	    	FileUtil.deleteTempFolder(request);
+	    // LOGGER.info("State has been selected to be:" + state);
+
+	    if (!noHearing) {
+		createNewHearing();
+		FileUtil.deleteTempFolder(request);
 	    }
 	} catch (MalformedURLException e) {
 	    e.printStackTrace();
-		addActionError("Server is busy, please try later.");
-	    
+	    addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
+
 	    return INPUT;
 	} catch (IOException e) {
 	    LOGGER.error("An error occurred in deleting the temp directory: " + e.getStackTrace());
 	    return INPUT;
 	} catch (Exception e) {
-		deleteVGDSummonsNumber(violationNumber);
 	    e.printStackTrace();
+
+	    if (null != tmpviolationNumber)
+		deleteVGDSummonsNumber(tmpviolationNumber);
+
 	    if (e.getMessage() != null && e.getMessage().toLowerCase().contains("invalid defense")) {
-		addActionError(
-			"Something wrong with the defense you entered. There might be some unauthorized characters in it. Please check and try again.");
-	    } else {		
-		addActionError("Error while create hearing, please try later");
+		addActionError(HBWMessages.CREATE_HEARING_INVALID_DEFENCE);
+	    } else {
+		LOGGER.error("Error while create hearing, please try later");
+		// need to display correct DOF server response
+		addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 	    }
 	    return INPUT;
 	}
 	return SUCCESS;
     }
-    
-    public void deleteVGDSummonsNumber(String violationNumber)
-    {
-    
-    	DeleteSummon ds = new DeleteSummon();	
-	    ds.setSummonsNumber(violationNumber);
-	    ds.setToken(JWTUtil.createJWT(violationNumber));	    
-	    
-	    String response = CommonUtil.deleteSummon(ds);;
-		JsonNode resNode;
-		try {
-			resNode = CommonUtil.parseJsonStringToObject(response);
-			if (null != resNode.get(0)) {
-				//need to code here
-				LOGGER.info(resNode.get(0).get("ReturnCode")+"");
-			}
-		} catch (IOException e) {			
-			e.printStackTrace();
-		}		
+
+    public void deleteVGDSummonsNumber(String violationNumber) {
+
+	DeleteSummon ds = new DeleteSummon();
+	ds.setSummonsNumber(violationNumber);
+	ds.setToken(JWTUtil.createJWT(violationNumber));
+
+	String response = CommonUtil.deleteSummon(ds);
+	;
+	JsonNode resNode;
+	try {
+	    resNode = CommonUtil.parseJsonStringToObject(response);
+	    if (null != resNode.get(0)) {
+		// need to code here
+		LOGGER.info(resNode.get(0).get("ReturnCode") + "");
+	    }
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -332,7 +338,7 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
      */
     public void createNewHearing() throws MalformedURLException {
 	NYCServMobileApp port = HBWClient.getConnection();
-	LOGGER.info(violationNumber + " :Invoking createNewHearing...");
+	LOGGER.info(violationNumber + " :Invoking DOF createNewHearing...");
 	CreateNewHearingRequest request = new CreateNewHearingRequest();
 	request.setCredentials(HBWClient.getCredentials());
 	request.setWebServiceChannel(Resource.WS_CHANNEL.getValue());
@@ -353,19 +359,33 @@ public class CreateNewHearingAction extends ActionSupport implements Preparable 
 	name.setLastName(lastName);
 	request.setName(name);
 
-	request.setDefense(defense);
+	// String tmpdefense = defense.replace("’", "'");
+	// request.setDefense(defense);
+
+	request.setDefense(CommonUtil.convertSpecialChars(defense));
+
 	request.setEmail(email1);
-	request.setViolationNumber(violationNumber);
+
+	String tmpviolationNumber = violationNumber.replace("-", "");
+
+	request.setViolationNumber(tmpviolationNumber);
 	request.setEvidenceToBeUploaded(!affirm);
-	request.setMtvjDefense(explainWhy);
+
+	// request.setMtvjDefense(explainWhy);
+
+	request.setMtvjDefense(CommonUtil.convertSpecialChars(explainWhy));
+
+	// LOGGER.info("defense text == "+ defense + " == new text == " + tmpdefense);
+	// LOGGER.info("explainWhy text == "+ explainWhy);
+
 	CreateNewHearingResult response = port.createNewHearing(request);
 	if (!response.getFeedBack().isSuccess()) {
 	    throw new RuntimeException(response.getFeedBack().getFailureReason());
 
-	}
-	else
-	{
-		LOGGER.info(violationNumber + " : createNewHearing.result from DOF isNewHearingCreated() = " + response.isNewHearingCreated() + " --getFeedBack().isSuccess()--  "+ response.getFeedBack().isSuccess());
+	} else {
+	    LOGGER.info(violationNumber + " : createNewHearing.result from DOF isNewHearingCreated() = "
+		    + response.isNewHearingCreated() + " --getFeedBack().isSuccess()--  "
+		    + response.getFeedBack().isSuccess());
 	}
     }
 

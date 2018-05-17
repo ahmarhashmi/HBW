@@ -1,0 +1,15 @@
+############ This is for Prod environment #############
+
+EVIDENCE_UPLOAD_LOCATION=../hbwnoncom/
+MAX_NUMBER_OF_EVIDENCES=50
+MAX_TOTAL_SIZE_OF_EVIDENCE=20971520
+WSDL_URI=https://nycserv-proda-pmtweb.nycnet/NYCServMobileAppWeb/NYCServMobileApp?wsdl
+USER_ID=VANGUARD
+#PASSWORD=VjFWb01tRXdSV3ROZWxwUllUQjRhVlZUVGtnPQ==
+PASSWORD=wkBUassbe8tfMKFNpbn5Sw==
+WS_CHANNEL=HBW
+VANGAURD_VIRUS_SCAN_URL=https://hbwmobile.vgdinbox.net/process.php
+VANGAURD_DELETE_SUMMON_URL=https://hbwmobile.vgdinbox.net/deleteSummon.php
+DOF_BROKER_URL=https://www1.nyc.gov/site/finance/vehicles/commercial.page
+PROXY_IP=
+PROXY_PORT=

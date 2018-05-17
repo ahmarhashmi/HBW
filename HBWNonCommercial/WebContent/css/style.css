@@ -374,3 +374,13 @@ div#header-links {
 .form-group.viewticketbuttons span {
     font-size: 16px;
 }
+
+pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    word-wrap: normal;
+}
+
+table{
+	page-break-inside: avoid;
+	}

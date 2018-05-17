@@ -68,25 +68,25 @@ public final class FileUtil {
 	 * files/folders other than the current session, we need to delete those files
 	 * to keep the directory clean.
 	 */
-	
+
 	File pathTillViolationNumber = new File(basePath + violationNumber.trim());
 	if (pathTillViolationNumber.exists()) {
 	    for (File child : pathTillViolationNumber.listFiles()) {
-	    	//LOGGER.info("violationNumber before delete = " + violationNumber +" -- session.getId = "+ session.getId()  +" -- requestFrom  = "+ requestFrom);
-			if (child.getName().equals(session.getId()) && !requestFrom.equals("FileUploadServlet_doGetFile") 
-					&& !requestFrom.equals("FileUploadServlet_doPost") && !requestFrom.equals("create_hearing_execute")
-					&& !requestFrom.equals("FileUploadServlet_doDeleteFile")) {
-				//LOGGER.info("CHILDS = " + child.getName());			
-				try {				
-				    FileUtils.forceDelete(child);
-				} catch (IOException e) {
-				    LOGGER.error("Previously uploaded files couldn't be deleted. Exception: " + e);
-				}		    
-			}
-			else
-			{
-				continue;
-			}
+		// LOGGER.info("violationNumber before delete = " + violationNumber +" --
+		// session.getId = "+ session.getId() +" -- requestFrom = "+ requestFrom);
+		if (child.getName().equals(session.getId()) && !requestFrom.equals("FileUploadServlet_doGetFile")
+			&& !requestFrom.equals("FileUploadServlet_doPost")
+			&& !requestFrom.equals("create_hearing_execute")
+			&& !requestFrom.equals("FileUploadServlet_doDeleteFile")) {
+		    // LOGGER.info("CHILDS = " + child.getName());
+		    try {
+			FileUtils.forceDelete(child);
+		    } catch (IOException e) {
+			LOGGER.error("Previously uploaded files couldn't be deleted. Exception: " + e);
+		    }
+		} else {
+		    continue;
+		}
 	    }
 	}
 
@@ -174,16 +174,16 @@ public final class FileUtil {
      * Delete all the files in the folder and then delete the folder as well
      * 
      * @param request
-     * @throws IOException 
+     * @throws IOException
      */
     public static void deleteTempFolder(HttpServletRequest request) throws IOException {
 	File folder = validateAndGetEvidenceUploadPath(request, "FileUtil_deleteTempFolder");
 	if (folder.exists()) {
-	    //FileUtils.cleanDirectory(folder.getParentFile().getParentFile());
+	    // FileUtils.cleanDirectory(folder.getParentFile().getParentFile());
 	    FileUtils.cleanDirectory(folder);
 	}
     }
-    
+
     /**
      * @author Ahmar Hashmi
      * 
@@ -204,7 +204,7 @@ public final class FileUtil {
 
 	return pageCount;
     }
-    
+
     /**
      * @author Ahmar Hashmi
      * 
