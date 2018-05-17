@@ -26,6 +26,18 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/common.js"></script>
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116506688-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-116506688-1');
+</script>
+
+
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -75,75 +87,66 @@
 <body
 	onload="enableDisableSearchButton(document.getElementById('violationNumber'))">
 
-	<jsp:include page="header.jsp" />
-	<div class="content-holder">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-9 col-sm-offset-3">
-					<h1>Dispute a Ticket</h1>
-					<h3>Enter Violation Number</h3>
-					<p>Please enter the parking or camera violation number that
-						appears on your ticket or notice of liability (NOL). On the next
-						page, you will be able to submit your defense and supporting
-						evidence.</p>
+<jsp:include page="header.jsp" />
+<div class="content-holder">
+<div class="container">
+<div class="row">
+<div class="col-sm-9 col-sm-offset-3">
+<h1>Dispute a Ticket</h1>
+<h3>Enter Violation Number</h3>
+<p>Please enter the parking or camera violation number that appears
+on your ticket or notice of liability (NOL). On the next page, you will
+be able to submit your defense and supporting evidence.</p>
 
-					<div class="form-group row ">
-						<s:form method="post" action="searchViolation"
-							namespace="/dispute" theme="simple" onsubmit="return validate();">
-							<div class="col-xs-3" style="width:175px">
-								<s:textfield type="tel" id="violationNumber" autocorrect="off" style="width:150px"
-									name="violationNumber" label="violationNumber" required="true"
-									maxlength="11" minlength="10" class="form-control"
-									onchange="enableDisableSearchButton(this);"
-									onkeyup="enableDisableSearchButton(this);" />
-<!-- 									placeholder="XXXXXXXXXX" -->
-							</div>
-
-							<div>
-								<s:submit id="searchBtn" class="btn btn-primary" value="Search" />
-							</div>
-							<div class="container" style="color: red">
-								<s:if test="hasActionErrors()">
-									<div class="errors">
-										<s:actionerror />
-									</div>
-								</s:if>
-							</div>
-							<div class="container" id="errorDiv" style="display: none;">
-								<output style="color: red;" id="errorMessage"></output>
-							</div>
-						</s:form>
-
-					</div>
-					<a href="#Content"><b>What is my violation number?</b></a>
-					<hr>
-					<h4>Requesting a Hearing</h4>
-					<p>To avoid penalties, request a hearing to dispute your
-						violation within 30 days of your violation or notice of liability
-						date. After you submit the form and any supporting evidence, a
-						judge will review your case.</p>
-					<p>If your violation is in judgment, you may request a hearing
-						up to one year after the judgment date— but if the judge finds you
-						guilty, you may be required to pay all outstanding penalties.</p>
-					<hr>
-					<h4 id="Content">What is my violation number?</h4>
-					<p>Your violation or notice number is a 10-digit number that
-						appears on your ticket or notice of liability (NOL).</p>
-					<p>View an example:</p>
-					<ul>
-						<li><a href="javascript:openTicketPopUp()">Parking Ticket</a></li>
-						<li><a href="javascript:openRedlightTicketPopup()">Red
-								Light Violation (NOL)</a></li>
-						<li><a href="javascript:openBusLaneCameraViolationPopup()">Bus
-								Lane Camera Violation (NOL)</a></li>
-						<li><a href="javascript:openSpeedCameraViolationPopup()">Speed
-								Camera Violation (NOL)</a></li>
-					</ul>
-					<hr>
-				</div>
-			</div>
-		</div>
+<div class="form-group row "><s:form method="post"
+	action="searchViolation" namespace="/dispute" theme="simple"
+	onsubmit="return validate();">
+	<div class="col-xs-3" style="width: 175px"><s:textfield
+		type="tel" id="violationNumber" autocorrect="off" style="width:150px"
+		name="violationNumber" label="violationNumber" required="true"
+		maxlength="11" minlength="10" class="form-control"
+		onchange="enableDisableSearchButton(this);"
+		onkeyup="enableDisableSearchButton(this);" /> <!--          placeholder="XXXXXXXXXX" -->
 	</div>
-	<jsp:include page="footer.jsp" />
+
+	<div><s:submit id="searchBtn" class="btn btn-primary"
+		value="Search" /></div>
+	<div class="container" style="color: red"><s:if
+		test="hasActionErrors()">
+		<div class="errors"><s:actionerror /></div>
+	</s:if></div>
+	<div class="container" id="errorDiv" style="display: none;"><output
+		style="color: red;" id="errorMessage"></output></div>
+</s:form></div>
+<a href="#Content"><b>What is my violation number?</b></a>
+<hr>
+<h4>Requesting a Hearing</h4>
+<p>To avoid penalties, request a hearing to dispute your violation
+within 30 days of your violation or notice of liability date. After you
+submit the form and any supporting evidence, a judge will review your
+case.</p>
+<p>If your violation is in judgment, you may request a hearing up to
+one year after the judgment date—but if the judge finds you guilty, you
+may be required to pay all outstanding penalties.</p>
+<hr>
+<h4 id="Content">What is my violation number?</h4>
+<p>Your violation or notice number is a 10-digit number that appears
+on your ticket or notice of liability (NOL).</p>
+<p>View an example:</p>
+<ul>
+	<li><a href="javascript:openTicketPopUp()">Parking Ticket</a></li>
+	<li><a href="javascript:openRedlightTicketPopup()">Red Light
+	Violation (NOL)</a></li>
+	<li><a href="javascript:openBusLaneCameraViolationPopup()">Bus
+	Lane Camera Violation (NOL)</a></li>
+	<li><a href="javascript:openSpeedCameraViolationPopup()">Speed
+	Camera Violation (NOL)</a></li>
+</ul>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<jsp:include page="footer.jsp" />
 </body>
 </html>

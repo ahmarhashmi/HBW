@@ -10,7 +10,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-3">
-				<a href="http://www1.nyc.gov/nyc-resources/agencies.page">Drectory
+				<a href="http://www1.nyc.gov/nyc-resources/agencies.page">Directory
 					of City Agencies</a> <a href="http://www.nyc.gov/notifynyc">Notify
 					NYC</a> <a href="http://www1.nyc.gov/connect/mobile-applications.page">NYC
 					Mobile Apps</a>
@@ -36,10 +36,10 @@
 					<button class="ico-search">Search</button>
 				</form>
 				<div class="clearfix" style="height: 10px"></div>
-				City of New York. 2017 All Rights Reserved, NYC is a trademark and
+				City of New York. <script>document.write(new Date().getFullYear());</script> All Rights Reserved, NYC is a trademark and
 				service mark of the City of New York<br />
 				<a href="http://www1.nyc.gov/home/privacy-policy.page" class="small">Privacy
-					pollicy</a>. <a class="small"
+					policy</a>. <a class="small"
 					href="http://www1.nyc.gov/home/terms-of-use.page">Terms of Use</a>.
 			</div>
 		</div>

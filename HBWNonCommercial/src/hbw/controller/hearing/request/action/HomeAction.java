@@ -35,7 +35,7 @@ public class HomeAction extends ActionSupport {
      */
     @Action(value = "/home", results = { @Result(name = "success", location = "ticket/broker_selection.jsp") })
     public String execute() {
-	LOGGER.info("Redirecting to the home screen.");
+	//LOGGER.info("Redirecting to the home screen.");
 	ServletActionContext.getRequest().getSession().invalidate();
 
 	ServletContext context = ServletActionContext.getServletContext();

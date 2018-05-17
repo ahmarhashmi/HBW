@@ -1,8 +1,20 @@
 package hbw.controller.hearing.request.action;
 
+import hbw.controller.hearing.request.common.CommonUtil;
+import hbw.controller.hearing.request.common.Constants;
+import hbw.controller.hearing.request.common.FileUtil;
+import hbw.controller.hearing.request.common.HBWClient;
+import hbw.controller.hearing.request.common.HBWMessages;
+import hbw.controller.hearing.request.common.StatesSinglton;
+import hbw.controller.hearing.request.model.States;
+import hbw.controller.hearing.request.model.ViolationInfo;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
@@ -13,6 +25,14 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.ApplicationAware;
+import org.apache.struts2.interceptor.CookiesAware;
+import org.apache.struts2.interceptor.PrincipalAware;
+import org.apache.struts2.interceptor.PrincipalProxy;
+import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -20,12 +40,6 @@ import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
-
-import hbw.controller.hearing.request.common.CommonUtil;
-import hbw.controller.hearing.request.common.Constants;
-import hbw.controller.hearing.request.common.HBWClient;
-import hbw.controller.hearing.request.common.StatesSinglton;
-import hbw.controller.hearing.request.model.ViolationInfo;
 
 /**
  * @author Ahmar Nadeem
@@ -48,7 +62,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     private boolean violationInSystem;
 
     public String getState() {
-	return "New York";
+	return "NY";
     }
 
     private String violationNumber;
@@ -66,22 +80,29 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 	/** Set the default value to true */
 	violationInSystem = true;
 	violationNumber = violationNumber.trim();
+	
 	try {
-	    if (!HBWClient.isViolationInSystem(violationNumber)) {
+	    /**
+	     * In case violation is not in system, there's no sense of checking it's
+	     * eligibility and populating info
+	     */
+		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {	
+			String message = HBWClient.getReasonForViolationNotEligibleForHearing(violationNumber);
+			if(null != message && message.contains("The check digit is invalid."))
+				message = HBWMessages.VIOLATION_SEARCH_INVALID_ENTRY;
+			addActionError(message);		
+		    //addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");			
+			return INPUT;
+		}
+	
+		if (!HBWClient.isViolationInSystem(violationNumber)) {
 		/** No more needed to restrict the user in case violation is not in system */
 		// addActionError("Violation number not found. Check that your violation number is correct and try again.");
 		// return INPUT;
 		violationInSystem = false;
 	    }
-	    /**
-	     * In case violation is not in system, there's no sense of checking it's
-	     * eligibility and populating info
-	     */
-	    if (violationInSystem) {
-		if (!HBWClient.isViolationEligibleForHearing(violationNumber)) {
-		    addActionError("This violation has had a prior hearing and cannot be scheduled for another hearing.");
-		    return INPUT;
-		}
+	
+	    if (violationInSystem) {	
 		violationInfo = HBWClient.getViolationInfo(violationNumber);
 		if (violationInfo == null) {
 		    violationInfo = HBWClient.getViolationInfoByPlateNubmer(violationNumber);
@@ -92,22 +113,36 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
 		vioNumber = this.violationNumber.substring(0, 9);
 		checkDigit = this.violationNumber.substring(this.violationNumber.length() - 1);
 		if (!checkDigit.equals(calculateViolationNumberCheckDigit(vioNumber))) {
-		    addActionError("Violation number you entered is not valid. Check that your violation number is correct and try again.");
+		    addActionError(HBWMessages.VIOLATION_SEARCH_INVALID_ENTRY);
 		    return INPUT;
 		}
 	    }
 	} catch (Exception e) {
-	    addActionError(
-		    "We are having trouble connecting to your system. We are aware of the issue and actively working on it. Please try again later.");
+		e.printStackTrace();
+	    addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
 	    return INPUT;
-	}
+	}		
+	
+	HttpServletRequest request = ServletActionContext.getRequest();	
+	HttpSession session = request.getSession(false);
 
 	LOGGER.info("Violation number " + this.violationNumber + " accepted for hearing request.");
-	HttpServletRequest request = ServletActionContext.getRequest();
-	HttpSession session = request.getSession();
+			
 	session.setAttribute(Constants.VIOLATION_NUMBER, violationNumber);
 	session.setAttribute(Constants.VIOLATION_INFO, violationInfo);
 	session.setAttribute(Constants.VIOLATION_IN_SYSTEM, violationInSystem);
+	
+	session.setAttribute(Constants.PAGE_COUNTS, (0));
+	
+	try {
+		FileUtil.deleteTempFolder(request);
+	} catch (IOException e) {
+		LOGGER.error("Error in sesssion ...");
+		e.printStackTrace();
+		addActionError(HBWMessages.CREATE_HEARING_GENERIC_ERROR);
+		return INPUT;
+	}
+	
 	return SUCCESS;
     }
 
@@ -119,8 +154,8 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
      */
     public String getVioBase64Encoded() {
 	HttpServletRequest request = ServletActionContext.getRequest();
-	HttpSession session = request.getSession();
-	return CommonUtil.tripleEncodeViolationNumber((String) session.getAttribute(Constants.VIOLATION_NUMBER));
+	HttpSession session = request.getSession(false);
+	return CommonUtil.tripleEncodePlainText((String) session.getAttribute(Constants.VIOLATION_NUMBER));
     }
 
     /**
@@ -154,7 +189,7 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
      * 
      * @return
      */
-    public List<String> getStates() {
+    public List<States> getStates() {
 	return StatesSinglton.getStates();
     }
 
@@ -203,5 +238,5 @@ public class ViolationNumberAction extends ActionSupport implements Preparable {
     public void setViolationInSystem(boolean violationInSystem) {
 	this.violationInSystem = violationInSystem;
     }
-
+    
 }

@@ -14,8 +14,8 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/bootstrap.min.css">
 
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/css/font-awesome.min.css">
+<link rel="stylesheet" 
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/style.css">
@@ -45,80 +45,230 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116506688-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-116506688-1');
+</script>
+
+
 <script type="text/javascript">
 	$(window).on('beforeunload', function(event) {
 		return "";
 	});
-	
-	
-	
-	function enableDisableSubmitButton(onPageload){
-
-		var dz = Dropzone.forElement("#file-upload-form"); 
-		var isValid = true;
-
-		var isInJudgment = $('#explainWhyID');
-		if( isInJudgment.is(':visible') && !isInJudgment.val() ){
-			isValid = false;
-		}
-		if(!$('#enterDefenseID').val()){
-			isValid = false;
-		}
-
-		if (!$('#certify')[0].checked) {
-			isValid = false;
-		} 
-		if (!$('#firstName').val()) {
-			isValid = false;
-		}
-		if (!$('#lastName').val()) {
-			isValid = false;
-		}
-		if (!$('#address').val()) {
-			isValid = false;
-		}
-		if (!$('#city').val()) {
-			isValid = false;
-		}
-		if ($('#state').val() == 1) {
-			isValid = false;
-		}
-		if (!$('#zip').val()) {
-			isValid = false;
-		}
-		if (!$('#email1').val()) {
-			isValid = false;
-		}
-		if (!$('#email2').val()) {
-			isValid = false;
-		}
-		if ($('#email1').val() != $('#email2').val()) {
-			isValid = false;
-		}
-		if ($('#affirm').is(":visible")
-				&& !$('#affirm')[0].checked) {
-			if(!onPageload){
-				$('#affirmMsg').css("color", "red");
-			}
-			isValid = false;
-		} else {
-			$('#affirmMsg').css("color", "black");
-		}
-
-		if ($('#email1FormatMsg').is(":visible") || $('#email2FormatMsg').is(":visible")){
-			isValid = false;
-		}
-
-		if (isValid) {
-			$("#submitBtn").removeAttr('disabled');
-		} else{
-			$("#submitBtn").attr("disabled", true);
-		}
-	}
-	
-	
 </script>
 <script type="text/javascript">
+
+		function validateForm() {
+			var isValid = true;
+			var isInJudgment = $('#explainWhyID');
+			if( isInJudgment.is(':visible') && !isInJudgment.val() ){
+				$('#explainWhyTitle').css("color", "red");
+				$('#explainWhyID').focus();
+				return false;
+			}else {
+				$('#explainWhyTitle').css("color", "black");
+			}
+			if(!$('#enterDefenseID').val()){
+				$('#defenseMessage').css("color", "red");
+				$('#enterDefenseID').focus();
+				return false;
+			}else {
+				$('#defenseMessage').css("color", "black");
+			}
+			if ($('#affirm').is(":visible")
+					&& !$('#affirm')[0].checked) {
+				$('#affirmMsg').css("color", "red");
+				$('html, body').animate({
+					scrollTop : $("#file-upload-form").offset().top},500);
+				return false;
+			} else {
+				$('#affirmMsg').css("color", "black");
+			}
+			if (!$('#firstName').val()) {
+				$('#firstNameMsg').css("display", "block");
+				$('#firstName').focus();
+				return false;
+			} else {
+				$('#firstNameMsg').css("display", "none");
+			}
+			if (!$('#lastName').val()) {
+				$('#lastNameMsg').css("display", "block");
+				$('#lastName').focus();
+				return false;
+			} else {
+				$('#lastNameMsg').css("display", "none");
+			}
+			if (!$('#address').val()) {
+				$('#addressMsg').css("display", "block");
+				$('#address').focus();
+				return false;
+			} else {
+				$('#addressMsg').css("display", "none");
+			}
+			if (!$('#city').val()) {
+				$('#cityMsg').css("display", "block");
+				$('#city').focus();
+				return false;
+			} else {
+				$('#cityMsg').css("display", "none");
+			}
+			if ($('#state').val() == 1) {
+				$('#stateMsg').css("display", "block");
+				$('#state').focus();
+				return false;
+			} else {
+				$('#stateMsg').css("display", "none");
+			}
+			if (!$('#zip').val()) {
+				$('#zipEmptyMsg').css("display", "block");
+				$('#zip').focus();
+				return false;
+			} else {
+				$('#zipEmptyMsg').css("display", "none");
+				var isZipValid = /^[a-zA-Z0-9-_]+$/.test($('#zip').val());
+				if (isZipValid) {
+					$('#zipInvalidMsg').css("display", "none");
+				} else{
+					$('#zipInvalidMsg').css("display", "block");
+					$('#zip').focus();
+			     	return false;
+			    }
+			}
+			if (!$('#email1').val()) {
+				$('#email1Msg').css("display", "block");
+				$('#email1').focus();
+				return false;
+			} else {
+				$('#email1Msg').css("display", "none");
+			}
+			if (!$('#email2').val()) {
+				$('#email2Msg').css("display", "block");
+				$('#email2').focus();
+				return false;
+			} else {
+				$('#email2Msg').css("display", "none");
+			}
+			if ($('#email1').val() != $('#email2').val()) {
+				$('#emailMatchMsg').css("display", "block");
+				isValid = false;
+			} else {
+				$('#emailMatchMsg').css("display", "none");
+			}
+			if (!$('#certify')[0].checked) {
+				$('#notCertified').css("color", "red");
+				return false;
+			} else {
+				$('#notCertified').css("color", "black");
+			}
+
+			if (!isValid) {
+				//$("#submitBtn").removeAttr('disabled');
+				//$(':input[type="submit"]').prop('disabled', false);
+				//$("#submitBtn").css("display", "block");
+				//$("#submitBtnDisabled").css("display", "none");
+				return false;
+			}
+
+			/** Checking virus scan after all the validations are successful so that 
+			 * user has not to wait for virus scan on every submit
+			 */
+			//if (!$('#affirm').is(":visible")) {
+				//loadingDiv.style.display = "block";
+				//var infectedFiles = isAllUploadedFilesClean();
+				//if (infectedFiles.length > 0) {
+					//if (confirm("("
+							//+ infectedFiles.toString()
+							//+ ") Files are infected and deleted from the server. Do you want to update more?")) {
+						//showHideLoadingDiv(false);
+						//$("#submitBtn").removeAttr('disabled');
+						/* $("#submitBtn").css("display", "block");
+						$("#submitBtnDisabled").css("display",
+								"none");
+						$(':input[type="submit"]').prop('disabled',
+								false); */
+						//return false;
+					//}
+				//}
+			//}
+			//$(window).unbind('beforeunload');
+			return true;
+		}
+
+function enableDisableSubmitButton(onPageload){
+	return false;
+	/*
+	var dz = Dropzone.forElement("#file-upload-form"); 
+	var isValid = true;
+	
+	var isInJudgment = $('#explainWhyID');
+	if( isInJudgment.is(':visible') && !isInJudgment.val() ){
+		isValid = false;
+	}
+	if(!$('#enterDefenseID').val()){
+		isValid = false;
+	}
+
+	if (!$('#certify')[0].checked) {
+		isValid = false;
+	} 
+	if (!$('#firstName').val()) {
+		isValid = false;
+	}
+	if (!$('#lastName').val()) {
+		isValid = false;
+	}
+	if (!$('#address').val()) {
+		isValid = false;
+	}
+	if (!$('#city').val()) {
+		isValid = false;
+	}
+	if ($('#state').val() == 1) {
+		isValid = false;
+	}
+	if (!$('#zip').val()) {
+		isValid = false;
+	}
+	if (!$('#email1').val()) {
+		isValid = false;
+	}
+	if (!$('#email2').val()) {
+		isValid = false;
+	}
+	if ($('#email1').val() != $('#email2').val()) {
+		isValid = false;
+	}
+	if ($('#affirm').is(":visible")
+			&& !$('#affirm')[0].checked) {
+		if(!onPageload){
+			$('#affirmMsg').css("color", "red");
+		}
+		isValid = false;
+	} else {
+		$('#affirmMsg').css("color", "black");
+	}
+	
+	if ($('#email1FormatMsg').is(":visible") || $('#email2FormatMsg').is(":visible")){
+		isValid = false;
+	}
+
+	if (isValid) {
+		$("#submitBtn").removeAttr('disabled');
+	} else{
+		$("#submitBtn").attr("disabled", true);
+	}
+	*/
+}
+
+function setViolationNumber() {
+	//document.getElementById("violationHidden").value = document.getElementById("violationNumber").innerHTML;
+}
 
 function isValidEmail(value){
 	var emailFormat = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
@@ -126,7 +276,7 @@ function isValidEmail(value){
 }
 
 	// Regular Expression to Check for Alphabets.
-	var cityFormat = new RegExp(/^[a-zA-Z]*$/);
+	var cityFormat = new RegExp(/^[a-zA-Z_ ]*$/);
 	var zipFormat = new RegExp(/[0-9]/);
 	var specialChar = ['!','@','#','$','%','^','&','*','(',')','_','+'];
 	var allowed = ['Backspace','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Tab', 'F5', 'Delete'];
@@ -136,30 +286,57 @@ function isValidEmail(value){
 						$('#city').on('keydown keyup', function(e) {
 							var value = String.fromCharCode(e.which) || e.key;
 							//alert(e.which);
-							if (!allowed.includes(e.key) && e.key != ' ' && (!cityFormat.test(value))) {
+							if ((e.keyCode >= 96 && e.keyCode <= 111) ||
+							(e.key != 'whitespace' && e.key != 'Tab' && e.key != ' ' 
+							&& e.key != 'Backspace' && e.key !='ArrowLeft'&&
+							 e.key !='ArrowRight'&& e.key !='ArrowUp'&& e.key !='ArrowDown'
+							 && e.key != 'F5'&& e.key != 'Delete') && (!cityFormat.test(value))) {
 								//e.preventDefault();
 								return false;
 							}
 						}); // End of 'keydown keyup' method.
 						$('#zip').on('keydown keyup', function(e) {
+							return;
 							var value = String.fromCharCode(e.which) || e.key;
-							if (!allowed.includes(e.key) && (!zipFormat.test(value) || specialChar.includes(e.key) )){
+							if (!(e.keyCode >= 96 && e.keyCode <= 105) &&
+							(e.key != 'Tab' && e.key != 'Backspace'&& e.key !='ArrowLeft'&&
+							 e.key !='ArrowRight'&& e.key !='ArrowUp'&& e.key !='ArrowDown'
+							 && e.key != 'F5'&& e.key != 'Delete') && (!zipFormat.test(value) || 
+							 (e.key=='!'||e.key=='@'||e.key=='#'||e.key=='$'||e.key=='%'
+							 ||e.key=='^'||e.key=='&'||e.key=='*'||e.key=='('||e.key==')'
+							 ||e.key=='_'||e.key=='+'))){
 						         // e.preventDefault();
 						          return false;
 						    }
 						}); // End of 'keydown keyup' method.
 
-						
+						enableDisableSubmitButton(true);
 
 						/**
 						 * Ajax submission of the page.
 						 */
 						$('#submitBtn')
-								.click(
+								.click(								
 										function(event) {
+										console.log("Crete Hearing Proces Starts ...");
+										var me = $(this);
+										
+										event.preventDefault();
+										event.stopImmediatePropagation();
+																				  									
+											if(validateForm()){											
+											//$('#submitBtn').prop('disabled', true);
+																																
+											if ( me.data('requestRunning') ) {
+												console.log("Crete hearing process is already running -- no action");
+        										return;
+    										}
+    										
+    										me.data('requestRunning', true); 
+    										  									
 											loadingDiv.style.display = "block";
 											$("#displayError").empty();
-											event.preventDefault();
+											
 											var processData = $('#mainForm')
 													.serialize();
 											$
@@ -168,22 +345,22 @@ function isValidEmail(value){
 														url : "<s:url action='create_hearing' />",
 														data : processData,
 														cache : false,
+														//async : false,														
 														success : function(
 																result) {
-															var errors = $(
-																	result)
-																	.find(
-																			".errors");
-															loadingDiv.style.display = "none";
-															if ($(result).find(
-																	".errors").length == 0) {
-																var myWindow = window
-																		.open(
-																				"",
-																				"_self");
-																myWindow.document
-																		.write(result);
+															console.log("request in progress ...");
+															me.data('requestRunning', false);
+															
+															var errors = $(result).find(".errors");
+															loadingDiv.style.display = "none";														
+															
+															if ($(result).find(".errors").length == 0) {
+															console.log("request in progress ... In if");
+																$(window).unbind('beforeunload');
+																var myWindow = window.open("","_self");
+																myWindow.document.write(result);
 															} else {
+																console.log("request in progress ... In else");
 																$(
 																		"#displayError")
 																		.append(
@@ -197,11 +374,20 @@ function isValidEmail(value){
 																				},
 																				1000);
 															}
-														},
-														error : function() {
+														},														
+														error : function(t) {														
 															loadingDiv.style.display = "none";
-														}
+															console.log("Some Error happens in ajax call ...");
+															
+														},														
+														complete: function(){
+															console.log("Proces Completes ...");																																								
+														 	me.data('requestRunning', false);														 	
+															//$('#submitBtn').prop('disabled', false);	
+														}														
 													});
+											}																						
+											return false;
 										});
 						
 						$("#email1")
@@ -249,23 +435,23 @@ function isValidEmail(value){
 												}
 											}
 										});
-						//$("#affirm").on('change', enableDisableSubmitButton);
-						//$("#firstName").on('blur', enableDisableSubmitButton);
-						//$("#lastName").on('blur', enableDisableSubmitButton);
-						//$("#address").on('blur', enableDisableSubmitButton);
-						//$("#city").on('blur', enableDisableSubmitButton);
-						//$("#state").on('blur', enableDisableSubmitButton);
-						//$("#zip").on('blur', enableDisableSubmitButton);
-						//$("#email1").on('blur', enableDisableSubmitButton);
-						//$("#email2").on('blur', enableDisableSubmitButton);
-						//$("#certify").on('change', enableDisableSubmitButton);
-						//$("#explainWhyID").on('keyup',
-							//	enableDisableSubmitButton);
-						//$("#enterDefenseID").on('keyup',
-								//enableDisableSubmitButton);
+						$("#affirm").bind('change', enableDisableSubmitButton);
+						$("#firstName").bind('blur', enableDisableSubmitButton);
+						$("#lastName").bind('blur', enableDisableSubmitButton);
+						$("#address").bind('blur', enableDisableSubmitButton);
+						$("#city").bind('blur', enableDisableSubmitButton);
+						$("#state").bind('blur', enableDisableSubmitButton);
+						$("#zip").bind('blur', enableDisableSubmitButton);
+						$("#email1").bind('blur', enableDisableSubmitButton);
+						$("#email2").bind('blur', enableDisableSubmitButton);
+						$("#certify").bind('change', enableDisableSubmitButton);
+						$("#explainWhyID").bind('keyup',
+								enableDisableSubmitButton);
+						$("#enterDefenseID").bind('keyup',
+								enableDisableSubmitButton);
 
 						$('#google_translate_element')
-								.on(
+								.bind(
 										'DOMNodeInserted',
 										function(event) {
 											//$('.goog-te-menu-value span:first').html('Translate');
@@ -298,25 +484,45 @@ function isValidEmail(value){
 		}, 'google_translate_element');
 	}
 </script>
+
+<style type="text/css">
+   	input.watermark { color: #999; } //light silver color
+</style>
+    
 </head>
-<body onload = "enableDisableSubmitButton(true);">
+<body onload="setViolationNumber();">
 	<jsp:include page="header.jsp" />
 	<div class="content-holder">
 
 		<div class="container">
 			<div class="row">
-				<div class="col-sm-9 col-sm-offset-3">
-					<h1>Dispute a Ticket</h1>
-					<h3>Enter Defense & Evidence</h3>
-					<p>Use this form to plead “Not Guilty” to your violation and
-						request a hearing. After you submit the form and any evidence you
-						have, a judge will review the case. The judge's decision will be
-						emailed in about 75 days.</p>
-					<hr>
-					<h4>Violation</h4>
 					<s:set name="webViolationInSystem" value="violationInSystem" />
 					<s:set name="webViolationInJudgment"
 						value="violationInfo.violationStatusInJudgment" />
+				<div class="col-sm-9 col-sm-offset-3">
+					<h1>Dispute a Ticket</h1>
+					<h3>Enter Defense & Evidence</h3>
+					<s:if test="%{#webViolationInJudgment}">
+						<p>Use this form to plead “Not Guilty” to your violation and
+						request a hearing. 
+						</p>
+						<b>The violation you entered is in judgment.</b>
+						<p style="margin-top: 15px;">
+						Outstanding violations go into judgment after approximately 100 days,
+						after which only the registered owner or his/her authorized
+						representative may request a hearing. If the judge does grant your
+						request for a hearing, he/she will review any evidence you may have
+						submitted along with your defense to the violation itself. The judge's
+						decision will be emailed in about 45 days.</p>
+					</s:if>
+					<s:else>
+					<p>Use this form to plead “Not Guilty” to your violation and
+						request a hearing. After you submit the form and any evidence you
+						have, a judge will review the case. The judge's decision will be
+						emailed in about 45 days.</p>
+					</s:else>
+					<hr>
+					<h4>Violation</h4>
 					<s:if test="%{#webViolationInSystem}">
 						<div class="row">
 							<div class="col-sm-4">
@@ -393,19 +599,19 @@ function isValidEmail(value){
 									</tr>
 									<tr>
 										<td>Penalty:</td>
-										<td><s:property value="violationInfo.penalty" /></td>
+										<td>$<s:property value="violationInfo.penalty" /></td>
 									</tr>
 									<tr>
 										<td>Interest:</td>
-										<td><s:property value="violationInfo.interest" /></td>
+										<td>$<s:property value="violationInfo.interest" /></td>
 									</tr>
 									<tr>
 										<td>Reduction:</td>
-										<td><s:property value="violationInfo.reduction" /></td>
+										<td>$<s:property value="violationInfo.reduction" /></td>
 									</tr>
 									<tr>
 										<td>Paid:</td>
-										<td><s:property value="violationInfo.paid" /></td>
+										<td>$<s:property value="violationInfo.paid" /></td>
 									</tr>
 									<tr class="total">
 										<td>Balance Due:</td>
@@ -437,23 +643,20 @@ function isValidEmail(value){
 					<hr>
 					<h4>Enter Defense</h4>
 					<s:if test="%{#webViolationInSystem and #webViolationInJudgment}">
-						<p>Explain why you not previously responded to this request.</p>
+						<p id="explainWhyTitle">Explain why you have not previously responded to this request.</p>
 						<div class="form-group">
 							<textarea class="form-control" rows="10" cols="30"
 								maxlength="32700" id="explainWhyID"
-								onkeyup="setDefenseValue(this, 'explainWhyMessage'); enableDisableSubmitButton(false);"></textarea>
-							<span id="explainWhyMessage" style="color: red; display: none;">Maximum
-								length reached. If you want to write more, please do not request
-								a hearing online. Submit your hearing request and evidence by
-								mail or in person.</span>
+								onkeyup="setDefenseValue(this, 'explainWhyMessage');"></textarea>
+							<span id="explainWhyMessage" style="color: red; display: none;">Your message cannot exceed 32700 characters. If you want to write more, please do not request a hearing online. Submit your hearing request and evidence by mail or in person.</span>
 						</div>
 					</s:if>
 					<div class="clearfix gap"></div>
-					<p>Explain why you believe the violation should be dismissed.</p>
+					<p id="defenseMessage">Explain why you believe the violation should be dismissed.</p>
 					<div class="form-group">
 						<textarea class="form-control" rows="10" cols="30"
 							maxlength="32700" id="enterDefenseID"
-							onkeyup="setDefenseValue(this, 'enterDefenseMessage'); enableDisableSubmitButton(false);"></textarea>
+							onkeyup="setDefenseValue(this, 'enterDefenseMessage');"></textarea>
 						<span id="enterDefenseMessage" style="color: red; display: none;">Maximum
 							length reached. If you want to write more, please do not request
 							a hearing online. Submit your hearing request and evidence by
@@ -472,8 +675,9 @@ function isValidEmail(value){
 						The total limit for uploaded evidence is 20MB and the maximum page
 						count is 50 pages. If your evidence exceeds either the file size
 						or the page count, do not ask for a hearing online. Submit your
-						hearing request and evidence by <a href="#">mail</a> or <a
-							href="#">in person</a> at a <a href="#">Department of Finance
+						hearing request and evidence by <a href="http://www1.nyc.gov/site/finance/about/contact-us-by-mail.page" target="_blank">mail</a> or <a
+							href="http://www1.nyc.gov/site/finance/about/contact-us-by-visit.page" target="_blank">in person</a> at a 
+							<a href="http://www1.nyc.gov/site/finance/about/contact-us-by-email.page" target="_blank">Department of Finance
 							Business Center.</a>
 					</p>
 					<div id="displayError"></div>
@@ -485,21 +689,24 @@ function isValidEmail(value){
 					<form id="file-upload-form" enctype="multipart/form-data"
 						action="<%=request.getContextPath()%>/FileUploadServlet"
 						class="dropzone" method="POST"></form>
+					<div id="totalCountDiv"
+						style="width: 100%; height: 20px; margin-top: 5px; margin-bottom: 5px; align-items: right;">
+						<span class="pull-right" id="totalCountSpan"></span>
+					</div>
 					<br>
 
 
 					<p id="affirmCheckBoxPrompt">You must check the box below if
 						you are not uploading evidence. By checking this box, you agree to
 						the following:</p>
-					<s:form method="post" action="create_hearing" namespace="/dispute"
-						theme="simple" id="mainForm">
+					<s:form theme="simple" id="mainForm" action="#" method="#">
 
-						<s:textfield id="violationHidden" name="violationNumber"
+						<s:textfield id="violationHidden" name="violationHidden" value="123"
 							style="display:none" />
 						<div class="dottedborderdiv"></div>
 						<div class="checkbox" id="affirmCheckBox">
 							<label id="affirmMsg"> <s:checkbox id="affirm"
-									name="affirm" onchange="enableDisableSubmitButton(false)"/> I affirm that I am not uploading evidence for
+									name="affirm" /> I affirm that I am not uploading evidence for
 								the judge to consider. I understand that this is the only
 								opportunity I will have to upload evidence for my hearing.
 							</label>
@@ -523,20 +730,20 @@ function isValidEmail(value){
 							<div class="form-group">
 								<label>First Name</label>
 								<s:textfield name="firstName" id="firstName" label="First Name"
-									class="form-control" labelposition="top" maxlength="30" onBlur="enableDisableSubmitButton(false)"/>
+									class="form-control" labelposition="top" maxlength="30" />
 								<span id="firstNameMsg" style="color: red; display: none;">First
 									Name is required.</span>
 							</div>
 							<div class="form-group">
 								<label>Middle Initial (Optional)</label>
-								<s:textfield name="middleName" label="Middle Initial"
+								<s:textfield name="middleName" id="middleName" label="Middle Initial"
 									class="form-control" style="max-width:50px;"
 									labelposition="top" maxlength="1" />
 							</div>
 							<div class="form-group">
 								<label>Last Name</label>
 								<s:textfield name="lastName" id="lastName" label="Last Name"
-									class="form-control" labelposition="top" maxlength="30" onblur="enableDisableSubmitButton(false)"/>
+									class="form-control" labelposition="top" maxlength="30" />
 								<span id="lastNameMsg" style="color: red; display: none;">Last
 									Name is required.</span>
 							</div>
@@ -544,7 +751,8 @@ function isValidEmail(value){
 							<div class="form-group">
 								<label>Address</label>
 								<s:textfield name="address" id="address" label="Address"
-									class="form-control" labelposition="top" maxlength="50" onblur="enableDisableSubmitButton(false)" />
+									class="form-control" labelposition="top" maxlength="50" />
+								<span class="help-block" id="addresshelpmsg">Street address, P.O. Box, etc.</span>
 								<span id="addressMsg" style="color: red; display: none;">Address
 									is required.</span>
 							</div>
@@ -552,20 +760,21 @@ function isValidEmail(value){
 								<label>Address Line 2 (Optional)</label>
 								<s:textfield name="address2" maxlength="50" class="form-control"
 									label="Address Line 2 (optional)" labelposition="top" />
+								<span class="help-block" id="address2helpmsg">Apartment, suite, unit, etc.</span>
 							</div>
 							<div class="form-group">
 								<label>City</label>
 								<s:textfield name="city" id="city" label="City"
-									labelposition="top" class="form-control" maxlength="50" onblur="enableDisableSubmitButton(false)"/>
+									labelposition="top" class="form-control" maxlength="50" />
 								<span id="cityMsg" style="color: red; display: none;">City
 									is required.</span>
 							</div>
 							<div class="form-group">
 								<label>State/Province</label>
-								<s:select label="State/Province" value="state" name="state"
-									id="state" name="state" class="form-control"
+								<s:select label="State/Province" list="state" name="state"
+									id="state" class="form-control" listKey="code" listValue="name"
 									style="max-width:250px;" labelposition="top"
-									headerValue="--- Please Select ---" headerKey="1" list="states" onblur="enableDisableSubmitButton(false)"/>
+									headerValue="--- Please Select ---" headerKey="1" list="states" />
 								<span id="stateMsg" style="color: red; display: none;">Please
 									select the State/Province.</span>
 							</div>
@@ -574,15 +783,16 @@ function isValidEmail(value){
 								<s:textfield name="zip" id="zip" type="tel"
 									label="ZIP/Postal Code" class="form-control" min="1"
 									max="9999999999" style="max-width:250px;" labelposition="top"
-									maxlength="10" requiredLabel="true" requiredPosition="top" onblur="enableDisableSubmitButton(false)"/>
-								<span id="zipMsg" style="color: red; display: none;">Zip/Postal
-									Code is required.</span>
+									maxlength="10" requiredLabel="true" requiredPosition="top" />
+								<span id="zipEmptyMsg" style="color: red; display: none;">Zip/Postal
+	Code is required.</span><span id="zipInvalidMsg" style="color: red; display: none;">Zip/Postal
+	Code format is not valid.</span>
 							</div>
 							<div class="form-group">
 								<label>Email Address</label>
 								<s:textfield name="email1" id="email1" label="Email Address"
 									class="form-control" labelposition="top" maxlength="50"
-									type="email" onblur="enableDisableSubmitButton(false)"/>
+									type="email" />
 								<span id="email1Msg" style="color: red; display: none;">Email
 									is required.</span> <span id="email1FormatMsg"
 									style="color: red; display: none;">Email format is not
@@ -592,11 +802,11 @@ function isValidEmail(value){
 								<label>Confirm Email Address</label>
 								<s:textfield name="email2" id="email2"
 									label="Confirm Email Address" class="form-control"
-									labelposition="top" maxlength="50" type="email" onblur="enableDisableSubmitButton(false)"/>
+									labelposition="top" maxlength="50" type="email" />
 								<span id="email2Msg" style="color: red; display: none;">Please
-									confirm your email.</span> <span id="emailMatchMsg"
+									confirm your email address.</span> <span id="emailMatchMsg"
 									style="color: red; display: none;">Does not match email
-									address above.</span> <span id="email2FormatMsg"
+									address above. Please try again.</span> <span id="email2FormatMsg"
 									style="color: red; display: none;">Email format is not
 									correct.</span>
 							</div>
@@ -606,7 +816,7 @@ function isValidEmail(value){
 								your hearing request. By checking this box, you agree to the
 								following:</p>
 							<div class="checkbox">
-								<label> <s:checkbox id="certify" name="certify" onchange="enableDisableSubmitButton(false)"/>I
+								<label> <s:checkbox id="certify" name="certify" />I
 									certify that I am the person named above or the authorized
 									agent of such person and I am duly authorized to make this
 									affirmation. I also affirm that all statements made and
@@ -618,18 +828,19 @@ function isValidEmail(value){
 								</label>
 
 							</div>
-						</div>
-
-						<p>Once you submit your request, your hearing will be
-							scheduled.</p>
+						</div>						
 						<div class="form-group">
 							<%-- <s:submit value="Submit Request" class="btn btn-primary "
 								id="submitBtn" /> --%>
-							<input id="submitBtn" type="button" class="btn btn-primary"
-								value="Submit Request" /> <a class="btn btn-link "
-								href="#submitBtn" onclick="cancelRequest();">Cancel Request</a>
+								<input id="submitBtn" type="button" class="btn btn-primary"
+								value="Submit Request" />
+							 <a class="btn btn-link "
+								href="#submitBtn"
+								onclick="cancelRequestConfirmationDialog('Warning: You have not yet submitted your request. If you leave the page, you will lose any information and files you have entered into this form.');">Cancel
+								Request</a>
 						</div>
 					</s:form>
+					
 				</div>
 			</div>
 		</div>
@@ -649,7 +860,6 @@ function isValidEmail(value){
 		<div class="backdrop"></div>
 		<div class="loading_image">
 			<img src="${pageContext.request.contextPath}/images/giphy.gif">
-			<p>Scanning uploaded documents...</p>
 		</div>
 	</div>
 </body>

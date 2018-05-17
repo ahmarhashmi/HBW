@@ -1,0 +1,15 @@
+############ This is for Systest environment #############
+
+EVIDENCE_UPLOAD_LOCATION=../hbwnoncom/
+MAX_NUMBER_OF_EVIDENCES=50
+MAX_TOTAL_SIZE_OF_EVIDENCE=20971520
+WSDL_URI=http://10.155.138.159/NYCServMobileAppWeb/NYCServMobileApp?wsdl
+USER_ID=VANGUARD
+#PASSWORD=Wkcxa2VWcEdVbXhTTFFOQ==
+PASSWORD=Eb4jZBYoLu5vybUkwfuqvg==
+WS_CHANNEL=HBW
+VANGAURD_VIRUS_SCAN_URL=https://hbwmobileuat.vgdinbox.net/process.php
+VANGAURD_DELETE_SUMMON_URL=https://hbwmobileuat.vgdinbox.net/deleteSummon.php
+DOF_BROKER_URL=https://www1.nyc.gov/site/finance/vehicles/commercial.page
+PROXY_IP=10.141.22.15
+PROXY_PORT=8080
